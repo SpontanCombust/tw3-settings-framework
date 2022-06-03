@@ -14,7 +14,7 @@ impl ToWitcherScript for SettingsGroup {
     }
 
     fn ws_code_body(&self) -> String {
-        let mut code = String::from("");
+        let mut code = String::new();
 
         code += &format!("struct {}\n", self.ws_type_name());
         code += "{\n";

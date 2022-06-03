@@ -12,7 +12,7 @@ impl ToWitcherScript for SettingsMaster {
     }
 
     fn ws_code_body(&self) -> String {
-        let mut code = String::from("");
+        let mut code = String::new();
 
         code += &format!("class {}\n", self.name);
         code += "{\n";
