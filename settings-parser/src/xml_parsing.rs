@@ -10,7 +10,7 @@ pub fn parse_settings_xml(xml_text: String, settings_master_name: String) -> Res
     };
     
     let mut master = SettingsMaster::default();
-    master.name = settings_master_name;
+    master.name = settings_master_name.clone();
 
     if let Some(root_node) = doc.descendants().find(|n| n.has_tag_name("UserConfig")) {
         let group_nodes: Vec<Node> = root_node.children().filter(|n| n.has_tag_name("Group")).collect();
@@ -21,6 +21,8 @@ pub fn parse_settings_xml(xml_text: String, settings_master_name: String) -> Res
         
         for group_node in &group_nodes {
             let mut sg = SettingsGroup::default();
+
+            sg.master_name = settings_master_name.clone();
 
             if let Some(group_id) = group_node.attribute("id") {
                 sg.id = group_id.to_owned();

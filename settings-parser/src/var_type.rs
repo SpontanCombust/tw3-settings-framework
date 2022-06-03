@@ -68,13 +68,4 @@ impl VarType {
 
         return Err(format!("Invalid display type: {}", display_type));
     }
-
-    pub fn to_ws_type_str(&self) -> &'static str {
-        match self {
-            VarType::Toggle => "bool",
-            VarType::Options => "int",
-            VarType::SliderInt => "int",
-            VarType::SliderFloat => "float"
-        }
-    }
 }

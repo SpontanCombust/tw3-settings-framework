@@ -1,26 +1,30 @@
-use crate::settings_var::SettingsVar;
+use crate::{settings_var::SettingsVar, to_witcher_script::ToWitcherScript};
 
 #[derive(Default)]
 pub struct SettingsGroup {
+    pub master_name: String,
     pub id: String,
     pub vars: Vec<SettingsVar>
 }
 
-impl SettingsGroup {
-    pub fn to_ws_struct_name(&self, settings_master_name: &str) -> String {
-        format!("{}_{}", settings_master_name, self.id)
+
+impl ToWitcherScript for SettingsGroup {
+    fn ws_type_name(&self) -> String {
+        format!("{}_{}", self.master_name, self.id)
     }
 
-    pub fn to_ws_struct(&self, settings_master_name: &str) {
+    fn ws_code_body(&self) -> String {
         let mut code = String::from("");
 
-        code += &format!("struct {}\n", self.to_ws_struct_name(settings_master_name));
+        code += &format!("struct {}\n", self.ws_type_name());
         code += "{\n";
 
         for var in &self.vars {
-            code += &format!("\tvar {} : {};\n", var.id, var.var_type.to_ws_type_str());
+            code += &format!("\t{};\n", var.ws_code_body());
         }
 
         code += "}\n";
+
+        code
     }
 }

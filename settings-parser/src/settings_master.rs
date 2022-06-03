@@ -1,4 +1,4 @@
-use crate::settings_group::SettingsGroup;
+use crate::{settings_group::SettingsGroup, to_witcher_script::ToWitcherScript};
 
 #[derive(Default)]
 pub struct SettingsMaster {
@@ -6,19 +6,25 @@ pub struct SettingsMaster {
     pub groups: Vec<SettingsGroup>
 }
 
-impl SettingsMaster {
-    pub fn to_ws_class(&self) {
+impl ToWitcherScript for SettingsMaster {
+    fn ws_type_name(&self) -> String {
+        self.name.clone()
+    }
+
+    fn ws_code_body(&self) -> String {
         let mut code = String::from("");
 
         code += &format!("class {}\n", self.name);
         code += "{\n";
 
         for group in &self.groups {
-            code += &format!("\tpublic var {} : {};\n", group.id, group.to_ws_struct_name(&self.name));
+            code += &format!("\tpublic var {} : {};\n", group.id, group.ws_type_name());
         }
 
         //TODO function fetching vars from CInGameConfigWrapper
 
         code += "}\n";
+
+        code
     }
 }
