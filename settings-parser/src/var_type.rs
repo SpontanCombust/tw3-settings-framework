@@ -7,7 +7,7 @@ pub enum VarType {
 }
 
 impl VarType {
-    pub fn from_display_type(display_type: &String) -> Result<VarType, String> {
+    pub fn from_display_type(display_type: &str) -> Result<VarType, String> {
         if display_type == "TOGGLE" {
             return Ok(VarType::Toggle);
         }
@@ -24,6 +24,8 @@ impl VarType {
                 return Err(format!("Invalid amount of slider parameters. Should be 3, is {}", spl.len() - 1));
             } 
             else {
+                //CHECKME min & max may need to be checked for being floats first
+
                 let min = spl[1].parse::<i32>();
                 if min.is_err() {
                     return Err(format!("Slider min value parse error: {}", min.unwrap_err()));   
