@@ -97,6 +97,8 @@ fn write_settings_function(master: &SettingsMaster) -> String {
         code += "\n";
     }
 
+    code += "\t\ttheGame.SaveUserSettings();\n";
+
     code += "\t}\n";
 
     code
