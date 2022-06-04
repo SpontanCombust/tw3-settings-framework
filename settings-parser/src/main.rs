@@ -20,14 +20,13 @@ struct CLI {
     #[clap(short = 'f')]
     xml_file_path: String,
 
-    //TODO output file could be made from xml_file_path
-    /// WitcherScipt output file
-    #[clap(short = 'o')]
-    output_ws_file_path: String,
-
     /// Name to use for the settings master class
     #[clap(short = 'c')]
     settings_master_name: String,
+
+    /// Path of the WitcherScipt output file, by default it's made from the menu xml file name in the same directory
+    #[clap(short = 'o')]
+    output_ws_file_path: Option<String>,
 
     /// Prefix to ommit from groups and variables, case sensitive
     #[clap(long)]
@@ -43,14 +42,7 @@ fn main() {
         .write(false)
         .create(false)
         .open(cli.xml_file_path.clone());
-
-    let ws_file = OpenOptions::new()
-        .write(true)
-        .create(true)
-        .truncate(true)
-        .open(cli.output_ws_file_path.clone());
-
-
+    
     let mut xml_file = match xml_file {
         Ok(f) => f,
         Err(e) => {
@@ -58,6 +50,24 @@ fn main() {
             return;
         }
     };
+
+
+
+    let ws_path = match cli.output_ws_file_path {
+        Some(path) => path,
+        None => {
+            let mut path = cli.xml_file_path.clone();
+            path.truncate(path.rfind(".").unwrap_or(path.len()));
+            path.push_str(".ws");
+            path
+        }
+    };
+
+    let ws_file = OpenOptions::new()
+        .write(true)
+        .create(true)
+        .truncate(true)
+        .open(ws_path.clone());
 
     let mut ws_file = match ws_file {
         Ok(f) => f,
@@ -93,7 +103,7 @@ fn main() {
                 return;
             }
 
-            println!("Successfully parsed {} into {}", cli.xml_file_path, cli.output_ws_file_path);
+            println!("Successfully parsed {} into {}", cli.xml_file_path, ws_path);
         }
         Err(e) => {
             println!("Error parsing menu xml file: {}", e);
