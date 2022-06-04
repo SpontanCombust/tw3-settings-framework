@@ -17,15 +17,15 @@ use to_witcher_script::ToWitcherScript;
 #[clap(about = "Parses a mod menu XML file and outputs witcher script code representing settings of this menu", long_about=None)]
 struct CLI {
     /// Path to the menu xml file
-    #[clap(short = 'f')]
+    #[clap(long = "file", short = 'f')]
     xml_file_path: String,
 
     /// Name to use for the settings master class
-    #[clap(short = 'c')]
+    #[clap(long = "master", short = 'm')]
     settings_master_name: String,
 
     /// Path of the WitcherScipt output file, by default it's made from the menu xml file name in the same directory
-    #[clap(short = 'o')]
+    #[clap(long = "output", short = 'o')]
     output_ws_file_path: Option<String>,
 
     /// Prefix to ommit from groups and variables, case sensitive

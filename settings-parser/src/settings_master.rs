@@ -43,6 +43,7 @@ fn settings_class_variables(master: &SettingsMaster) -> String {
 fn update_settings_function(master: &SettingsMaster) -> String {
     let mut code = String::new();
 
+    //TODO rename to ReadSettings() and add WriteSettings()
     code += "\tpublic function UpdateSettings()\n";
     code += "\t{\n";
 
