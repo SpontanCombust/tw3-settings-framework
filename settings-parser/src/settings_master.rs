@@ -34,7 +34,7 @@ fn settings_class_variables(master: &SettingsMaster) -> String {
     let mut code = String::new();
 
     for group in &master.groups {
-        code += &format!("\tpublic var {} : {};\n", group.id, group.ws_type_name());
+        code += &format!("\tpublic var {} : {};\n", group.name, group.ws_type_name());
     }
 
     code
@@ -61,7 +61,7 @@ fn update_settings_function(master: &SettingsMaster) -> String {
                 _ => get_var_value
             };
 
-            code += &format!("\t\t{}.{} = {};\n", group.id, var.id, get_var_value);
+            code += &format!("\t\t{}.{} = {};\n", group.name, var.name, get_var_value);
         }
         code += "\n";
     }

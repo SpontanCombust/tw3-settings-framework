@@ -20,6 +20,7 @@ struct CLI {
     #[clap(short = 'f')]
     xml_file_path: String,
 
+    //TODO output file could be made from xml_file_path
     /// WitcherScipt output file
     #[clap(short = 'o')]
     output_ws_file_path: String,
@@ -28,7 +29,9 @@ struct CLI {
     #[clap(short = 'c')]
     settings_master_name: String,
 
-    //TODO option to ignore groups with certain keywords (or with lack there of)
+    /// Prefix to ommit from groups and variables, case sensitive
+    #[clap(long)]
+    ommit_prefix: Option<String>,
 }
 
 fn main() {
@@ -74,7 +77,7 @@ fn main() {
         return;
     };
 
-    match xml_parsing::parse_settings_xml(xml_text, cli.settings_master_name.clone()) {
+    match xml_parsing::parse_settings_xml(xml_text, cli.settings_master_name.clone(), cli.ommit_prefix) {
         Ok(master) => {
             let mut code = String::new();
 

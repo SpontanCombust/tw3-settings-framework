@@ -4,13 +4,14 @@ use crate::{settings_var::SettingsVar, to_witcher_script::ToWitcherScript};
 pub struct SettingsGroup {
     pub master_name: String,
     pub id: String,
+    pub name: String,
     pub vars: Vec<SettingsVar>
 }
 
 
 impl ToWitcherScript for SettingsGroup {
     fn ws_type_name(&self) -> String {
-        format!("{}_{}", self.master_name, self.id)
+        format!("{}_{}", self.master_name, self.name)
     }
 
     fn ws_code_body(&self) -> String {
