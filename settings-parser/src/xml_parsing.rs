@@ -20,19 +20,20 @@ pub fn parse_settings_xml(xml_text: String, settings_master_name: String) -> Res
         }
         
         for group_node in &group_nodes {
-            let mut sg = SettingsGroup::default();
-
-            sg.master_name = settings_master_name.clone();
-
+            
             if let Some(group_id) = group_node.attribute("id") {
-                sg.id = group_id.to_owned();
 
                 if let Some(visible_vars_node) = group_node.children().find(|n| n.has_tag_name("VisibleVars")) {
                     let var_nodes: Vec<Node> = visible_vars_node.children().filter(|n| n.has_tag_name("Var")).collect();
 
                     if var_nodes.is_empty() {
-                        println!("Group {} at {} has no visible vars", sg.id, node_pos(&group_node, &doc));
+                        println!("Group {} at {} has no vars and will be ignored.", group_id, node_pos(&group_node, &doc));
+                        continue;
                     }
+
+                    let mut sg = SettingsGroup::default();
+                    sg.master_name = settings_master_name.clone();
+                    sg.id = group_id.to_owned();
 
                     for var_node in &var_nodes {
                         let var_id = match var_node.attribute("id") {
@@ -65,12 +66,12 @@ pub fn parse_settings_xml(xml_text: String, settings_master_name: String) -> Res
                             var_type: var_type
                         });
                     }
+
+                    master.groups.push(sg);
                 }
                 else {
-                    println!("No visible vars found for Group {} at {}", sg.id, node_pos(&group_node, &doc));
+                    println!("Group {} at {} has no vars and will be ignored.", group_id, node_pos(&group_node, &doc));
                 }
-
-                master.groups.push(sg);
             }
             else {
                 println!("No id attribute found for Group tag at {}", node_pos(&group_node, &doc))

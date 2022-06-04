@@ -28,8 +28,6 @@ struct CLI {
     #[clap(short = 'c')]
     settings_master_name: String,
 
-    //TODO option to ignore a group if it's empty
-
     //TODO option to ignore groups with certain keywords (or with lack there of)
 }
 
