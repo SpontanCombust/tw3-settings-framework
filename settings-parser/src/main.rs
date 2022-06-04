@@ -28,9 +28,9 @@ struct CLI {
     #[clap(long = "output", short = 'o')]
     output_ws_file_path: Option<String>,
 
-    /// Prefix to ommit from groups and variables, case sensitive
+    /// Prefix to omit from groups and variables, case sensitive
     #[clap(long)]
-    ommit_prefix: Option<String>,
+    omit_prefix: Option<String>,
 }
 
 fn main() {
@@ -87,7 +87,7 @@ fn main() {
         return;
     };
 
-    match xml_parsing::parse_settings_xml(xml_text, cli.settings_master_name.clone(), cli.ommit_prefix) {
+    match xml_parsing::parse_settings_xml(xml_text, cli.settings_master_name.clone(), cli.omit_prefix) {
         Ok(master) => {
             let mut code = String::new();
 

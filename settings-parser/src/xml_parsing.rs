@@ -1,7 +1,7 @@
 use crate::{settings_master::SettingsMaster, settings_group::SettingsGroup, settings_var::SettingsVar, var_type::VarType};
 use roxmltree::{self, Document, Node};
 
-pub fn parse_settings_xml(xml_text: String, settings_master_name: String, ommit_prefix: Option<String>) -> Result<SettingsMaster, String> {
+pub fn parse_settings_xml(xml_text: String, settings_master_name: String, omit_prefix: Option<String>) -> Result<SettingsMaster, String> {
     let doc = match Document::parse(&xml_text) {
         Ok(doc) => doc,
         Err(err) => {
@@ -34,7 +34,7 @@ pub fn parse_settings_xml(xml_text: String, settings_master_name: String, ommit_
                     let mut sg = SettingsGroup::default();
                     sg.master_name = settings_master_name.clone();
                     sg.id = group_id.to_owned();
-                    sg.name = id_to_name(group_id, &ommit_prefix);
+                    sg.name = id_to_name(group_id, &omit_prefix);
 
                     for var_node in &var_nodes {
                         let var_id = match var_node.attribute("id") {
@@ -64,7 +64,7 @@ pub fn parse_settings_xml(xml_text: String, settings_master_name: String, ommit_
 
                         sg.vars.push(SettingsVar {
                             id: var_id.to_owned(),
-                            name: id_to_name(var_id, &ommit_prefix),
+                            name: id_to_name(var_id, &omit_prefix),
                             var_type: var_type
                         });
                     }
@@ -92,8 +92,8 @@ fn node_pos(node: &Node, doc: &Document) -> String {
     format!("line {}, column {}", pos.row, pos.col)
 }
 
-fn id_to_name(id: &str, ommit_prefix: &Option<String>) -> String {
-    if let Some(prefix) = ommit_prefix {
+fn id_to_name(id: &str, omit_prefix: &Option<String>) -> String {
+    if let Some(prefix) = omit_prefix {
         if id.starts_with(prefix) {
             return id[prefix.len()..].to_string();
         }
