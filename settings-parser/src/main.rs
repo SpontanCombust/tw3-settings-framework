@@ -5,8 +5,7 @@ mod settings_master;
 mod xml_parsing;
 mod to_witcher_script;
 
-use std::path::PathBuf;
-use std::{fs::OpenOptions, io::{Read, Write}, path::Path};
+use std::{fs::OpenOptions, io::{Read, Write}, path::{Path, PathBuf}};
 
 use clap::Parser;
 use to_witcher_script::ToWitcherScript;
