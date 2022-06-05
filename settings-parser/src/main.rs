@@ -5,7 +5,8 @@ mod settings_master;
 mod xml_parsing;
 mod to_witcher_script;
 
-use std::{fs::OpenOptions, io::{Read, Write}};
+use std::path::PathBuf;
+use std::{fs::OpenOptions, io::{Read, Write}, path::Path};
 
 use clap::Parser;
 use to_witcher_script::ToWitcherScript;
@@ -36,12 +37,12 @@ struct CLI {
 fn main() {
     let cli = CLI::parse();
 
-    
+    let input_file_path = Path::new(&cli.xml_file_path);
     let xml_file = OpenOptions::new()
         .read(true)
         .write(false)
         .create(false)
-        .open(cli.xml_file_path.clone());
+        .open(&input_file_path);
     
     let mut xml_file = match xml_file {
         Ok(f) => f,
@@ -51,23 +52,16 @@ fn main() {
         }
     };
 
-
-
-    let ws_path = match cli.output_ws_file_path {
-        Some(path) => path,
-        None => {
-            let mut path = cli.xml_file_path.clone();
-            path.truncate(path.rfind(".").unwrap_or(path.len()));
-            path.push_str(".ws");
-            path
-        }
+    let ws_path = match cli.output_ws_file_path  {
+        Some(path) => PathBuf::from(&path),
+        None => input_file_path.with_extension("ws")
     };
 
     let ws_file = OpenOptions::new()
         .write(true)
         .create(true)
         .truncate(true)
-        .open(ws_path.clone());
+        .open(&ws_path);
 
     let mut ws_file = match ws_file {
         Ok(f) => f,
@@ -103,7 +97,7 @@ fn main() {
                 return;
             }
 
-            println!("Successfully parsed {} into {}", cli.xml_file_path, ws_path);
+            println!("Successfully parsed {} into {}", cli.xml_file_path, ws_path.to_str().unwrap_or(""));
         }
         Err(e) => {
             println!("Error parsing menu xml file: {}", e);
