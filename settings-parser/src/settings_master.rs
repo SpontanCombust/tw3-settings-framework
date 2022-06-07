@@ -6,6 +6,10 @@ pub struct SettingsMaster {
     pub groups: Vec<SettingsGroup>
 }
 
+const SETTINGS_MASTER_BASE_CLASS_NAME: &str = "ISettingsMaster";
+const SETTINGS_READ_FUNC_NAME: &str = "ReadSettings";
+const SETTINGS_WRITE_FUNC_NAME: &str = "WriteSettings";
+
 impl ToWitcherScript for SettingsMaster {
     fn ws_type_name(&self) -> String {
         self.name.clone()
@@ -16,7 +20,7 @@ impl ToWitcherScript for SettingsMaster {
 
         code += &format!("// Code generated using Mod Settings Framework & Utilites v{} by SpontanCombust\n\n", option_env!("CARGO_PKG_VERSION").unwrap());
 
-        code += &format!("class {}\n", self.name);
+        code += &format!("class {} extends {}\n", self.name, SETTINGS_MASTER_BASE_CLASS_NAME);
         code += "{\n";
 
         code += &settings_class_variables(self);
@@ -46,7 +50,7 @@ fn settings_class_variables(master: &SettingsMaster) -> String {
 fn read_settings_function(master: &SettingsMaster) -> String {
     let mut code = String::new();
 
-    code += "\tpublic function ReadSettings()\n";
+    code += &format!("\tpublic function {}()\n", SETTINGS_READ_FUNC_NAME);
     code += "\t{\n";
 
     code += "\t\tvar config : CInGameConfigWrapper;\n";
@@ -77,7 +81,7 @@ fn read_settings_function(master: &SettingsMaster) -> String {
 fn write_settings_function(master: &SettingsMaster) -> String {
     let mut code = String::new();
 
-    code += "\tpublic function WriteSettings()\n";
+    code += &format!("\tpublic function {}()\n", SETTINGS_WRITE_FUNC_NAME);
     code += "\t{\n";
 
     code += "\t\tvar config : CInGameConfigWrapper;\n";
