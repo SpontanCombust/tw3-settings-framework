@@ -2,6 +2,8 @@ use crate::{settings_master::SettingsMaster, settings_group::SettingsGroup, sett
 use roxmltree::{self, Document, Node};
 
 pub fn parse_settings_xml(xml_text: String, settings_master_name: String, omit_prefix: Option<String>) -> Result<SettingsMaster, String> {
+    validate_settings_master_name(&settings_master_name)?;
+
     let doc = match Document::parse(&xml_text) {
         Ok(doc) => doc,
         Err(err) => {
@@ -85,6 +87,20 @@ pub fn parse_settings_xml(xml_text: String, settings_master_name: String, omit_p
     }
 
     return Ok(master);
+}
+
+fn validate_settings_master_name(name: &str) -> Result<(), String> {
+    if name.is_empty() {
+        return Err("Settings master name cannot be empty".to_string());
+    }
+    if name.chars().nth(0).unwrap().is_numeric() {
+        return Err("Settings master name cannot start with a number".to_string());
+    }
+    if name.chars().any(|c| !c.is_ascii_alphanumeric() && c != '_') {
+        return Err("Settings master name must be alphanumeric with no spaces".to_string());
+    }
+
+    return Ok(());
 }
 
 fn node_pos(node: &Node, doc: &Document) -> String {

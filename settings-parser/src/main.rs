@@ -70,9 +70,7 @@ fn main() {
         }
     };
 
-    //TODO validating settings master name
-
-
+    
 
     let mut xml_text = String::new();
     if let Err(e) = xml_file.read_to_string(&mut xml_text) {
@@ -80,7 +78,7 @@ fn main() {
         return;
     };
 
-    match xml_parsing::parse_settings_xml(xml_text, cli.settings_master_name.clone(), cli.omit_prefix) {
+    match xml_parsing::parse_settings_xml(xml_text, cli.settings_master_name, cli.omit_prefix) {
         Ok(master) => {
             let mut code = String::new();
 
