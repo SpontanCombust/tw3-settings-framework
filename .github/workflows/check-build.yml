@@ -24,10 +24,8 @@ jobs:
         target: x86_64-pc-windows-msvc
         override: true
     - name: Build with Cargo
-      uses: actions-rs/cargo@v1
-      with:
-        use-cross: true
-        command: build
-        args: --release --target=x86_64-pc-windows-msvc
+      run: cargo build --release --target=x86_64-pc-windows-msvc
+      working-directory: ./settings-parser
     - name: Run tests
       run: cargo test --verbose
+      working-directory: ./settings-parser
