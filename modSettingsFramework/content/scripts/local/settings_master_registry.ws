@@ -4,6 +4,13 @@ struct SSettingsMasterRegistryEntry
     var id : name; 
 }
 
+enum ESettingsReadEvent
+{
+    ESettingsReadEvent_EnterMainMenu,
+    ESettingsReadEvent_LoadSave,
+    ESettingsReadEvent_ClosePauseMenu
+}
+
 class CSettingsMasterRegistry
 {
     private var m_settingsEntries : array<SSettingsMasterRegistryEntry>;
@@ -56,7 +63,6 @@ class CSettingsMasterRegistry
         }
     }
 
-    //TODO argument that tells you where settings were updated (in main menu? in pause menu?)
     public function ReadAllSettings() : void
     {
         var i, size : int;
@@ -78,4 +84,15 @@ class CSettingsMasterRegistry
     {
         m_readListeners.PushBack(listener);
     }
+}
+
+
+function GetSettingsMasterRegistry() : CSettingsMasterRegistry
+{
+    if(theGame.m_settingsMasterRegistry == NULL)
+    {
+        theGame.m_settingsMasterRegistry = new CSettingsMasterRegistry in theGame;
+    }
+
+    return theGame.m_settingsMasterRegistry;
 }
