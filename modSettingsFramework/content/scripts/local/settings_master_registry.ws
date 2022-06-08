@@ -4,26 +4,26 @@ struct SSettingsMasterRegistryEntry
     var id : name; 
 }
 
-enum ESettingsReadEvent
-{
-    ESettingsReadEvent_EnterMainMenu,
-    ESettingsReadEvent_LoadSave,
-    ESettingsReadEvent_ClosePauseMenu
-}
-
 class CSettingsMasterRegistry
 {
     private var m_settingsEntries : array<SSettingsMasterRegistryEntry>;
     private var m_readListeners : array<ISettingsReadListener>;
 
-    public function AddSettings(settingsMaster : ISettingsMaster, id : name, optional shouldDoReadNow : bool) : void
+    public function AddSettings(settingsMaster : ISettingsMaster, id : name) : void
     {
+        var i, size : int;
         var settingsEntry : SSettingsMasterRegistryEntry;
 
-        if(shouldDoReadNow)
+        size = m_settingsEntries.Size();
+        for (i = 0; i < size; i++)
         {
-            settingsMaster.ReadSettings();
+            if (m_settingsEntries[i].id == id)
+            {
+                return;
+            }
         }
+
+        settingsMaster.ReadSettings();
 
         settingsEntry.settingsMaster = settingsMaster;
         settingsEntry.id = id;
