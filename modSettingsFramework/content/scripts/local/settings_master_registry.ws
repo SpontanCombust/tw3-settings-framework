@@ -15,7 +15,7 @@ class CSettingsMasterRegistry
         var settingsEntry : SSettingsMasterRegistryEntry;
 
         size = m_settingsEntries.Size();
-        for (i = 0; i < size; i++)
+        for (i = 0; i < size; i += 1)
         {
             if (m_settingsEntries[i].id == id)
             {
@@ -70,7 +70,7 @@ class CSettingsMasterRegistry
         size = m_settingsEntries.Size();
         for (i = 0; i < size; i += 1)
         {
-            m_settingsEntries[i].ReadSettings();
+            m_settingsEntries[i].settingsMaster.ReadSettings();
         }
 
         size = m_readListeners.Size();
@@ -89,10 +89,14 @@ class CSettingsMasterRegistry
 
 function GetSettingsMasterRegistry() : CSettingsMasterRegistry
 {
-    if(theGame.m_settingsMasterRegistry == NULL)
+    var game : CR4Game;
+
+    game = theGame;
+
+    if(!game.m_settingsMasterRegistry)
     {
-        theGame.m_settingsMasterRegistry = new CSettingsMasterRegistry in theGame;
+        game.m_settingsMasterRegistry = new CSettingsMasterRegistry in theGame;
     }
 
-    return theGame.m_settingsMasterRegistry;
+    return game.m_settingsMasterRegistry;
 }
