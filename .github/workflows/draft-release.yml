@@ -1,0 +1,45 @@
+name: draft-release
+
+on:
+  push:
+    tags: '*'
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build:
+
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Use Rust stable
+      uses: actions-rs/toolchain@v1
+      with:
+        toolchain: stable
+        target: x86_64-pc-windows-msvc
+        override: true
+    - name: Build with Cargo
+      uses: actions-rs/cargo@v1
+      with:
+        use-cross: true
+        command: build
+        args: --release --target=x86_64-pc-windows-msvc
+    - name: Zip parser
+      uses: papeloto/action-zip@v1
+      with:
+        files: "target/x86_64-pc-windows-msvc/release/settings_parser.exe"
+        dest: "TW3 Mod Settings Framework - Parser.zip"
+    - name: Zip modSettingsFramework
+      uses: papeloto/action-zip@v1
+      with:
+        files: "modSettingsFramework/"
+        dest: "TW3 Mod Settings Framework - modSettingsFramework.zip"
+    - name: Create draft release
+      uses: ncipollo/release-action@v1
+      with:
+        artifacts: "TW3 Mod Settings Framework - Parser.zip" "TW3 Mod Settings Framework - modSettingsFramework.zip"
+        draft: true
+        generateReleaseNotes: true
