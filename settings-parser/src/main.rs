@@ -4,34 +4,14 @@ mod settings_group;
 mod settings_master;
 mod xml_parsing;
 mod to_witcher_script;
+mod cli;
 
 use std::{fs::OpenOptions, io::{Read, Write}, path::{Path, PathBuf}};
 
 use clap::Parser;
+use cli::CLI;
 use to_witcher_script::ToWitcherScript;
 
-
-#[derive(Parser)]
-#[clap(name = "TW3 Settings Framework Parser")]
-#[clap(version = option_env!("CARGO_PKG_VERSION").unwrap_or("unknown version"))]
-#[clap(about = "Parses a mod menu XML file and outputs witcher script code representing settings of this menu", long_about=None)]
-struct CLI {
-    /// Path to the menu xml file
-    #[clap(long = "file", short = 'f')]
-    xml_file_path: String,
-
-    /// Name to use for the settings master class
-    #[clap(long = "master", short = 'm')]
-    settings_master_name: String,
-
-    /// Path of the WitcherScipt output file, by default it's made from the menu xml file name in the same directory
-    #[clap(long = "output", short = 'o')]
-    output_ws_file_path: Option<String>,
-
-    /// Prefix to omit from groups and variables, case sensitive
-    #[clap(long)]
-    omit_prefix: Option<String>,
-}
 
 fn main() {
     let cli = CLI::parse();
@@ -51,7 +31,7 @@ fn main() {
         }
     };
 
-    let ws_path = match cli.output_ws_file_path  {
+    let ws_path = match &cli.output_ws_file_path  {
         Some(path) => PathBuf::from(&path),
         None => input_file_path.with_extension("ws")
     };
@@ -78,7 +58,7 @@ fn main() {
         return;
     };
 
-    match xml_parsing::parse_settings_xml(xml_text, cli.settings_master_name, cli.omit_prefix) {
+    match xml_parsing::parse_settings_xml(xml_text, &cli) {
         Ok(master) => {
             let mut code = String::new();
 

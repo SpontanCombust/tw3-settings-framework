@@ -1,8 +1,8 @@
-use crate::{settings_master::SettingsMaster, settings_group::SettingsGroup, settings_var::SettingsVar, var_type::VarType};
+use crate::{settings_master::SettingsMaster, settings_group::SettingsGroup, settings_var::SettingsVar, var_type::VarType, CLI};
 use roxmltree::{self, Document, Node};
 
-pub fn parse_settings_xml(xml_text: String, settings_master_name: String, omit_prefix: Option<String>) -> Result<SettingsMaster, String> {
-    if let Err(err) = validate_name(&settings_master_name) {
+pub fn parse_settings_xml(xml_text: String, cli: &CLI) -> Result<SettingsMaster, String> {
+    if let Err(err) = validate_name(&cli.settings_master_name) {
         return Err(format!("Invalid settings master name: {}", err));
     }
 
@@ -14,7 +14,7 @@ pub fn parse_settings_xml(xml_text: String, settings_master_name: String, omit_p
     };
     
     let mut master = SettingsMaster::default();
-    master.name = settings_master_name.clone();
+    master.name = cli.settings_master_name.clone();
 
     if let Some(root_node) = doc.descendants().find(|n| n.has_tag_name("UserConfig")) {
         let group_nodes: Vec<Node> = root_node.children().filter(|n| n.has_tag_name("Group")).collect();
@@ -24,7 +24,7 @@ pub fn parse_settings_xml(xml_text: String, settings_master_name: String, omit_p
         }
         
         for group_node in &group_nodes {
-            match parse_group_node(group_node, &settings_master_name, &omit_prefix) {
+            match parse_group_node(group_node, cli) {
                 Ok(group_opt) => {
                     if let Some(group) = group_opt {
                         master.groups.push(group);
@@ -57,7 +57,7 @@ fn validate_name(name: &str) -> Result<(), String> {
     return Ok(());
 }
 
-fn parse_group_node(group_node: &Node, settings_master_name: &str, omit_prefix: &Option<String>) -> Result<Option<SettingsGroup>, String> {
+fn parse_group_node(group_node: &Node, cli: &CLI) -> Result<Option<SettingsGroup>, String> {
     if let Some(group_id) = group_node.attribute("id") {
                 
         if let Err(err) = validate_name(group_id) {
@@ -73,12 +73,12 @@ fn parse_group_node(group_node: &Node, settings_master_name: &str, omit_prefix: 
             }
 
             let mut sg = SettingsGroup::default();
-            sg.master_name = settings_master_name.to_owned();
+            sg.master_name = cli.settings_master_name.to_owned();
             sg.id = group_id.to_owned();
-            sg.name = id_to_script_name(group_id, omit_prefix);
+            sg.name = id_to_script_name(group_id, &cli.omit_prefix);
 
             for var_node in &var_nodes {
-                match parse_var_node(&var_node, group_id, omit_prefix) {
+                match parse_var_node(&var_node, group_id, cli) {
                     Ok(var_opt) => {
                         if let Some(var) = var_opt {
                             sg.vars.push(var);
@@ -103,7 +103,7 @@ fn parse_group_node(group_node: &Node, settings_master_name: &str, omit_prefix: 
     }
 }
 
-fn parse_var_node(var_node: &Node, group_id: &str, omit_prefix: &Option<String>) -> Result<Option<SettingsVar>, String> {
+fn parse_var_node(var_node: &Node, group_id: &str, cli: &CLI) -> Result<Option<SettingsVar>, String> {
     let var_id = match var_node.attribute("id") {
         Some(id) => id,
         None => {
@@ -135,7 +135,7 @@ fn parse_var_node(var_node: &Node, group_id: &str, omit_prefix: &Option<String>)
 
     return Ok(Some(SettingsVar {
         id: var_id.to_owned(),
-        name: id_to_script_name(var_id, omit_prefix),
+        name: id_to_script_name(var_id, &cli.omit_prefix),
         var_type: var_type
     }));
 }
