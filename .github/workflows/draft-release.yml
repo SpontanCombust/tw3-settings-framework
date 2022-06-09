@@ -28,15 +28,15 @@ jobs:
       uses: papeloto/action-zip@v1
       with:
         files: "settings-parser/target/x86_64-pc-windows-msvc/release/settings_parser.exe"
-        dest: "TW3 Mod Settings Framework - Parser.zip"
+        dest: "TW3 Mod Settings Framework Parser.zip"
     - name: Zip modSettingsFramework
       uses: papeloto/action-zip@v1
       with:
-        files: "modSettingsFramework/"
-        dest: "TW3 Mod Settings Framework - modSettingsFramework.zip"
+        files: "modSettingsFramework"
+        dest: "TW3 Mod Settings Framework modSettingsFramework.zip"
     - name: Create draft release
       uses: ncipollo/release-action@v1
       with:
-        artifacts: "TW3 Mod Settings Framework - Parser.zip,TW3 Mod Settings Framework - modSettingsFramework.zip"
+        artifacts: "TW3 Mod Settings Framework Parser.zip,TW3 Mod Settings Framework modSettingsFramework.zip"
         draft: true
         generateReleaseNotes: true
