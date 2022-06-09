@@ -25,18 +25,20 @@ jobs:
       run: cargo build --release --target=x86_64-pc-windows-msvc
       working-directory: ./settings-parser
     - name: Zip parser
-      uses: papeloto/action-zip@v1
+      uses: thedoctor0/zip-release@main
       with:
-        files: "settings-parser/target/x86_64-pc-windows-msvc/release/settings_parser.exe"
-        dest: "TW3 Mod Settings Framework Parser.zip"
+        type: 'zip'
+        filename: "TW3_Mod_Settings_Framework_Parser.zip"
+        path: "./settings-parser/target/x86_64-pc-windows-msvc/release/settings_parser.exe"
     - name: Zip modSettingsFramework
-      uses: papeloto/action-zip@v1
+      uses: thedoctor0/zip-release@main
       with:
-        files: "modSettingsFramework"
-        dest: "TW3 Mod Settings Framework modSettingsFramework.zip"
+        type: 'zip'
+        filename: "TW3_Mod_Settings_Framework_modSettingsFramework.zip"
+        path: "./modSettingsFramework"
     - name: Create draft release
       uses: ncipollo/release-action@v1
       with:
-        artifacts: "TW3 Mod Settings Framework Parser.zip,TW3 Mod Settings Framework modSettingsFramework.zip"
+        artifacts: "TW3_Mod_Settings_Framework_Parser.zip,TW3_Mod_Settings_Framework_modSettingsFramework.zip"
         draft: true
         generateReleaseNotes: true
