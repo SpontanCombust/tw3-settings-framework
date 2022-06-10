@@ -9,32 +9,26 @@ abstract class ISettingsMaster
     // Initializes the settings class members and more
     public function Init() : void 
     {
-        if(ShouldResetSettingsToDefaultOnInit() == "")
+        if(ShouldResetSettingsToDefaultOnInit())
         {
             ResetSettingsToDefault();
         }
 
         // child class will initialize variables and modVersion beforehand
-        ReadSettings(true);
+        ReadSettings();
     }
 
     // Reads all settings from CInGameConfigWrapper using ReadSettingValue and sets class variables
-    public function ReadSettings(optional invokeListener: bool) : void 
+    public function ReadSettings() : void 
     {
-        // child class will call read code beforehand
-        if(invokeListener) {
-            OnReadSettings();
-        }
+        // child class will fetch config var values here
     }
 
     // Using class variables and WriteSettingValue sets all settings in CInGameConfigWrapper and saves user configuration
-    public function WriteSettings(optional invokeListener: bool) : void 
+    public function WriteSettings() : void 
     {
-        // child class will call write code here
+        // child class will send var values to config beforehand 
         theGame.SaveUserSettings();
-        if(invokeListener) {
-            OnWriteSettings();
-        }
     }
 
     // Apply a default preset to all groups if possible
@@ -48,14 +42,6 @@ abstract class ISettingsMaster
         // child class will evaluate mod version var here
     }
 
-
-
-    // ====================== Listener functions - to be overriden by the developer ======================
-
-    // Invoked after ReadSettings
-    public function OnReadSettings() : void {}
-    // Invoked after WriteSettings
-    public function OnWriteSettings() : void {}
 
 
 

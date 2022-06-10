@@ -21,8 +21,7 @@ abstract class ISettingsGroup
         m_parentMaster.ResetSettingValues(config, id, presetIndex);
 
         theGame.SaveUserSettings();
-        m_parentMaster.OnWriteSettings();
-        m_parentMaster.ReadSettings(false); // get preset values back from config
+        m_parentMaster.ReadSettings(); // get preset values back from config
     }
 
     public function ResetToDefault() : void

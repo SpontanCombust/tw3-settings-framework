@@ -22,7 +22,7 @@ class CSettingsMasterRegistry
             }
         }
 
-        settingsMaster.ReadSettings();
+        settingsMaster.Init();
 
         settingsEntry.settingsMaster = settingsMaster;
         settingsEntry.id = id;
