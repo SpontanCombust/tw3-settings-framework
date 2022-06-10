@@ -7,6 +7,7 @@ pub struct SettingsMaster {
 }
 
 const MASTER_BASE_CLASS_NAME: &str = "ISettingsMaster";
+const INIT_FUNC_NAME: &str = "Init";
 const READ_SETTINGS_FUNC_NAME: &str = "ReadSettings";
 const READ_SETTING_VALUE_FUNC_NAME: &str = "ReadSettingValue";
 const WRITE_SETTINGS_FUNC_NAME: &str = "WriteSettings";
@@ -55,12 +56,15 @@ fn settings_class_variables(master: &SettingsMaster) -> String {
 fn init_function(master: &SettingsMaster) -> String {
     let mut code = String::new();
 
-    code += &format!("\tpublic function Init()\n");
+    code += &format!("\tpublic function {}()\n", INIT_FUNC_NAME);
     code += "\t{\n";
 
     for group in &master.groups {
         code += &format!("\t\t{} = new {} in this;\n", group.name, group.ws_type_name());
     }
+
+    code += "\n";
+    code += &format!("\t\tsuper.{}();\n", INIT_FUNC_NAME);
 
     code += "\t}\n";
 
@@ -93,6 +97,9 @@ fn read_settings_function(master: &SettingsMaster) -> String {
         code += "\n";
     }
 
+    code += "\n";
+    code += &format!("\t\tsuper.{}();\n", READ_SETTINGS_FUNC_NAME);
+
     code += "\t}\n";
 
     return code;
@@ -121,7 +128,8 @@ fn write_settings_function(master: &SettingsMaster) -> String {
         code += "\n";
     }
 
-    code += "\t\ttheGame.SaveUserSettings();\n";
+    code += "\n";
+    code += &format!("\t\tsuper.{}();\n", WRITE_SETTINGS_FUNC_NAME);
 
     code += "\t}\n";
 
