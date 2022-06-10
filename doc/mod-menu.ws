@@ -2,7 +2,7 @@
 
 class MyModSettings extends ISettingsMaster
 {
-	default modVersion = "1.2.3";
+	default modVersion = "1.23";
 
 	public var tab1 : MyModSettings_tab1;
 	public var tab2subtab1 : MyModSettings_tab2subtab1;
@@ -64,10 +64,7 @@ class MyModSettings extends ISettingsMaster
 
 	public function ShouldResetSettingsToDefaultOnInit() : bool
 	{
-		var config : CInGameConfigWrapper;
-		config = theGame.GetInGameConfigWrapper();
-
-		return config.GetVarValue('MODtab1','MODversion') == "";
+		return config.GetVarValue('MODtab1','MODoption') == "";
 	}
 }
 

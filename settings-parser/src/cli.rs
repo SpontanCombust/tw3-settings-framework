@@ -18,24 +18,18 @@ pub struct CLI {
     pub mod_version: String,
 
     /// Path of the WitcherScipt output file, by default it's made from the menu xml file name in the same directory.
-    #[clap(long = "output", short = 'o', display_order=6)]
+    #[clap(long = "output", short = 'o', display_order=3)]
     pub output_ws_file_path: Option<String>,
 
 
     /// Prefix to omit from groups and vars when generating code. Case sensitive.
-    #[clap(long, display_order=3)]
+    #[clap(long, display_order=4)]
     pub omit_prefix: Option<String>,
 
     /// Keyword used in default presets' display_name.
     /// Used to deduce IDs of default presets for config groups so they can be used in ResetToDefault() methods.
     /// If won't find default preset or any preset at that will use 0 as the preset ID.
     /// Case insensitive.
-    #[clap(long, default_value="default", display_order=4)]
-    pub default_preset_keyword: String,
-
-    /// Id of the var which is used to store the mod version in game's config.
-    /// This is used to set all settings to default if the mod has not been installed before.
-    /// (default preset keyword can be set with --default-preset-keyword option).
-    #[clap(long, display_order=5)]
-    pub mod_version_var: Option<String>,
+    #[clap(long, default_value="default", display_order=5)]
+    pub default_preset_keyword: String
 }

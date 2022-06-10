@@ -4,7 +4,6 @@ use crate::{settings_group::SettingsGroup, to_witcher_script::ToWitcherScript, v
 pub struct SettingsMaster {
     pub name: String,
     pub mod_version: String,
-    pub mod_version_var_name: Option<String>,
     pub groups: Vec<SettingsGroup>
 }
 
@@ -180,31 +179,12 @@ fn should_reset_to_default_on_init_function(master: &SettingsMaster) -> String {
     code += &format!("\tpublic function {}() : bool\n", SHOULD_RESET_TO_DEFAULT_ON_INIT_FUNC_NAME);
     code += "\t{\n";
 
-    if let Some((gid, vid)) = version_var_gid_vid(master) {
-        code += "\t\tvar config : CInGameConfigWrapper;\n";
-        code += "\t\tconfig = theGame.GetInGameConfigWrapper();\n";
-        code += "\n";
+    let group_id = &master.groups[0].id;
+    let var_id = &master.groups[0].vars[0].id;
 
-        code += &format!("\t\treturn config.GetVarValue('{}','{}') == \"\";\n", gid, vid);
-    }
-    else {
-        code += "\t\treturn false;\n";
-    }
-
+    code += &format!("\t\treturn config.GetVarValue('{}','{}') == \"\";\n", group_id, var_id);
+    
     code += "\t}\n";
 
     return code;
-}
-
-// Returns option for Group Id and Var Id of a var that represents mod version in menu xml
-fn version_var_gid_vid(master: &SettingsMaster) -> Option<(String, String)> {
-    if let Some(version_var_name) = &master.mod_version_var_name {
-        for group in &master.groups {
-            if let Some(version_var) = group.vars.iter().find(|v| v.id.eq(version_var_name)) {
-                return Some((group.id.clone(), version_var.id.clone()));
-            }
-        }
-    }
-
-    return None;
 }
