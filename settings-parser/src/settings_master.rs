@@ -26,6 +26,9 @@ impl ToWitcherScript for SettingsMaster {
         code += "{\n";
 
         code += &settings_class_variables(self);
+
+        code += "\n";
+        code += &init_function(self);
         
         code += "\n";
         code += &read_settings_function(self);
@@ -46,7 +49,22 @@ fn settings_class_variables(master: &SettingsMaster) -> String {
         code += &format!("\tpublic var {} : {};\n", group.name, group.ws_type_name());
     }
 
-    code
+    return code;
+}
+
+fn init_function(master: &SettingsMaster) -> String {
+    let mut code = String::new();
+
+    code += &format!("\tpublic function Init()\n");
+    code += "\t{\n";
+
+    for group in &master.groups {
+        code += &format!("\t\t{} = new {} in this;\n", group.name, group.ws_type_name());
+    }
+
+    code += "\t}\n";
+
+    return code;
 }
 
 fn read_settings_function(master: &SettingsMaster) -> String {
@@ -77,7 +95,7 @@ fn read_settings_function(master: &SettingsMaster) -> String {
 
     code += "\t}\n";
 
-    code
+    return code;
 }
 
 fn write_settings_function(master: &SettingsMaster) -> String {
@@ -107,5 +125,5 @@ fn write_settings_function(master: &SettingsMaster) -> String {
 
     code += "\t}\n";
 
-    code
+    return code;
 }

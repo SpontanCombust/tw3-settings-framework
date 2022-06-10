@@ -17,11 +17,11 @@ impl ToWitcherScript for SettingsGroup {
     fn ws_code_body(&self) -> String {
         let mut code = String::new();
 
-        code += &format!("struct {}\n", self.ws_type_name());
+        code += &format!("class {}\n", self.ws_type_name());
         code += "{\n";
 
         for var in &self.vars {
-            code += &format!("\t{};\n", var.ws_code_body());
+            code += &format!("\tpublic {};\n", var.ws_code_body());
         }
 
         code += "}\n";
