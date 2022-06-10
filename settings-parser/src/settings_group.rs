@@ -8,6 +8,7 @@ pub struct SettingsGroup {
     pub vars: Vec<SettingsVar>
 }
 
+const SETTINGS_GROUP_PARENT_CLASS: &str = "ISettingsGroup";
 
 impl ToWitcherScript for SettingsGroup {
     fn ws_type_name(&self) -> String {
@@ -17,7 +18,7 @@ impl ToWitcherScript for SettingsGroup {
     fn ws_code_body(&self) -> String {
         let mut code = String::new();
 
-        code += &format!("class {}\n", self.ws_type_name());
+        code += &format!("class {} extends {}\n", self.ws_type_name(), SETTINGS_GROUP_PARENT_CLASS);
         code += "{\n";
 
         for var in &self.vars {

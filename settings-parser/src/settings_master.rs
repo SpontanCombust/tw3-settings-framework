@@ -60,7 +60,8 @@ fn init_function(master: &SettingsMaster) -> String {
     code += "\t{\n";
 
     for group in &master.groups {
-        code += &format!("\t\t{} = new {} in this;\n", group.name, group.ws_type_name());
+        code += &format!("\t\t{} = new {} in this; ", group.name, group.ws_type_name());
+        code += &format!("{}.Init(this, '{}');\n", group.name, group.id);
     }
 
     code += "\n";
