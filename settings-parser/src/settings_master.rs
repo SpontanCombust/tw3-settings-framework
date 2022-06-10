@@ -6,9 +6,11 @@ pub struct SettingsMaster {
     pub groups: Vec<SettingsGroup>
 }
 
-const SETTINGS_MASTER_BASE_CLASS_NAME: &str = "ISettingsMaster";
-const SETTINGS_READ_FUNC_NAME: &str = "ReadSettings";
-const SETTINGS_WRITE_FUNC_NAME: &str = "WriteSettings";
+const MASTER_BASE_CLASS_NAME: &str = "ISettingsMaster";
+const READ_SETTINGS_FUNC_NAME: &str = "ReadSettings";
+const READ_SETTING_VALUE_FUNC_NAME: &str = "ReadSettingValue";
+const WRITE_SETTINGS_FUNC_NAME: &str = "WriteSettings";
+const WRITE_SETTING_VALUE_FUNC_NAME: &str = "WriteSettingValue";
 
 impl ToWitcherScript for SettingsMaster {
     fn ws_type_name(&self) -> String {
@@ -20,7 +22,7 @@ impl ToWitcherScript for SettingsMaster {
 
         code += &format!("// Code generated using Mod Settings Framework & Utilites v{} by SpontanCombust\n\n", option_env!("CARGO_PKG_VERSION").unwrap());
 
-        code += &format!("class {} extends {}\n", self.name, SETTINGS_MASTER_BASE_CLASS_NAME);
+        code += &format!("class {} extends {}\n", self.name, MASTER_BASE_CLASS_NAME);
         code += "{\n";
 
         code += &settings_class_variables(self);
@@ -50,7 +52,7 @@ fn settings_class_variables(master: &SettingsMaster) -> String {
 fn read_settings_function(master: &SettingsMaster) -> String {
     let mut code = String::new();
 
-    code += &format!("\tpublic function {}()\n", SETTINGS_READ_FUNC_NAME);
+    code += &format!("\tpublic function {}()\n", READ_SETTINGS_FUNC_NAME);
     code += "\t{\n";
 
     code += "\t\tvar config : CInGameConfigWrapper;\n";
@@ -59,7 +61,7 @@ fn read_settings_function(master: &SettingsMaster) -> String {
 
     for group in &master.groups {
         for var in &group.vars {
-            let mut get_var_value = format!("config.GetVarValue('{}', '{}')", group.id, var.id);
+            let mut get_var_value = format!("{}(config, '{}', '{}')", READ_SETTING_VALUE_FUNC_NAME, group.id, var.id);
 
             // surround with type cast if necessary
             get_var_value = match &var.var_type {
@@ -81,7 +83,7 @@ fn read_settings_function(master: &SettingsMaster) -> String {
 fn write_settings_function(master: &SettingsMaster) -> String {
     let mut code = String::new();
 
-    code += &format!("\tpublic function {}()\n", SETTINGS_WRITE_FUNC_NAME);
+    code += &format!("\tpublic function {}()\n", WRITE_SETTINGS_FUNC_NAME);
     code += "\t{\n";
 
     code += "\t\tvar config : CInGameConfigWrapper;\n";
@@ -96,7 +98,7 @@ fn write_settings_function(master: &SettingsMaster) -> String {
                 _ => format!("{}.{}", group.name, var.name) // ShowKnown in hud.ws does no cast for bool either
             };
 
-            code += &format!("\t\tconfig.SetVarValue('{}', '{}', {});\n", group.id, var.id, var_value_str);
+            code += &format!("\t\t{}(config, '{}', '{}', {});\n", WRITE_SETTING_VALUE_FUNC_NAME, group.id, var.id, var_value_str);
         }
         code += "\n";
     }
