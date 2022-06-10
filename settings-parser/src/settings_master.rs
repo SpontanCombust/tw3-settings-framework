@@ -3,16 +3,20 @@ use crate::{settings_group::SettingsGroup, to_witcher_script::ToWitcherScript, v
 #[derive(Default)]
 pub struct SettingsMaster {
     pub name: String,
+    pub mod_version: String,
+    pub mod_version_var_name: Option<String>,
     pub groups: Vec<SettingsGroup>
 }
 
 const MASTER_BASE_CLASS_NAME: &str = "ISettingsMaster";
+const MASTER_MOD_VERSION_VAR_NAME: &str = "modVersion";
 const INIT_FUNC_NAME: &str = "Init";
 const READ_SETTINGS_FUNC_NAME: &str = "ReadSettings";
 const READ_SETTING_VALUE_FUNC_NAME: &str = "ReadSettingValue";
 const WRITE_SETTINGS_FUNC_NAME: &str = "WriteSettings";
 const WRITE_SETTING_VALUE_FUNC_NAME: &str = "WriteSettingValue";
 const RESET_SETTINGS_TO_DEFAULT_FUNC_NAME: &str = "ResetSettingsToDefault";
+const SHOULD_RESET_TO_DEFAULT_ON_INIT_FUNC_NAME: &str = "ShouldResetSettingsToDefaultOnInit";
 
 impl ToWitcherScript for SettingsMaster {
     fn ws_type_name(&self) -> String {
@@ -27,6 +31,9 @@ impl ToWitcherScript for SettingsMaster {
         code += &format!("class {} extends {}\n", self.name, MASTER_BASE_CLASS_NAME);
         code += "{\n";
 
+        code += &default_variable_values(self);
+        
+        code += "\n";
         code += &settings_class_variables(self);
 
         code += "\n";
@@ -40,6 +47,9 @@ impl ToWitcherScript for SettingsMaster {
 
         code += "\n";
         code += &reset_settings_to_default_function(self);
+
+        code += "\n";
+        code += &should_reset_to_default_on_init_function(self);
 
         code += "}\n";
 
@@ -57,10 +67,18 @@ fn settings_class_variables(master: &SettingsMaster) -> String {
     return code;
 }
 
+fn default_variable_values(master: &SettingsMaster) -> String {
+    let mut code = String::new();
+
+    code += &format!("\tdefault {} = \"{}\";\n", MASTER_MOD_VERSION_VAR_NAME, master.mod_version);
+
+    return code;
+}
+
 fn init_function(master: &SettingsMaster) -> String {
     let mut code = String::new();
 
-    code += &format!("\tpublic function {}()\n", INIT_FUNC_NAME);
+    code += &format!("\tpublic function {}() : void\n", INIT_FUNC_NAME);
     code += "\t{\n";
 
     for group in &master.groups {
@@ -79,7 +97,7 @@ fn init_function(master: &SettingsMaster) -> String {
 fn read_settings_function(master: &SettingsMaster) -> String {
     let mut code = String::new();
 
-    code += &format!("\tpublic function {}()\n", READ_SETTINGS_FUNC_NAME);
+    code += &format!("\tpublic function {}() : void\n", READ_SETTINGS_FUNC_NAME);
     code += "\t{\n";
 
     code += "\t\tvar config : CInGameConfigWrapper;\n";
@@ -113,7 +131,7 @@ fn read_settings_function(master: &SettingsMaster) -> String {
 fn write_settings_function(master: &SettingsMaster) -> String {
     let mut code = String::new();
 
-    code += &format!("\tpublic function {}()\n", WRITE_SETTINGS_FUNC_NAME);
+    code += &format!("\tpublic function {}() : void\n", WRITE_SETTINGS_FUNC_NAME);
     code += "\t{\n";
 
     code += "\t\tvar config : CInGameConfigWrapper;\n";
@@ -144,7 +162,7 @@ fn write_settings_function(master: &SettingsMaster) -> String {
 fn reset_settings_to_default_function(master: &SettingsMaster) -> String {
     let mut code = String::new();
 
-    code += &format!("\tpublic function {}()\n", RESET_SETTINGS_TO_DEFAULT_FUNC_NAME);
+    code += &format!("\tpublic function {}() : void\n", RESET_SETTINGS_TO_DEFAULT_FUNC_NAME);
     code += "\t{\n";
 
     for group in &master.groups {
@@ -154,4 +172,39 @@ fn reset_settings_to_default_function(master: &SettingsMaster) -> String {
     code += "\t}\n";
 
     return code;
+}
+
+fn should_reset_to_default_on_init_function(master: &SettingsMaster) -> String {
+    let mut code = String::new();
+
+    code += &format!("\tpublic function {}() : bool\n", SHOULD_RESET_TO_DEFAULT_ON_INIT_FUNC_NAME);
+    code += "\t{\n";
+
+    if let Some((gid, vid)) = version_var_gid_vid(master) {
+        code += "\t\tvar config : CInGameConfigWrapper;\n";
+        code += "\t\tconfig = theGame.GetInGameConfigWrapper();\n";
+        code += "\n";
+
+        code += &format!("\t\treturn config.GetVarValue('{}','{}') == \"\";\n", gid, vid);
+    }
+    else {
+        code += "\t\treturn false;\n";
+    }
+
+    code += "\t}\n";
+
+    return code;
+}
+
+// Returns option for Group Id and Var Id of a var that represents mod version in menu xml
+fn version_var_gid_vid(master: &SettingsMaster) -> Option<(String, String)> {
+    if let Some(version_var_name) = &master.mod_version_var_name {
+        for group in &master.groups {
+            if let Some(version_var) = group.vars.iter().find(|v| v.id.eq(version_var_name)) {
+                return Some((group.id.clone(), version_var.id.clone()));
+            }
+        }
+    }
+
+    return None;
 }

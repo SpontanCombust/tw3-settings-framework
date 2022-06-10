@@ -15,6 +15,8 @@ pub fn parse_settings_xml(xml_text: String, cli: &CLI) -> Result<SettingsMaster,
     
     let mut master = SettingsMaster::default();
     master.name = cli.settings_master_name.clone();
+    master.mod_version = cli.mod_version.clone();
+    master.mod_version_var_name = cli.mod_version_var.clone();
 
     if let Some(root_node) = doc.descendants().find(|n| n.has_tag_name("UserConfig")) {
         let group_nodes: Vec<Node> = root_node.children().filter(|n| n.has_tag_name("Group")).collect();
