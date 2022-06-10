@@ -12,6 +12,7 @@ const READ_SETTINGS_FUNC_NAME: &str = "ReadSettings";
 const READ_SETTING_VALUE_FUNC_NAME: &str = "ReadSettingValue";
 const WRITE_SETTINGS_FUNC_NAME: &str = "WriteSettings";
 const WRITE_SETTING_VALUE_FUNC_NAME: &str = "WriteSettingValue";
+const RESET_SETTINGS_TO_DEFAULT_FUNC_NAME: &str = "ResetSettingsToDefault";
 
 impl ToWitcherScript for SettingsMaster {
     fn ws_type_name(&self) -> String {
@@ -37,6 +38,9 @@ impl ToWitcherScript for SettingsMaster {
         code += "\n";
         code += &write_settings_function(self);
 
+        code += "\n";
+        code += &reset_settings_to_default_function(self);
+
         code += "}\n";
 
         code
@@ -61,7 +65,7 @@ fn init_function(master: &SettingsMaster) -> String {
 
     for group in &master.groups {
         code += &format!("\t\t{} = new {} in this; ", group.name, group.ws_type_name());
-        code += &format!("{}.Init(this, '{}');\n", group.name, group.id);
+        code += &format!("{}.Init(this);\n", group.name);
     }
 
     code += "\n";
@@ -131,6 +135,21 @@ fn write_settings_function(master: &SettingsMaster) -> String {
 
     code += "\n";
     code += &format!("\t\tsuper.{}();\n", WRITE_SETTINGS_FUNC_NAME);
+
+    code += "\t}\n";
+
+    return code;
+}
+
+fn reset_settings_to_default_function(master: &SettingsMaster) -> String {
+    let mut code = String::new();
+
+    code += &format!("\tpublic function {}()\n", RESET_SETTINGS_TO_DEFAULT_FUNC_NAME);
+    code += "\t{\n";
+
+    for group in &master.groups {
+        code += &format!("\t\t{}.ResetSettingsToDefault();\n", group.name);
+    }
 
     code += "\t}\n";
 

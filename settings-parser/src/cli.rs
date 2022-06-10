@@ -19,5 +19,11 @@ pub struct CLI {
 
     /// Prefix to omit from groups and variables, case sensitive
     #[clap(long)]
-    pub omit_prefix: Option<String>
+    pub omit_prefix: Option<String>,
+
+    /// Keyword used in presets' default display_name, case insensitive. By default it's 'default'
+    /// Used to deduce the correct ID of the groups' default preset
+    /// If won't find "default" preset or any preset at that will use 0 as preset ID
+    #[clap(long, default_value="default")]
+    pub default_preset_keyword: String
 }

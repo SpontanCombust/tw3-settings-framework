@@ -28,6 +28,12 @@ abstract class ISettingsMaster
         }
     }
 
+    // Apply a default preset to all groups if possible
+    public function ResetSettingsToDefault() : void
+    {
+        // child class will call reset code on every group here
+    }
+
 
 
     // ====================== Listener functions - to be overriden by the developer ======================
