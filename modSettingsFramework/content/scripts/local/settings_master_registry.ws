@@ -7,7 +7,6 @@ struct SSettingsMasterRegistryEntry
 class CSettingsMasterRegistry
 {
     private var m_settingsEntries : array<SSettingsMasterRegistryEntry>;
-    private var m_readListeners : array<ISettingsReadListener>;
 
     public function AddSettings(settingsMaster : ISettingsMaster, id : name) : void
     {
@@ -23,7 +22,7 @@ class CSettingsMasterRegistry
             }
         }
 
-        settingsMaster.ReadSettings();
+        settingsMaster.Init();
 
         settingsEntry.settingsMaster = settingsMaster;
         settingsEntry.id = id;
@@ -72,17 +71,6 @@ class CSettingsMasterRegistry
         {
             m_settingsEntries[i].settingsMaster.ReadSettings();
         }
-
-        size = m_readListeners.Size();
-        for (i = 0; i < size; i += 1)
-        {
-            m_readListeners[i].OnReadSettings();
-        }
-    }
-
-    public function AddReadListener(listener : ISettingsReadListener) : void
-    {
-        m_readListeners.PushBack(listener);
     }
 }
 

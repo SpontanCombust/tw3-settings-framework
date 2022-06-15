@@ -8,8 +8,7 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  build:
-
+  release:
     runs-on: windows-latest
 
     steps:
@@ -36,9 +35,15 @@ jobs:
         type: 'zip'
         filename: "TW3_Mod_Settings_Framework_modSettingsFramework.zip"
         path: "./modSettingsFramework"
+    - name: Zip samples
+      uses: thedoctor0/zip-release@main
+      with:
+        type: 'zip'
+        filename: "TW3_Mod_Settings_Framework_Samples.zip"
+        path: "./samples"
     - name: Create draft release
       uses: ncipollo/release-action@v1
       with:
-        artifacts: "TW3_Mod_Settings_Framework_Parser.zip,TW3_Mod_Settings_Framework_modSettingsFramework.zip"
+        artifacts: "TW3_Mod_Settings_Framework_Parser.zip,TW3_Mod_Settings_Framework_modSettingsFramework.zip,TW3_Mod_Settings_Framework_Samples.zip"
         draft: true
         generateReleaseNotes: true

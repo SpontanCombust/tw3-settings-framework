@@ -15,6 +15,7 @@ pub fn parse_settings_xml(xml_text: String, cli: &CLI) -> Result<SettingsMaster,
     
     let mut master = SettingsMaster::default();
     master.name = cli.settings_master_name.clone();
+    master.mod_version = cli.mod_version.clone();
 
     if let Some(root_node) = doc.descendants().find(|n| n.has_tag_name("UserConfig")) {
         let group_nodes: Vec<Node> = root_node.children().filter(|n| n.has_tag_name("Group")).collect();
@@ -64,6 +65,11 @@ fn parse_group_node(group_node: &Node, cli: &CLI) -> Result<Option<SettingsGroup
             return Err(format!("Invalid Group id {} at {}: {}", group_id, node_pos(group_node), err));
         }
 
+        let mut default_preset_index: Option<u8> = None;
+        if let Some(presets_array_node) = group_node.children().find(|n| n.has_tag_name("PresetsArray")) {
+            default_preset_index = parse_presets_array_node(&presets_array_node, cli);
+        }
+
         if let Some(visible_vars_node) = group_node.children().find(|n| n.has_tag_name("VisibleVars")) {
             let var_nodes: Vec<Node> = visible_vars_node.children().filter(|n| n.has_tag_name("Var")).collect();
 
@@ -76,6 +82,7 @@ fn parse_group_node(group_node: &Node, cli: &CLI) -> Result<Option<SettingsGroup
             sg.master_name = cli.settings_master_name.to_owned();
             sg.id = group_id.to_owned();
             sg.name = id_to_script_name(group_id, &cli.omit_prefix);
+            sg.default_preset_index = default_preset_index;
 
             for var_node in &var_nodes {
                 match parse_var_node(&var_node, group_id, cli) {
@@ -101,6 +108,18 @@ fn parse_group_node(group_node: &Node, cli: &CLI) -> Result<Option<SettingsGroup
         println!("No id attribute found for Group tag at {}", node_pos(group_node));
         return Ok(None);
     }
+}
+
+fn parse_presets_array_node(presets_array_node: &Node, cli: &CLI) -> Option<u8> {
+    for preset_node in presets_array_node.children() {
+        if preset_node.has_tag_name("Preset") && preset_node.has_attribute("id") && preset_node.has_attribute("displayName") {
+            if preset_node.attribute("displayName").unwrap().contains(&cli.default_preset_keyword.to_lowercase()) {
+                return preset_node.attribute("id").unwrap().parse::<u8>().ok();
+            }
+        }
+    }
+
+    return None;
 }
 
 fn parse_var_node(var_node: &Node, group_id: &str, cli: &CLI) -> Result<Option<SettingsVar>, String> {
