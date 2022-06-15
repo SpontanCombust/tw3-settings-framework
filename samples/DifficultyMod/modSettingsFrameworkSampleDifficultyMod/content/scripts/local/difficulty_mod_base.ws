@@ -4,11 +4,11 @@ class ModDifficultySettingsBase extends ISettingsMaster
 {
 	default modVersion = "1.1";
 
-	public var general : ModDifficultySettings_general;
+	public var general : ModDifficultySettingsBase_general;
 
 	public function Init() : void
 	{
-		general = new ModDifficultySettings_general in this; general.Init(this);
+		general = new ModDifficultySettingsBase_general in this; general.Init(this);
 
 		super.Init();
 	}
@@ -41,16 +41,19 @@ class ModDifficultySettingsBase extends ISettingsMaster
 
 	public function ResetSettingsToDefault() : void
 	{
-		general.ResetSettingsToDefault();
+		general.ResetToDefault();
 	}
 
 	public function ShouldResetSettingsToDefaultOnInit() : bool
 	{
+		var config : CInGameConfigWrapper;
+		config = theGame.GetInGameConfigWrapper();
+
 		return config.GetVarValue('DMgeneral','DMenabled') == "";
 	}
 }
 
-class ModDifficultySettings_general extends ISettingsGroup
+class ModDifficultySettingsBase_general extends ISettingsGroup
 {
 	public var enabled : bool;
 	public var healthMultip : float;

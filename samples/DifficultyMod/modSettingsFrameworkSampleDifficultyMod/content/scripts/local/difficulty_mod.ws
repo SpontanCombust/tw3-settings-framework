@@ -34,6 +34,6 @@ class ModDifficultySettings extends ModDifficultySettingsBase
     {
         super.ResetSettingValues(config, groupId, presetIndex);
         
-        LogChannel('DifficultyMod', "Preset " + IntToString(presetIndex, 0) + " has been applied" );
+        LogChannel('DifficultyMod', "Preset " + IntToString(presetIndex) + " has been applied" );
     }
 }

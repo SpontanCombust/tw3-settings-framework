@@ -3,8 +3,10 @@ exec function settings_difficulty_init()
     var game: CR4Game;
 
     game = theGame;
-    game.difficultySettings = new ModDifficultySettings in theGame;
-    GetSettingsMasterRegistry().AddSettings(game.difficultySettings, 'DifficultySettings');
+    if(!game.difficultySettings) {
+        game.difficultySettings = new ModDifficultySettings in theGame;
+        GetSettingsMasterRegistry().AddSettings(game.difficultySettings, 'DifficultySettings');
+    }
 }
 
 exec function settings_difficulty_easy()

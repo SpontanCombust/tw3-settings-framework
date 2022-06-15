@@ -9,13 +9,14 @@ pub struct SettingsMaster {
 
 const MASTER_BASE_CLASS_NAME: &str = "ISettingsMaster";
 const MASTER_MOD_VERSION_VAR_NAME: &str = "modVersion";
-const INIT_FUNC_NAME: &str = "Init";
-const READ_SETTINGS_FUNC_NAME: &str = "ReadSettings";
-const READ_SETTING_VALUE_FUNC_NAME: &str = "ReadSettingValue";
-const WRITE_SETTINGS_FUNC_NAME: &str = "WriteSettings";
-const WRITE_SETTING_VALUE_FUNC_NAME: &str = "WriteSettingValue";
-const RESET_SETTINGS_TO_DEFAULT_FUNC_NAME: &str = "ResetSettingsToDefault";
-const SHOULD_RESET_TO_DEFAULT_ON_INIT_FUNC_NAME: &str = "ShouldResetSettingsToDefaultOnInit";
+const MASTER_INIT_FUNC_NAME: &str = "Init";
+const MASTER_READ_SETTINGS_FUNC_NAME: &str = "ReadSettings";
+const MASTER_READ_SETTING_VALUE_FUNC_NAME: &str = "ReadSettingValue";
+const MASTER_WRITE_SETTINGS_FUNC_NAME: &str = "WriteSettings";
+const MASTER_WRITE_SETTING_VALUE_FUNC_NAME: &str = "WriteSettingValue";
+const MASTER_RESET_SETTINGS_TO_DEFAULT_FUNC_NAME: &str = "ResetSettingsToDefault";
+const MASTER_SHOULD_RESET_TO_DEFAULT_ON_INIT_FUNC_NAME: &str = "ShouldResetSettingsToDefaultOnInit";
+const GROUP_RESET_SETTINGS_TO_DEFAULT_FUNC_NAME: &str = "ResetToDefault";
 
 impl ToWitcherScript for SettingsMaster {
     fn ws_type_name(&self) -> String {
@@ -77,7 +78,7 @@ fn default_variable_values(master: &SettingsMaster) -> String {
 fn init_function(master: &SettingsMaster) -> String {
     let mut code = String::new();
 
-    code += &format!("\tpublic function {}() : void\n", INIT_FUNC_NAME);
+    code += &format!("\tpublic function {}() : void\n", MASTER_INIT_FUNC_NAME);
     code += "\t{\n";
 
     for group in &master.groups {
@@ -86,7 +87,7 @@ fn init_function(master: &SettingsMaster) -> String {
     }
 
     code += "\n";
-    code += &format!("\t\tsuper.{}();\n", INIT_FUNC_NAME);
+    code += &format!("\t\tsuper.{}();\n", MASTER_INIT_FUNC_NAME);
 
     code += "\t}\n";
 
@@ -96,7 +97,7 @@ fn init_function(master: &SettingsMaster) -> String {
 fn read_settings_function(master: &SettingsMaster) -> String {
     let mut code = String::new();
 
-    code += &format!("\tpublic function {}() : void\n", READ_SETTINGS_FUNC_NAME);
+    code += &format!("\tpublic function {}() : void\n", MASTER_READ_SETTINGS_FUNC_NAME);
     code += "\t{\n";
 
     code += "\t\tvar config : CInGameConfigWrapper;\n";
@@ -105,7 +106,7 @@ fn read_settings_function(master: &SettingsMaster) -> String {
 
     for group in &master.groups {
         for var in &group.vars {
-            let mut get_var_value = format!("{}(config, '{}', '{}')", READ_SETTING_VALUE_FUNC_NAME, group.id, var.id);
+            let mut get_var_value = format!("{}(config, '{}', '{}')", MASTER_READ_SETTING_VALUE_FUNC_NAME, group.id, var.id);
 
             // surround with type cast if necessary
             get_var_value = match &var.var_type {
@@ -120,7 +121,7 @@ fn read_settings_function(master: &SettingsMaster) -> String {
     }
 
     code += "\n";
-    code += &format!("\t\tsuper.{}();\n", READ_SETTINGS_FUNC_NAME);
+    code += &format!("\t\tsuper.{}();\n", MASTER_READ_SETTINGS_FUNC_NAME);
 
     code += "\t}\n";
 
@@ -130,7 +131,7 @@ fn read_settings_function(master: &SettingsMaster) -> String {
 fn write_settings_function(master: &SettingsMaster) -> String {
     let mut code = String::new();
 
-    code += &format!("\tpublic function {}() : void\n", WRITE_SETTINGS_FUNC_NAME);
+    code += &format!("\tpublic function {}() : void\n", MASTER_WRITE_SETTINGS_FUNC_NAME);
     code += "\t{\n";
 
     code += "\t\tvar config : CInGameConfigWrapper;\n";
@@ -145,13 +146,13 @@ fn write_settings_function(master: &SettingsMaster) -> String {
                 VarType::Toggle => format!("BoolToString({}.{})", group.name, var.name),
             };
 
-            code += &format!("\t\t{}(config, '{}', '{}', {});\n", WRITE_SETTING_VALUE_FUNC_NAME, group.id, var.id, var_value_str);
+            code += &format!("\t\t{}(config, '{}', '{}', {});\n", MASTER_WRITE_SETTING_VALUE_FUNC_NAME, group.id, var.id, var_value_str);
         }
         code += "\n";
     }
 
     code += "\n";
-    code += &format!("\t\tsuper.{}();\n", WRITE_SETTINGS_FUNC_NAME);
+    code += &format!("\t\tsuper.{}();\n", MASTER_WRITE_SETTINGS_FUNC_NAME);
 
     code += "\t}\n";
 
@@ -161,11 +162,11 @@ fn write_settings_function(master: &SettingsMaster) -> String {
 fn reset_settings_to_default_function(master: &SettingsMaster) -> String {
     let mut code = String::new();
 
-    code += &format!("\tpublic function {}() : void\n", RESET_SETTINGS_TO_DEFAULT_FUNC_NAME);
+    code += &format!("\tpublic function {}() : void\n", MASTER_RESET_SETTINGS_TO_DEFAULT_FUNC_NAME);
     code += "\t{\n";
 
     for group in &master.groups {
-        code += &format!("\t\t{}.ResetSettingsToDefault();\n", group.name);
+        code += &format!("\t\t{}.{}();\n", group.name, GROUP_RESET_SETTINGS_TO_DEFAULT_FUNC_NAME);
     }
 
     code += "\t}\n";
@@ -175,10 +176,13 @@ fn reset_settings_to_default_function(master: &SettingsMaster) -> String {
 
 fn should_reset_to_default_on_init_function(master: &SettingsMaster) -> String {
     let mut code = String::new();
-
-    code += &format!("\tpublic function {}() : bool\n", SHOULD_RESET_TO_DEFAULT_ON_INIT_FUNC_NAME);
+    code += &format!("\tpublic function {}() : bool\n", MASTER_SHOULD_RESET_TO_DEFAULT_ON_INIT_FUNC_NAME);
     code += "\t{\n";
-
+    
+    code += "\t\tvar config : CInGameConfigWrapper;\n";
+    code += "\t\tconfig = theGame.GetInGameConfigWrapper();\n";
+    code += "\n";
+     
     let group_id = &master.groups[0].id;
     let var_id = &master.groups[0].vars[0].id;
 

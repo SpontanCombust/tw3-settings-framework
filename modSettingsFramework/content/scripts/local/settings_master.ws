@@ -40,6 +40,7 @@ abstract class ISettingsMaster
     public function ShouldResetSettingsToDefaultOnInit() : bool
     {
         // child class will evaluate mod version var here
+        return false;
     }
 
 
