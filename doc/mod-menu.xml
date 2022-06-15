@@ -1,6 +1,20 @@
 <?xml version="1.0" encoding="UTF-16"?>
 <UserConfig>
 	<Group id="MODtab1" displayName="Mods.my_mod.my_mod_tab1">
+		<PresetsArray>
+			<Preset id="0" displayName="MOD_preset_hard">
+				<Entry varId="MODoption" value="2"/>
+				<Entry varId="MODsliderFloat" value="1.0"/>
+				<Entry varId="MODsliderInt" value="100"/>
+				<Entry varId="MODtoggle" value="true"/>
+			</Preset>
+			<Preset id="1" displayName="MOD_default_preset_easy">
+				<Entry varId="MODoption" value="0"/>
+				<Entry varId="MODsliderFloat" value="0.5"/>
+				<Entry varId="MODsliderInt" value="50"/>
+				<Entry varId="MODtoggle" value="false"/>
+			</Preset>
+		</PresetsArray>
    		<VisibleVars>
 			<Var id="MODoption" displayName="mod_tab1_option" displayType="OPTIONS">
 				<OptionsArray>
@@ -20,20 +34,6 @@
             <Var id="MODtoggle" displayName="mod_toggle" displayType="TOGGLE"/>
 			<Var id="MODversion" displayName="mod_version" displayType="SLIDER;0;100;100000" visibilityCondition="hideAlways"/>
         </VisibleVars>
-		<PresetsArray>
-			<Preset id="0" displayName="MOD_preset_hard">
-				<Entry varId="MODoption" value="2"/>
-				<Entry varId="MODsliderFloat" value="1.0"/>
-				<Entry varId="MODsliderInt" value="100"/>
-				<Entry varId="MODtoggle" value="true"/>
-			</Preset>
-			<Preset id="1" displayName="MOD_default_preset_easy">
-				<Entry varId="MODoption" value="0"/>
-				<Entry varId="MODsliderFloat" value="0.5"/>
-				<Entry varId="MODsliderInt" value="50"/>
-				<Entry varId="MODtoggle" value="false"/>
-			</Preset>
-		</PresetsArray>
     </Group>
 	
 	

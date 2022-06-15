@@ -1,11 +1,6 @@
 <?xml version="1.0" encoding="UTF-16"?>
 <UserConfig>
-	<Group id="DMgeneral" displayName="Mods.my_mod.my_mod_tab1">
-   		<VisibleVars>
-            <Var id="DMenabled" displayName="dm_enabled" displayType="TOGGLE"/>
-            <Var id="DMhealthMultip" displayName="dm_health_multip" displayType="SLIDER;0;2;200"/>
-            <Var id="DMdmgMultip" displayName="dm_dmg_multip" displayType="SLIDER;0;2;200"/>
-        </VisibleVars>
+	<Group id="DMgeneral" displayName="Mods.difficulty_mod">	
         <PresetsArray>
         	<Preset id="0" displayName="dm_preset_easy">
 				<Entry varId="DMenabled" value="true"/>
@@ -23,5 +18,10 @@
 				<Entry varId="DMdmgMultip" value="2.0"/>
 			</Preset>
 		</PresetsArray>
+		<VisibleVars>
+            <Var id="DMenabled" displayName="dm_enabled" displayType="TOGGLE"/>
+            <Var id="DMhealthMultip" displayName="dm_health_multip" displayType="SLIDER;0;2;200"/>
+            <Var id="DMdmgMultip" displayName="dm_dmg_multip" displayType="SLIDER;0;2;200"/>
+        </VisibleVars>
     </Group>
 </UserConfig>
