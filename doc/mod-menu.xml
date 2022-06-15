@@ -19,9 +19,9 @@
             <Var id="MODsliderInt" displayName="mod_slider_int" displayType="SLIDER;0;100;100"/>
             <Var id="MODtoggle" displayName="mod_toggle" displayType="TOGGLE"/>
 			<Var id="MODversion" displayName="mod_version" displayType="SLIDER;0;100;100000" visibilityCondition="hideAlways"/>
-        	</VisibleVars>
-        	<PresetsArray>
-        		<Preset id="0" displayName="MOD_preset_hard">
+        </VisibleVars>
+		<PresetsArray>
+			<Preset id="0" displayName="MOD_preset_hard">
 				<Entry varId="MODoption" value="2"/>
 				<Entry varId="MODsliderFloat" value="1.0"/>
 				<Entry varId="MODsliderInt" value="100"/>
@@ -34,20 +34,20 @@
 				<Entry varId="MODtoggle" value="false"/>
 			</Preset>
 		</PresetsArray>
-    	</Group>
+    </Group>
 	
 	
-    	<Group id="MODtab2" displayName="Mods.my_mod.my_mod_tab2">
-    	</Group>
+	<Group id="MODtab2" displayName="Mods.my_mod.my_mod_tab2">
+	</Group>
     	
    	<Group id="MODtab2subtab1" displayName="Mods.my_mod.my_mod_tab2.subtap1">
-        	<VisibleVars>
-            		<Var id="anotherSlider" displayName="mod_another_slider" displayType="SLIDER;-100;100;1000"/>
-        	</VisibleVars>
-    	</Group>
+		<VisibleVars>
+				<Var id="anotherSlider" displayName="mod_another_slider" displayType="SLIDER;-100;100;1000"/>
+		</VisibleVars>
+    </Group>
 	<Group id="MODtab2subtab2" displayName="Mods.my_mod.my_mod_tab2.subtap2">
-        	<VisibleVars>
-            		<Var id="anotherToggle" displayName="mod_another_toggle" displayType="TOGGLE" />
-        	</VisibleVars>
-    	</Group>
+		<VisibleVars>
+				<Var id="anotherToggle" displayName="mod_another_toggle" displayType="TOGGLE" />
+		</VisibleVars>
+    </Group>
 </UserConfig>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-16"?>
+<UserConfig>
+	<Group id="DMgeneral" displayName="Mods.my_mod.my_mod_tab1">
+   		<VisibleVars>
+            <Var id="DMenabled" displayName="dm_enabled" displayType="TOGGLE"/>
+            <Var id="DMhealthMultip" displayName="dm_health_multip" displayType="SLIDER;0;2;200"/>
+            <Var id="DMdmgMultip" displayName="dm_dmg_multip" displayType="SLIDER;0;2;200"/>
+        </VisibleVars>
+        <PresetsArray>
+        	<Preset id="0" displayName="dm_preset_easy">
+				<Entry varId="DMenabled" value="true"/>
+				<Entry varId="DMhealthMultip" value="0.5"/>
+				<Entry varId="DMdmgMultip" value="0.5"/>
+			</Preset>
+        	<Preset id="1" displayName="dm_default_preset_normal">
+				<Entry varId="DMenabled" value="true"/>
+				<Entry varId="DMhealthMultip" value="1.0"/>
+				<Entry varId="DMdmgMultip" value="1.0"/>
+			</Preset>
+        	<Preset id="2" displayName="dm_preset_hard">
+				<Entry varId="DMenabled" value="true"/>
+				<Entry varId="DMhealthMultip" value="2.0"/>
+				<Entry varId="DMdmgMultip" value="2.0"/>
+			</Preset>
+		</PresetsArray>
+    </Group>
+</UserConfig>

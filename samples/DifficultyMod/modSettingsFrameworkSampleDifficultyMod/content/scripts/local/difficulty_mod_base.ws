@@ -1,0 +1,62 @@
+// Code generated using Mod Settings Framework & Utilites v0.2.0 by SpontanCombust
+
+class ModDifficultySettingsBase extends ISettingsMaster
+{
+	default modVersion = "1.1";
+
+	public var general : ModDifficultySettings_general;
+
+	public function Init() : void
+	{
+		general = new ModDifficultySettings_general in this; general.Init(this);
+
+		super.Init();
+	}
+
+	public function ReadSettings() : void
+	{
+		var config : CInGameConfigWrapper;
+		config = theGame.GetInGameConfigWrapper();
+
+		general.enabled = StringToBool(ReadSettingValue(config, 'DMgeneral', 'DMenabled'));
+		general.healthMultip = StringToFloat(ReadSettingValue(config, 'DMgeneral', 'DMhealthMultip'), 0.0);
+		general.dmgMultip = StringToFloat(ReadSettingValue(config, 'DMgeneral', 'DMdmgMultip'), 0.0);
+
+
+		super.ReadSettings();
+	}
+
+	public function WriteSettings() : void
+	{
+		var config : CInGameConfigWrapper;
+		config = theGame.GetInGameConfigWrapper();
+
+		WriteSettingValue(config, 'DMgeneral', 'DMenabled', BoolToString(general.enabled));
+		WriteSettingValue(config, 'DMgeneral', 'DMhealthMultip', FloatToString(general.healthMultip));
+		WriteSettingValue(config, 'DMgeneral', 'DMdmgMultip', FloatToString(general.dmgMultip));
+
+
+		super.WriteSettings();
+	}
+
+	public function ResetSettingsToDefault() : void
+	{
+		general.ResetSettingsToDefault();
+	}
+
+	public function ShouldResetSettingsToDefaultOnInit() : bool
+	{
+		return config.GetVarValue('DMgeneral','DMenabled') == "";
+	}
+}
+
+class ModDifficultySettings_general extends ISettingsGroup
+{
+	public var enabled : bool;
+	public var healthMultip : float;
+	public var dmgMultip : float;
+
+	default id = 'DMgeneral';
+	default defaultPresetIndex = 1;
+}
+

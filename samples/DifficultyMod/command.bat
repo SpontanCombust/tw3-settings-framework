@@ -1,0 +1,1 @@
+settings_parser.exe -f bin/config/r4game/user_config_matrix/pc/modSettingsFrameworkSampleDifficultyMod.xml -m ModDifficultySettingsBase -v 1.1 --omit-prefix=DM --default-preset-keyword=DEFAULT -o modSettingsFrameworkSampleDifficultyMod/content/scripts/local/difficulty_mod_base.ws
