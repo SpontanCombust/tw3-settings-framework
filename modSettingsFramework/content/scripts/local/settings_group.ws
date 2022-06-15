@@ -4,7 +4,7 @@ abstract class ISettingsGroup
 
     // these are set using 'default' in the child class
     public const var id: name;
-    public const var defaultPresetIndex: name;
+    public const var defaultPresetIndex: int;
 
 
     public function Init(parent_: ISettingsMaster) : void
