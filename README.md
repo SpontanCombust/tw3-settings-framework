@@ -1,4 +1,4 @@
-<img src="doc/title.jpg" alt="Logo" style="width: 1000px; height: 250px; object-fit: cover;"/>
+<img src="doc/banner.jpg" alt="Logo"/>
 
 <br>
 
