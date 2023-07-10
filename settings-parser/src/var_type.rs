@@ -4,15 +4,16 @@ pub enum VarType {
     Options,
     SliderInt,
     SliderFloat
+    // SubtleSeparator not included as it's just a cosmetic var
 }
 
 impl VarType {
-    pub fn from_display_type(display_type: &str) -> Result<VarType, String> {
+    pub fn from_display_type(display_type: &str) -> Result<Option<VarType>, String> {
         if display_type == "TOGGLE" {
-            return Ok(VarType::Toggle);
+            return Ok(Some(VarType::Toggle));
         }
         if display_type == "OPTIONS" {
-            return Ok(VarType::Options);
+            return Ok(Some(VarType::Options));
         }
         if &display_type[0..6] == "SLIDER" {
             let spl: Vec<&str> = display_type.split(';').collect();
@@ -58,14 +59,17 @@ impl VarType {
                 }
 
                 if (max - min) % div == 0 {
-                    return Ok(VarType::SliderInt)
+                    return Ok(Some(VarType::SliderInt))
                 } 
                 else {
-                    return Ok(VarType::SliderFloat)
+                    return Ok(Some(VarType::SliderFloat))
                 }
             }
         }
+        if display_type == "SUBTLE_SEPARATOR" {
+            return Ok(None);
+        }
 
-        return Err(format!("Invalid display type: {}", display_type));
+        return Err(format!("Unsupported display type: {}", display_type));
     }
 }
