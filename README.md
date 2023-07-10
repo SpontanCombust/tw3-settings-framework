@@ -125,7 +125,9 @@ The most common usage of this would be overriding `ReadSettings()` method to run
 
 
 ## Remarks
-WitcherScript side of the framework was made using scripts from [Community Patch - Base](https://www.nexusmods.com/witcher3/mods/3652), so you should need to install it as well. Due to this it _may not_ be possible to be used with Enhanced Edition as that does not use CPB. Seperate compatibility versions may appear in the future, but for now if merging modSettingsFramework with your mod setup produces nasty results you may need to hold off with using it for now.
+Framework version support:
+- 0.3+ for game version 4.03
+- 0.2.0 for game version 1.32 (requires [Community Patch - Base](https://www.nexusmods.com/witcher3/mods/3652))
 
 
 ## Documentation
