@@ -1,61 +1,53 @@
-exec function settings_difficulty_init()
-{
-    var game: CR4Game;
-
-    game = theGame;
-    if(!game.difficultySettings) {
-        game.difficultySettings = new ModDifficultySettings in theGame;
-        GetSettingsMasterRegistry().AddSettings(game.difficultySettings, 'DifficultySettings');
-    }
-}
-
 exec function settings_difficulty_easy()
 {
-    theGame.difficultySettings.general.Reset(0);
+    GetModDifficultySettings().general.Reset(0);
 }
 
 exec function settings_difficulty_default()
 {
-    theGame.difficultySettings.general.ResetToDefault();
+    GetModDifficultySettings().general.ResetToDefault();
 }
 
 exec function settings_difficulty_hard()
 {
-    var game: CR4Game;
+    var settings : ModDifficultySettings;
+    settings = GetModDifficultySettings();
 
-    game = theGame;
-    game.difficultySettings.general.enabled = true;
-    game.difficultySettings.general.healthMultip = 2.0;
-    game.difficultySettings.general.dmgMultip = 2.0;
+    settings.general.enabled = true;
+    settings.general.healthMultip = 2.0;
+    settings.general.dmgMultip = 2.0;
 
-    game.difficultySettings.WriteSettings();
+    settings.WriteSettings();
 }
 
 exec function settings_difficulty_toggle()
 {
-    var game: CR4Game;
+    var settings : ModDifficultySettings;
+    settings = GetModDifficultySettings();
 
-    game = theGame;
-    game.difficultySettings.general.enabled = !game.difficultySettings.general.enabled;
-    game.difficultySettings.WriteSettings();
+    settings.general.enabled = !settings.general.enabled;
+    settings.WriteSettings();
 }
 
 exec function settings_difficulty_read()
 {
-    theGame.difficultySettings.ReadSettings();
+    GetModDifficultySettings().ReadSettings();
 }
 
 exec function settings_difficulty_write()
 {
-    theGame.difficultySettings.WriteSettings();
+    GetModDifficultySettings().WriteSettings();
 }
 
 exec function settings_difficulty_log()
 {
+    var settings : ModDifficultySettings;
+    settings = GetModDifficultySettings();
+
     LogChannel('DifficultyMod', 
-        "Enabled: " + theGame.difficultySettings.general.enabled + ", " +
-        "Health multiplier: " + theGame.difficultySettings.general.healthMultip + ", " +
-        "Damage multiplier: " + theGame.difficultySettings.general.dmgMultip
+        "Enabled: " + settings.general.enabled + ", " +
+        "Health multiplier: " + settings.general.healthMultip + ", " +
+        "Damage multiplier: " + settings.general.dmgMultip
     );
 }
 
