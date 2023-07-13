@@ -18,7 +18,7 @@ class ModDifficultySettings extends ModDifficultySettingsBase
     {
         super.WriteSettings();
 
-        LogChannel('DifficultyMod', "Mod has been written to config");
+        LogChannel('DifficultyMod', "Mod settings have been written to config");
     }
 
     public function ShouldResetSettingsToDefaultOnInit() : bool
