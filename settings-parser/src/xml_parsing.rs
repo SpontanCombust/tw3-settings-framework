@@ -144,7 +144,10 @@ fn parse_var_node(var_node: &Node, group_id: &str, cli: &CLI) -> Result<Option<S
     };
 
     let var_type = match VarType::from_display_type(var_display_type) {
-        Ok(vt) => vt,
+        Ok(vto) => match vto {
+            Some(vt) => vt,
+            None => return Ok(None),
+        },
         Err(err) => {
             println!("Error parsing Var node's display_type in Group {} at {}: {}", group_id, node_pos(var_node), err);
             return Ok(None);

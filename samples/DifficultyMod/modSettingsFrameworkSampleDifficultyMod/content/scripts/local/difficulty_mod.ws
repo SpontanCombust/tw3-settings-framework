@@ -18,7 +18,7 @@ class ModDifficultySettings extends ModDifficultySettingsBase
     {
         super.WriteSettings();
 
-        LogChannel('DifficultyMod', "Mod has been written to config");
+        LogChannel('DifficultyMod', "Mod settings have been written to config");
     }
 
     public function ShouldResetSettingsToDefaultOnInit() : bool
@@ -36,4 +36,18 @@ class ModDifficultySettings extends ModDifficultySettingsBase
         
         LogChannel('DifficultyMod', "Preset " + IntToString(presetIndex) + " has been applied" );
     }
+}
+
+function GetModDifficultySettings(): ModDifficultySettings
+{
+    var settings : ModDifficultySettings;
+
+    settings = (ModDifficultySettings)GetSettingsMasterRegistry().GetSettings('ModDifficultySettings');
+    if (!settings)
+    {
+        settings = new ModDifficultySettings in theGame;
+        GetSettingsMasterRegistry().AddSettings(settings, 'ModDifficultySettings');
+    }
+
+    return settings;
 }
