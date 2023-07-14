@@ -2,15 +2,17 @@ mod var_type;
 mod settings_var;
 mod settings_group;
 mod settings_master;
-mod xml_parsing;
 mod to_witcher_script;
 mod cli;
+mod utils;
 
 use std::{fs::OpenOptions, io::{Read, Write}, path::{Path, PathBuf}};
 
 use clap::Parser;
 use cli::CLI;
-use to_witcher_script::ToWitcherScript;
+use settings_master::SettingsMaster;
+
+use crate::to_witcher_script::ToWitcherScript;
 
 
 fn main() {
@@ -58,7 +60,7 @@ fn main() {
         return;
     };
 
-    match xml_parsing::parse_settings_xml(xml_text, &cli) {
+    match SettingsMaster::from_xml(xml_text, &cli) {
         Ok(master) => {
             let mut code = String::new();
 

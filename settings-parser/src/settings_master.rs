@@ -1,4 +1,6 @@
-use crate::{settings_group::SettingsGroup, to_witcher_script::ToWitcherScript, var_type::VarType};
+use roxmltree::{Document, Node};
+
+use crate::{settings_group::SettingsGroup, to_witcher_script::ToWitcherScript, var_type::VarType, cli::CLI, utils::validate_name};
 
 #[derive(Default)]
 pub struct SettingsMaster {
@@ -6,6 +8,54 @@ pub struct SettingsMaster {
     pub mod_version: String,
     pub groups: Vec<SettingsGroup>
 }
+
+impl SettingsMaster {
+    pub fn from_xml(xml_text: String, cli: &CLI) -> Result<SettingsMaster, String> {
+        if let Err(err) = validate_name(&cli.settings_master_name) {
+            return Err(format!("Invalid settings master name: {}", err));
+        }
+    
+        let doc = match Document::parse(&xml_text) {
+            Ok(doc) => doc,
+            Err(err) => {
+                return Err(err.to_string())
+            }
+        };
+        
+        let mut master = SettingsMaster::default();
+        master.name = cli.settings_master_name.clone();
+        master.mod_version = cli.mod_version.clone();
+    
+        if let Some(root_node) = doc.descendants().find(|n| n.has_tag_name("UserConfig")) {
+            let group_nodes: Vec<Node> = root_node.children().filter(|n| n.has_tag_name("Group")).collect();
+    
+            if group_nodes.is_empty() {
+                return Err("No Groups found inside UserConfig".to_string());
+            }
+            
+            for group_node in &group_nodes {
+                match SettingsGroup::from_xml(group_node, cli) {
+                    Ok(group_opt) => {
+                        if let Some(group) = group_opt {
+                            master.groups.push(group);
+                        }
+                    }
+                    Err(err) => {
+                        return Err(err);
+                    }
+                }
+            }
+        }
+        else {
+            return Err("No UserConfig root node found".to_string());
+        }
+    
+        return Ok(master);
+    }
+}
+
+
+
 
 const MASTER_BASE_CLASS_NAME: &str = "ISettingsMaster";
 const MASTER_MOD_VERSION_VAR_NAME: &str = "modVersion";
@@ -26,7 +76,7 @@ impl ToWitcherScript for SettingsMaster {
     fn ws_code_body(&self) -> String {
         let mut code = String::new();
 
-        code += &format!("// Code generated using Mod Settings Framework & Utilites v{} by SpontanCombust\n\n", option_env!("CARGO_PKG_VERSION").unwrap());
+        code += &format!("// Code generated using Mod Settings Framework v{} by SpontanCombust & Aeltoth\n\n", option_env!("CARGO_PKG_VERSION").unwrap());
 
         code += &format!("class {} extends {}\n", self.name, MASTER_BASE_CLASS_NAME);
         code += "{\n";
