@@ -1,0 +1,16 @@
+name: "Build parser"
+description: "Build the release version of settings framework parser"
+
+runs:
+  using: "composite"
+
+  steps:
+    - name: Use Rust stable
+      uses: actions-rs/toolchain@v1
+      with:
+        toolchain: stable
+        target: x86_64-pc-windows-msvc
+        override: true
+    - name: Build with Cargo
+      run: cargo build --release --target=x86_64-pc-windows-msvc
+      working-directory: ./settings-parser

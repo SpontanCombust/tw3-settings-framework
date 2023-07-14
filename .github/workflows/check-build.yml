@@ -17,15 +17,8 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v2
-    - name: Use Rust stable
-      uses: actions-rs/toolchain@v1
-      with:
-        toolchain: stable
-        target: x86_64-pc-windows-msvc
-        override: true
-    - name: Build with Cargo
-      run: cargo build --release --target=x86_64-pc-windows-msvc
-      working-directory: ./settings-parser
+    - name: Build parser
+      uses: ./.github/actions/build-parser
     - name: Run tests
       run: cargo test --verbose
       working-directory: ./settings-parser
