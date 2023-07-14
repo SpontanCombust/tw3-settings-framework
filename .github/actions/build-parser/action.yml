@@ -12,5 +12,6 @@ runs:
         target: x86_64-pc-windows-msvc
         override: true
     - name: Build with Cargo
+      shell: pwsh
       run: cargo build --release --target=x86_64-pc-windows-msvc
       working-directory: ./settings-parser
