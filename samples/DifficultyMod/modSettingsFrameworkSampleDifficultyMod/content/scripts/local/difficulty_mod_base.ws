@@ -1,4 +1,4 @@
-// Code generated using Mod Settings Framework & Utilites v0.2.0 by SpontanCombust
+// Code generated using Mod Settings Framework v0.3.1 by SpontanCombust & Aeltoth
 
 class ModDifficultySettingsBase extends ISettingsMaster
 {
