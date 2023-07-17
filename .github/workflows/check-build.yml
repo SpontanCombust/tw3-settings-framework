@@ -11,14 +11,31 @@ env:
 
 jobs:
   build:
+    strategy:
+      matrix:
+        target:
+        - x86_64-pc-windows-msvc
+        - x86_64-unknown-linux-gnu
+        include:
+        - target: x86_64-pc-windows-msvc
+          os: windows-latest
+        - target: x86_64-unknown-linux-gnu
+          os: ubuntu-latest
 
-    runs-on: windows-latest
+    runs-on: ${{matrix.os}}
 
     steps:
     - name: Checkout
       uses: actions/checkout@v2
-    - name: Build parser
-      uses: ./.github/actions/build-parser
+    - name: Use Rust stable
+      uses: actions-rs/toolchain@v1
+      with:
+        toolchain: stable
+        target: ${{matrix.target}}
+        override: true
+    - name: Build with Cargo
+      run: cargo build --release --target=${{matrix.target}}
+      working-directory: ./settings-parser
     - name: Run tests
       run: cargo test --verbose
       working-directory: ./settings-parser

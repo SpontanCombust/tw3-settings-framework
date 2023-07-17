@@ -1,0 +1,49 @@
+name: "Regenerate samples"
+
+on:
+  push:
+    branches: '*'
+  pull_request:
+    branches: '*'
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Use Rust stable
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          target: x86_64-unknown-linux-gnu
+          override: true
+      - name: Build with Cargo
+        run: cargo build --release --target=x86_64-unknown-linux-gnu
+        working-directory: ./settings-parser
+      - name: Parse doc example
+        run: cargo run --release -- -f=../doc/mod-menu.xml \
+                                    -o=../doc/mod-menu.ws \
+                                    --omit-prefix MOD \
+                                    -m=MyModSettings \
+                                    -v=1.23 
+        working-directory: ./settings-parser
+      - name: Parse DifficultyMod sample
+        run: cargo run --release -- -f=../samples/DifficultyMod/bin/config/r4game/user_config_matrix/pc/modSettingsFrameworkSampleDifficultyMod.xml \
+                                    -o=../samples/modSettingsFrameworkSampleDifficultyMod/content/scripts/local/difficulty_mod_base.ws \
+                                    -m=ModDifficultySettingsBase \
+                                    --omit-prefix=DM \
+                                    --default-preset-keyword=DEFAULT \
+                                    -v=1.1
+        working-directory: ./settings-parser
+      - name: Check for changes in the project
+        id: get_changes
+        run: echo "changed=$(git status --porcelain | wc -l)" >> $GITHUB_OUTPUT
+      - name: Committing changes if there are any
+        if: steps.get_changes.outputs.changed != 0
+        uses: EndBug/add-and-commit@v7
+        with:
+          message: "Update samples"
+    
