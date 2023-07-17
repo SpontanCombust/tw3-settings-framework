@@ -1,4 +1,4 @@
-name: "Regenerate samples"
+name: regenerate-samples
 
 on:
   push:
@@ -10,7 +10,7 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  build:
+  regenerate-samples:
     runs-on: ubuntu-latest
 
     steps:
