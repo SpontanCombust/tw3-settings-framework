@@ -1,4 +1,4 @@
-// Code generated using Mod Settings Framework & Utilites v0.2.0 by SpontanCombust
+// Code generated using Mod Settings Framework v0.3.0 by SpontanCombust & Aeltoth
 
 class MyModSettings extends ISettingsMaster
 {
@@ -57,13 +57,16 @@ class MyModSettings extends ISettingsMaster
 
 	public function ResetSettingsToDefault() : void
 	{
-		tab1.ResetSettingsToDefault();
-		tab2subtab1.ResetSettingsToDefault();
-		tab2subtab2.ResetSettingsToDefault();
+		tab1.ResetToDefault();
+		tab2subtab1.ResetToDefault();
+		tab2subtab2.ResetToDefault();
 	}
 
 	public function ShouldResetSettingsToDefaultOnInit() : bool
 	{
+		var config : CInGameConfigWrapper;
+		config = theGame.GetInGameConfigWrapper();
+
 		return config.GetVarValue('MODtab1','MODoption') == "";
 	}
 }
