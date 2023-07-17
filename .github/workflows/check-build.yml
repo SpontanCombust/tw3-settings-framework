@@ -35,7 +35,7 @@ jobs:
         override: true
     - name: Build with Cargo
       run: cargo build --release --target=${{matrix.target}}
-      working-directory: ./settings-parser
+      working-directory: settings-parser
     - name: Run tests
       run: cargo test --verbose
-      working-directory: ./settings-parser
+      working-directory: settings-parser
