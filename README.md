@@ -112,8 +112,9 @@ The most common usage of this would be overriding `ReadSettings()` method to run
 
 ## Remarks
 Framework version support:
-- 0.3+ for game version 4.03
-- 0.2.0 for game version 1.32 (requires [Community Patch - Base](https://www.nexusmods.com/witcher3/mods/3652))
+- 0.4+ for game version 4.04
+- 0.3.0 - 0.3.1 for game version 4.03
+- 0.1.0 - 0.2.0 for game version 1.32 (requires [Community Patch - Base](https://www.nexusmods.com/witcher3/mods/3652))
 
 
 ## Documentation
