@@ -1,4 +1,4 @@
-// Code generated using Mod Settings Framework v0.3.1 by SpontanCombust & Aeltoth
+// Code generated using Mod Settings Framework v0.4.0 by SpontanCombust & Aeltoth
 
 class MyModSettings extends ISettingsMaster
 {
