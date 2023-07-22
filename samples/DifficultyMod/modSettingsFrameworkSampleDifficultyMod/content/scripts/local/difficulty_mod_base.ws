@@ -6,14 +6,23 @@ class ModDifficultySettingsBase extends ISettingsMaster
 
 	public var general : ModDifficultySettingsBase_general;
 
-	public function Init() : void
+	public /* override */ function Init() : void
 	{
 		general = new ModDifficultySettingsBase_general in this; general.Init(this);
 
 		super.Init();
 	}
 
-	public function ReadSettings() : void
+	public /* override */ function ValidateValues() : void
+	{
+		general.healthMultip = ClampF(general.healthMultip, 0, 2);
+		general.dmgMultip = ClampF(general.dmgMultip, 0, 2);
+
+
+		super.ValidateValues();
+	}
+
+	public /* override */ function ReadSettings() : void
 	{
 		var config : CInGameConfigWrapper;
 		config = theGame.GetInGameConfigWrapper();
@@ -23,13 +32,16 @@ class ModDifficultySettingsBase extends ISettingsMaster
 		general.dmgMultip = StringToFloat(ReadSettingValue(config, 'DMgeneral', 'DMdmgMultip'), 0.0);
 
 
+		this.ValidateValues();
 		super.ReadSettings();
 	}
 
-	public function WriteSettings() : void
+	public /* override */ function WriteSettings() : void
 	{
 		var config : CInGameConfigWrapper;
 		config = theGame.GetInGameConfigWrapper();
+
+		this.ValidateValues();
 
 		WriteSettingValue(config, 'DMgeneral', 'DMenabled', BoolToString(general.enabled));
 		WriteSettingValue(config, 'DMgeneral', 'DMhealthMultip', FloatToString(general.healthMultip));
@@ -39,12 +51,12 @@ class ModDifficultySettingsBase extends ISettingsMaster
 		super.WriteSettings();
 	}
 
-	public function ResetSettingsToDefault() : void
+	public /* override */ function ResetSettingsToDefault() : void
 	{
 		general.ResetToDefault();
 	}
 
-	public function ShouldResetSettingsToDefaultOnInit() : bool
+	public /* override */ function ShouldResetSettingsToDefaultOnInit() : bool
 	{
 		var config : CInGameConfigWrapper;
 		config = theGame.GetInGameConfigWrapper();
