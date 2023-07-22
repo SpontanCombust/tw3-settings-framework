@@ -10,7 +10,6 @@ pub struct SettingsVar {
 
 impl SettingsVar {
     pub fn from_xml(var_node: &Node, group_id: &str, cli: &CLI) -> Result<Option<SettingsVar>, String> {
-        //TODO rename with _node and _attr suffixes
         let var_id = match var_node.attribute("id") {
             Some(id) => id,
             None => {
@@ -22,16 +21,8 @@ impl SettingsVar {
         if let Err(err) = validate_name(var_id) {
             return Err(format!("Invalid Var id {} at {}: {}", var_id, node_pos(var_node), err));
         }
-    
-        let var_display_type = match var_node.attribute("displayType") {
-            Some(dt) => dt,
-            None => {
-                println!("Var node without displayType found in Group {} at {}", group_id, node_pos(var_node));
-                return Ok(None);
-            }
-        };
-    
-        let mut var_type = match VarType::from_display_type(var_display_type) {
+        
+        let var_type = match VarType::from_xml(var_node) {
             Ok(vto) => match vto {
                 Some(vt) => vt,
                 None => return Ok(None),
@@ -41,28 +32,6 @@ impl SettingsVar {
                 return Ok(None);
             }
         };
-
-        if let VarType::Options(options_var_type) = &mut var_type {
-            if let Some(options_array) = var_node.children().find(|ch| ch.has_tag_name("OptionsArray")) {
-                let option_nodes = options_array.children()
-                    .filter(|n| n.has_tag_name("Option"))
-                    .collect::<Vec<_>>();
-
-                if option_nodes.is_empty() {
-                    return Err(format!("OptionsArray node at {} is missing Option nodes", node_pos(&options_array)));
-                }
-
-                for option_node in option_nodes {
-                    if let Some(display_name) = option_node.attribute("displayName") {
-                        options_var_type.options_array.push(display_name.to_owned());
-                    } else {
-                        return Err(format!("Option node at {} is missing displayName attribute", node_pos(&option_node)));
-                    }
-                }
-            } else {
-                return Err(format!("No OptionsArray node found in var with OPTIONS displayType at {}", node_pos(var_node)));
-            }                   
-        }
     
         return Ok(Some(SettingsVar {
             id: var_id.to_owned(),
