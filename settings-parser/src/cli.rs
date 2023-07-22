@@ -31,5 +31,11 @@ pub struct CLI {
     /// If won't find default preset or any preset at that will use 0 as the preset ID.
     /// Case insensitive.
     #[clap(long, default_value="default", display_order=5)]
-    pub default_preset_keyword: String
+    pub default_preset_keyword: String,
+
+    /// Disables the generation of code for value correction.
+    /// After reading from or before writing to user config values will no longer be checked if they are valid,
+    /// i.e. if slider value is in a specified range.
+    #[clap(long, display_order=6)]
+    pub no_var_validation: bool
 }

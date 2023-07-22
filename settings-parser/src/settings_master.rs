@@ -6,7 +6,8 @@ use crate::{settings_group::SettingsGroup, to_witcher_script::ToWitcherScript, v
 pub struct SettingsMaster {
     pub name: String,
     pub mod_version: String,
-    pub groups: Vec<SettingsGroup>
+    pub groups: Vec<SettingsGroup>,
+    pub validate_values: bool
 }
 
 impl SettingsMaster {
@@ -25,6 +26,7 @@ impl SettingsMaster {
         let mut master = SettingsMaster::default();
         master.name = cli.settings_master_name.clone();
         master.mod_version = cli.mod_version.clone();
+        master.validate_values = !cli.no_var_validation;
     
         if let Some(root_node) = doc.descendants().find(|n| n.has_tag_name("UserConfig")) {
             let group_nodes: Vec<Node> = root_node.children().filter(|n| n.has_tag_name("Group")).collect();
@@ -60,6 +62,7 @@ impl SettingsMaster {
 const MASTER_BASE_CLASS_NAME: &str = "ISettingsMaster";
 const MASTER_MOD_VERSION_VAR_NAME: &str = "modVersion";
 const MASTER_INIT_FUNC_NAME: &str = "Init";
+const MASTER_VALIDATE_VALUES_FUNC_NAME: &str = "ValidateValues";
 const MASTER_READ_SETTINGS_FUNC_NAME: &str = "ReadSettings";
 const MASTER_READ_SETTING_VALUE_FUNC_NAME: &str = "ReadSettingValue";
 const MASTER_WRITE_SETTINGS_FUNC_NAME: &str = "WriteSettings";
@@ -88,6 +91,11 @@ impl ToWitcherScript for SettingsMaster {
 
         code += "\n";
         code += &init_function(self);
+
+        if self.validate_values {
+            code += "\n";
+            code += &validate_values_function(self);
+        }
         
         code += "\n";
         code += &read_settings_function(self);
@@ -128,7 +136,7 @@ fn default_variable_values(master: &SettingsMaster) -> String {
 fn init_function(master: &SettingsMaster) -> String {
     let mut code = String::new();
 
-    code += &format!("\tpublic function {}() : void\n", MASTER_INIT_FUNC_NAME);
+    code += &format!("\tpublic /* override */ function {}() : void\n", MASTER_INIT_FUNC_NAME);
     code += "\t{\n";
 
     for group in &master.groups {
@@ -144,10 +152,52 @@ fn init_function(master: &SettingsMaster) -> String {
     return code;
 }
 
+fn validate_values_function(master: &SettingsMaster) -> String {
+    let mut code = String::new();
+
+    code += &format!("\tpublic /* override */ function {}() : void\n", MASTER_VALIDATE_VALUES_FUNC_NAME);
+    code += "\t{\n";
+
+    for group in &master.groups {
+        let mut group_code = String::new();
+        for var in &group.vars {
+            let validator = match &var.var_type {
+                VarType::Options(options)   => Some(format!("{g}.{v} = Clamp({g}.{v}, {min}, {max});", 
+                                                        g = group.name, 
+                                                        v = var.name, 
+                                                        min = 0, 
+                                                        max = options.options_array.len() - 1)),
+                VarType::Slider(slider)     => Some(format!("{g}.{v} = {func}({g}.{v}, {min}, {max});",
+                                                        g = group.name,
+                                                        v = var.name,
+                                                        func = if slider.is_integral() { "Clamp" } else { "ClampF" },
+                                                        min = slider.min,
+                                                        max = slider.max)),
+                _ => None
+            };
+
+            if let Some(validator) = validator {
+                group_code += &format!("\t\t{}\n", validator);
+            }
+        }
+
+        if !group_code.is_empty() {
+            code += &format!("{}\n", group_code);
+        }
+    }
+
+    code += "\n";
+    code += &format!("\t\tsuper.{}();\n", MASTER_VALIDATE_VALUES_FUNC_NAME);
+
+    code += "\t}\n";
+
+    return code;
+}
+
 fn read_settings_function(master: &SettingsMaster) -> String {
     let mut code = String::new();
 
-    code += &format!("\tpublic function {}() : void\n", MASTER_READ_SETTINGS_FUNC_NAME);
+    code += &format!("\tpublic /* override */ function {}() : void\n", MASTER_READ_SETTINGS_FUNC_NAME);
     code += "\t{\n";
 
     code += "\t\tvar config : CInGameConfigWrapper;\n";
@@ -160,8 +210,14 @@ fn read_settings_function(master: &SettingsMaster) -> String {
 
             // surround with type cast if necessary
             get_var_value = match &var.var_type {
-                VarType::Options | VarType::SliderInt => format!("StringToInt({}, 0)", get_var_value),
-                VarType::SliderFloat => format!("StringToFloat({}, 0.0)", get_var_value),
+                VarType::Options(_) => format!("StringToInt({}, 0)", get_var_value),
+                VarType::Slider(slider) => {
+                    if slider.is_integral() {
+                        format!("StringToInt({}, 0)", get_var_value)
+                    } else {
+                        format!("StringToFloat({}, 0.0)", get_var_value)
+                    }
+                }
                 VarType::Toggle => format!("StringToBool({})", get_var_value),
             };
 
@@ -171,6 +227,9 @@ fn read_settings_function(master: &SettingsMaster) -> String {
     }
 
     code += "\n";
+    if master.validate_values {
+        code += &format!("\t\tthis.{}();\n", MASTER_VALIDATE_VALUES_FUNC_NAME);
+    }
     code += &format!("\t\tsuper.{}();\n", MASTER_READ_SETTINGS_FUNC_NAME);
 
     code += "\t}\n";
@@ -181,18 +240,29 @@ fn read_settings_function(master: &SettingsMaster) -> String {
 fn write_settings_function(master: &SettingsMaster) -> String {
     let mut code = String::new();
 
-    code += &format!("\tpublic function {}() : void\n", MASTER_WRITE_SETTINGS_FUNC_NAME);
+    code += &format!("\tpublic /* override */ function {}() : void\n", MASTER_WRITE_SETTINGS_FUNC_NAME);
     code += "\t{\n";
 
     code += "\t\tvar config : CInGameConfigWrapper;\n";
     code += "\t\tconfig = theGame.GetInGameConfigWrapper();\n";
     code += "\n";
 
+    if master.validate_values {
+        code += &format!("\t\tthis.{}();\n", MASTER_VALIDATE_VALUES_FUNC_NAME);
+        code += "\n";
+    }
+
     for group in &master.groups {
         for var in &group.vars {
             let var_value_str = match &var.var_type {
-                VarType::Options | VarType::SliderInt => format!("IntToString({}.{})", group.name, var.name),
-                VarType::SliderFloat => format!("FloatToString({}.{})", group.name, var.name),
+                VarType::Options(_) => format!("IntToString({}.{})", group.name, var.name),
+                VarType::Slider(slider) => {
+                    if slider.is_integral() {
+                        format!("IntToString({}.{})", group.name, var.name)
+                    } else {
+                        format!("FloatToString({}.{})", group.name, var.name)
+                    }
+                }
                 VarType::Toggle => format!("BoolToString({}.{})", group.name, var.name),
             };
 
@@ -212,7 +282,7 @@ fn write_settings_function(master: &SettingsMaster) -> String {
 fn reset_settings_to_default_function(master: &SettingsMaster) -> String {
     let mut code = String::new();
 
-    code += &format!("\tpublic function {}() : void\n", MASTER_RESET_SETTINGS_TO_DEFAULT_FUNC_NAME);
+    code += &format!("\tpublic /* override */ function {}() : void\n", MASTER_RESET_SETTINGS_TO_DEFAULT_FUNC_NAME);
     code += "\t{\n";
 
     for group in &master.groups {
@@ -226,7 +296,7 @@ fn reset_settings_to_default_function(master: &SettingsMaster) -> String {
 
 fn should_reset_to_default_on_init_function(master: &SettingsMaster) -> String {
     let mut code = String::new();
-    code += &format!("\tpublic function {}() : bool\n", MASTER_SHOULD_RESET_TO_DEFAULT_ON_INIT_FUNC_NAME);
+    code += &format!("\tpublic /* override */ function {}() : bool\n", MASTER_SHOULD_RESET_TO_DEFAULT_ON_INIT_FUNC_NAME);
     code += "\t{\n";
     
     code += "\t\tvar config : CInGameConfigWrapper;\n";

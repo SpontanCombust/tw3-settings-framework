@@ -18,6 +18,12 @@ abstract class ISettingsMaster
         ReadSettings();
     }
 
+    // Corrects values to ranges specified in the xml
+    public function ValidateValues() : void
+    {
+        // generated child class will correct these values in this function
+    }
+
     // Reads all settings from CInGameConfigWrapper using ReadSettingValue and sets class variables
     public function ReadSettings() : void 
     {

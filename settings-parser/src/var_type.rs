@@ -1,11 +1,31 @@
 #[derive(Debug)]
 pub enum VarType {
     Toggle,
-    Options,
-    SliderInt,
-    SliderFloat
+    Options(OptionsVarType),
+    Slider(SliderVarType)
     // SubtleSeparator not included as it's just a cosmetic var
 }
+
+
+#[derive(Debug, Default)]
+pub struct OptionsVarType {
+    pub options_array: Vec<String>
+}
+
+
+#[derive(Debug)]
+pub struct SliderVarType {
+    pub min: i32,
+    pub max: i32,
+    pub div: i32
+}
+
+impl SliderVarType {
+    pub fn is_integral(&self) -> bool {
+        (self.max - self.min) % self.div == 0
+    }
+}
+
 
 impl VarType {
     pub fn from_display_type(display_type: &str) -> Result<Option<VarType>, String> {
@@ -13,7 +33,7 @@ impl VarType {
             return Ok(Some(VarType::Toggle));
         }
         if display_type == "OPTIONS" {
-            return Ok(Some(VarType::Options));
+            return Ok(Some(VarType::Options(OptionsVarType::default())));
         }
         if &display_type[0..6] == "SLIDER" {
             let spl: Vec<&str> = display_type.split(';').collect();
@@ -25,8 +45,6 @@ impl VarType {
                 return Err(format!("Invalid amount of slider parameters. Should be 3, is {}", spl.len() - 1));
             } 
             else {
-                //CHECKME min & max may need to be checked for being floats first
-
                 let min = spl[1].parse::<i32>();
                 if min.is_err() {
                     return Err(format!("Slider min value parse error: {}", min.unwrap_err()));   
@@ -58,12 +76,7 @@ impl VarType {
                     return Err(format!("Slider min value is greater than max value: {}", min));
                 }
 
-                if (max - min) % div == 0 {
-                    return Ok(Some(VarType::SliderInt))
-                } 
-                else {
-                    return Ok(Some(VarType::SliderFloat))
-                }
+                return Ok(Some(VarType::Slider(SliderVarType { min, max, div })));
             }
         }
         if display_type == "SUBTLE_SEPARATOR" {
