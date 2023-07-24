@@ -17,7 +17,7 @@ class MyModSettings extends ISettingsMaster
 		super.Init();
 	}
 
-	public /* override */ function ValidateValues() : void
+	public /* override */ function ValidateSettings() : void
 	{
 		tab1.option = Clamp(tab1.option, 0, 2);
 		tab1.sliderFloat = ClampF(tab1.sliderFloat, 0, 1);
@@ -27,7 +27,7 @@ class MyModSettings extends ISettingsMaster
 		tab2subtab1.anotherSlider = ClampF(tab2subtab1.anotherSlider, -100, 100);
 
 
-		super.ValidateValues();
+		super.ValidateSettings();
 	}
 
 	public /* override */ function ReadSettings() : void
@@ -46,7 +46,7 @@ class MyModSettings extends ISettingsMaster
 		tab2subtab2.anotherToggle = StringToBool(ReadSettingValue(config, 'MODtab2subtab2', 'anotherToggle'));
 
 
-		this.ValidateValues();
+		this.ValidateSettings();
 		super.ReadSettings();
 	}
 
@@ -55,7 +55,7 @@ class MyModSettings extends ISettingsMaster
 		var config : CInGameConfigWrapper;
 		config = theGame.GetInGameConfigWrapper();
 
-		this.ValidateValues();
+		this.ValidateSettings();
 
 		WriteSettingValue(config, 'MODtab1', 'MODoption', IntToString(tab1.option));
 		WriteSettingValue(config, 'MODtab1', 'MODsliderFloat', FloatToString(tab1.sliderFloat));
