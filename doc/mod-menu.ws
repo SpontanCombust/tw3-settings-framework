@@ -26,7 +26,6 @@ class MyModSettings extends ISettingsMaster
 
 		tab2subtab1.anotherSlider = ClampF(tab2subtab1.anotherSlider, -100, 100);
 
-
 		super.ValidateSettings();
 	}
 
@@ -44,7 +43,6 @@ class MyModSettings extends ISettingsMaster
 		tab2subtab1.anotherSlider = StringToFloat(ReadSettingValue(config, 'MODtab2subtab1', 'anotherSlider'), 0.0);
 
 		tab2subtab2.anotherToggle = StringToBool(ReadSettingValue(config, 'MODtab2subtab2', 'anotherToggle'));
-
 
 		this.ValidateSettings();
 		super.ReadSettings();
@@ -66,7 +64,6 @@ class MyModSettings extends ISettingsMaster
 		WriteSettingValue(config, 'MODtab2subtab1', 'anotherSlider', FloatToString(tab2subtab1.anotherSlider));
 
 		WriteSettingValue(config, 'MODtab2subtab2', 'anotherToggle', BoolToString(tab2subtab2.anotherToggle));
-
 
 		super.WriteSettings();
 	}

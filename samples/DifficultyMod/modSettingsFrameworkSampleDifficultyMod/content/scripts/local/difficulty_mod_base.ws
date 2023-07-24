@@ -18,7 +18,6 @@ class ModDifficultySettingsBase extends ISettingsMaster
 		general.healthMultip = ClampF(general.healthMultip, 0, 2);
 		general.dmgMultip = ClampF(general.dmgMultip, 0, 2);
 
-
 		super.ValidateSettings();
 	}
 
@@ -30,7 +29,6 @@ class ModDifficultySettingsBase extends ISettingsMaster
 		general.enabled = StringToBool(ReadSettingValue(config, 'DMgeneral', 'DMenabled'));
 		general.healthMultip = StringToFloat(ReadSettingValue(config, 'DMgeneral', 'DMhealthMultip'), 0.0);
 		general.dmgMultip = StringToFloat(ReadSettingValue(config, 'DMgeneral', 'DMdmgMultip'), 0.0);
-
 
 		this.ValidateSettings();
 		super.ReadSettings();
@@ -46,7 +44,6 @@ class ModDifficultySettingsBase extends ISettingsMaster
 		WriteSettingValue(config, 'DMgeneral', 'DMenabled', BoolToString(general.enabled));
 		WriteSettingValue(config, 'DMgeneral', 'DMhealthMultip', FloatToString(general.healthMultip));
 		WriteSettingValue(config, 'DMgeneral', 'DMdmgMultip', FloatToString(general.dmgMultip));
-
 
 		super.WriteSettings();
 	}
