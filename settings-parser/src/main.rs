@@ -63,9 +63,21 @@ fn main() -> Result<(), String>{
 
             code += &master.ws_code_body();
             code += "\n";
+
             for group in master.groups {
-                code += &group.ws_code_body();
-                code += "\n";
+                let group_body = group.ws_code_body();
+                if !group_body.is_empty() {
+                    code += &group.ws_code_body();
+                    code += "\n";
+                }
+
+                for var in group.vars {
+                    let var_body = var.ws_code_body();
+                    if !var_body.is_empty() {
+                        code += &var_body;
+                        code += "\n";
+                    }
+                }
             }
 
             if let Err(e) = ws_file.write_all(code.as_bytes()) {

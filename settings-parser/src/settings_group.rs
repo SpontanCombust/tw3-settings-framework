@@ -4,7 +4,7 @@ use crate::{settings_var::SettingsVar, to_witcher_script::ToWitcherScript, cli::
 
 #[derive(Default)]
 pub struct SettingsGroup {
-    pub master_name: String,
+    pub master_name: String, //TODO remove
     pub id: String,
     pub name: String,
     pub default_preset_index: Option<u8>,
@@ -12,6 +12,7 @@ pub struct SettingsGroup {
 }
 
 impl SettingsGroup {
+    //TODO make from_xml trait, find if it's necessary to have Result<Option<T>, E> instead of Result<T, E>
     pub fn from_xml(group_node: &Node, cli: &CLI) -> Result<Option<SettingsGroup>, String> {
         if let Some(group_id) = group_node.attribute("id") {
                     
@@ -110,7 +111,7 @@ fn group_class_variables(group: &SettingsGroup) -> String {
     let mut code = String::new();
 
     for var in &group.vars {
-        code += &format!("\tpublic {};\n", var.ws_code_body());
+        code += &format!("\tpublic var {} : {};\n", var.name, var.ws_type_name());
     }
 
     return code;

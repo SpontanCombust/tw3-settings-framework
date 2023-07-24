@@ -1,6 +1,6 @@
 use roxmltree::Node;
 
-use crate::utils::node_pos;
+use crate::{utils::{node_pos, id_to_script_name, validate_name}, cli::CLI};
 
 #[derive(Debug)]
 pub enum VarType {
@@ -13,7 +13,8 @@ pub enum VarType {
 
 #[derive(Debug)]
 pub struct OptionsVarType {
-    pub options_array: Vec<String>
+    pub options_array: Vec<String>,
+    pub enum_type: Option<String>
 }
 
 
@@ -32,7 +33,7 @@ impl SliderVarType {
 
 
 impl VarType {
-    pub fn from_xml(var_node: &Node) -> Result<Option<VarType>, String> {
+    pub fn from_xml(var_node: &Node, cli: &CLI) -> Result<Option<VarType>, String> {
         let display_type = match var_node.attribute("displayType") {
             Some(dt) => dt,
             None => {
@@ -56,13 +57,31 @@ impl VarType {
                 let mut display_names = Vec::new();
                 for option_node in option_nodes {
                     if let Some(display_name) = option_node.attribute("displayName") {
-                        display_names.push(display_name.to_owned());
+                        if let Err(err) = validate_name(display_name) {
+                            return Err(format!("Invalid displayName attribute at {}: {}", node_pos(&option_node), err));
+                        } else {
+                            display_names.push(id_to_script_name(display_name, &cli.omit_prefix));
+                        }
                     } else {
                         return Err(format!("Option node at {} is missing displayName attribute", node_pos(&option_node)));
                     }
                 }
 
-                Ok(Some(VarType::Options(OptionsVarType { options_array: display_names })))
+                let prefix = common_str_prefix(&display_names);
+                let enum_type = if cli.options_as_int || prefix.is_none() { 
+                    None 
+                } else { 
+                    Some(format!("{}_{}", cli.settings_master_name, common_str_prefix(&display_names).unwrap()))
+                };
+
+                let options_array = display_names.iter()
+                                    .map(|dn| format!("{}_{}", cli.settings_master_name, dn))
+                                    .collect::<Vec<_>>();
+
+                Ok(Some(VarType::Options(OptionsVarType { 
+                    options_array,
+                    enum_type
+                })))
             } else {
                 return Err(format!("No OptionsArray node found in var with OPTIONS displayType at {}", node_pos(var_node)));
             }
@@ -114,4 +133,36 @@ impl VarType {
             Err(format!("Unsupported display type: {}", display_type))
         }
     }
+}
+
+pub fn common_str_prefix(v: &Vec<String>) -> Option<String> {
+    // parsing should guarantee it won't be empty
+    if v.len() <= 1 {
+        return Some(v[0].to_owned());
+    }
+
+    let mut common_len = usize::MAX; 
+    for i in 0..v.len() - 1 {
+        let s1 = &v[i];
+        let s2 = &v[i + 1];
+        common_len = std::cmp::min(common_len, common_str_prefix_len(s1, s2));
+    }
+
+    if common_len == 0 {
+        return None;
+    }
+    
+    return Some(v[0][0..common_len].to_owned());
+}
+
+fn common_str_prefix_len(s1: &str, s2: &str) -> usize {
+    let min_len = std::cmp::min(s1.len(), s2.len());
+
+    for i in 0..min_len {
+        if s1.chars().nth(i) != s2.chars().nth(i) {
+            return i;
+        }
+    }
+
+    min_len
 }

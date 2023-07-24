@@ -11,6 +11,7 @@ pub struct SettingsMaster {
 }
 
 impl SettingsMaster {
+    //TODO make from_xml trait
     pub fn from_xml(xml_text: String, cli: &CLI) -> Result<SettingsMaster, String> {
         if let Err(err) = validate_name(&cli.settings_master_name) {
             return Err(format!("Invalid settings master name: {}", err));
@@ -78,7 +79,7 @@ impl ToWitcherScript for SettingsMaster {
 
     fn ws_code_body(&self) -> String {
         let mut code = String::new();
-
+        //TODO move to main
         code += &format!("// Code generated using Mod Settings Framework v{} by SpontanCombust & Aeltoth\n\n", option_env!("CARGO_PKG_VERSION").unwrap());
 
         code += &format!("class {} extends {}\n", self.name, MASTER_BASE_CLASS_NAME);

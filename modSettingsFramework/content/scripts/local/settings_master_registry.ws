@@ -26,7 +26,7 @@ class CSettingsMasterRegistry
 
         settingsEntry.settingsMaster = settingsMaster;
         settingsEntry.id = id;
-
+        //TODO log these actions
         m_settingsEntries.PushBack(settingsEntry);
     }
 

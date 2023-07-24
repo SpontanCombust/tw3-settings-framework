@@ -21,11 +21,12 @@ pub struct CLI {
     #[clap(long = "output", short = 'o', display_order=3)]
     pub output_ws_file_path: Option<String>,
 
-
+    //TODO allow multiple
     /// Prefix to omit from groups and vars when generating code. Case sensitive.
     #[clap(long, display_order=4)]
     pub omit_prefix: Option<String>,
 
+    //TODO allow multiple
     /// Keyword used in default presets' display_name.
     /// Used to deduce IDs of default presets for config groups so they can be used in ResetToDefault() methods.
     /// If won't find default preset or any preset at that will use 0 as the preset ID.
@@ -37,5 +38,12 @@ pub struct CLI {
     /// After reading from or before writing to user config values will no longer be checked if they are valid,
     /// i.e. if slider value is in a specified range.
     #[clap(long, display_order=6)]
-    pub no_var_validation: bool
+    pub no_var_validation: bool,
+
+    //TODO pub options_unique_enums: bool,
+
+    /// Treats options vars as regular ints instead of creating custom enum types for them
+    /// This essentially brings back the behaviour from before v0.5
+    #[clap(long, display_order=7)]
+    pub options_as_int: bool
 }

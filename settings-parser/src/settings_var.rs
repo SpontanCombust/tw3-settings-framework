@@ -22,7 +22,7 @@ impl SettingsVar {
             return Err(format!("Invalid Var id {} at {}: {}", var_id, node_pos(var_node), err));
         }
         
-        let var_type = match VarType::from_xml(var_node) {
+        let var_type = match VarType::from_xml(var_node, cli) {
             Ok(vto) => match vto {
                 Some(vt) => vt,
                 None => return Ok(None),
@@ -47,7 +47,13 @@ impl ToWitcherScript for SettingsVar {
     fn ws_type_name(&self) -> String {
         match &self.var_type {
             VarType::Toggle => String::from("bool"),
-            VarType::Options(_) => String::from("int"),
+            VarType::Options(options) => {
+                if let Some(enum_type) = &options.enum_type {
+                    enum_type.to_owned()
+                } else {
+                    String::from("int")
+                }
+            },
             VarType::Slider(slider) => {
                 if slider.is_integral() {
                     String::from("int")
@@ -59,6 +65,24 @@ impl ToWitcherScript for SettingsVar {
     }
 
     fn ws_code_body(&self) -> String {
-        format!("var {} : {}", self.name, self.ws_type_name())
+        let mut code = String::new();
+
+        match &self.var_type {
+            VarType::Options(options) => {
+                if let Some(enum_type) = &options.enum_type {
+                    code += &format!("enum {}\n", enum_type);
+                    code += "{\n";
+
+                    for i in 0..options.options_array.len() {
+                        code += &format!("\t{} = {},\n", options.options_array[i], i);
+                    }
+
+                    code += "}\n";
+                }
+            },
+            _ => {}
+        }
+
+        code
     }
 }
