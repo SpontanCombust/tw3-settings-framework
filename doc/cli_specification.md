@@ -1,3 +1,4 @@
+```
 TW3 Settings Framework Parser 0.4.0
 Parses a mod menu XML file and outputs witcher script code representing settings of this menu
 
@@ -43,3 +44,4 @@ OPTIONS:
 
     -V, --version
             Print version information
+```
