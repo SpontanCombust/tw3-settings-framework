@@ -13,13 +13,13 @@ class ModDifficultySettingsBase extends ISettingsMaster
 		super.Init();
 	}
 
-	public /* override */ function ValidateValues() : void
+	public /* override */ function ValidateSettings() : void
 	{
 		general.healthMultip = ClampF(general.healthMultip, 0, 2);
 		general.dmgMultip = ClampF(general.dmgMultip, 0, 2);
 
 
-		super.ValidateValues();
+		super.ValidateSettings();
 	}
 
 	public /* override */ function ReadSettings() : void
@@ -32,7 +32,7 @@ class ModDifficultySettingsBase extends ISettingsMaster
 		general.dmgMultip = StringToFloat(ReadSettingValue(config, 'DMgeneral', 'DMdmgMultip'), 0.0);
 
 
-		this.ValidateValues();
+		this.ValidateSettings();
 		super.ReadSettings();
 	}
 
@@ -41,7 +41,7 @@ class ModDifficultySettingsBase extends ISettingsMaster
 		var config : CInGameConfigWrapper;
 		config = theGame.GetInGameConfigWrapper();
 
-		this.ValidateValues();
+		this.ValidateSettings();
 
 		WriteSettingValue(config, 'DMgeneral', 'DMenabled', BoolToString(general.enabled));
 		WriteSettingValue(config, 'DMgeneral', 'DMhealthMultip', FloatToString(general.healthMultip));
