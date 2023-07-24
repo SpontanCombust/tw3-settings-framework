@@ -1,6 +1,6 @@
 use roxmltree::Node;
 
-use crate::{settings_var::SettingsVar, traits::{ToWitcherScript, FromXMLNode}, cli::CLI, utils::{validate_name, node_pos, id_to_script_name}};
+use crate::{settings_var::SettingsVar, traits::{ToWitcherScriptType, FromXmlNode, WitcherScript}, cli::CLI, utils::{validate_name, node_pos, id_to_script_name}};
 
 pub struct SettingsGroup {
     pub id: String,
@@ -10,7 +10,7 @@ pub struct SettingsGroup {
     pub vars: Vec<SettingsVar>
 }
 
-impl FromXMLNode for SettingsGroup {
+impl FromXmlNode for SettingsGroup {
     fn from_xml_node(node: &Node, cli: &CLI) -> Result<Option<Self>, String> {
         let tag_name = node.tag_name().name();
         if tag_name != "Group" {
@@ -37,7 +37,7 @@ impl FromXMLNode for SettingsGroup {
     
                 let id = group_id.to_owned();
                 let var_name = id_to_script_name(group_id, &cli.omit_prefix);
-                let class_name = format!("{}_{}", cli.settings_master_name, var_name); //TODO camel case instead of underscore
+                let class_name = format!("{}_{}", cli.settings_master_name, var_name); //TODO styling modificator
                 let mut setting_vars = Vec::<SettingsVar>::new();
     
                 for var_node in &var_nodes {
@@ -83,41 +83,33 @@ const SETTINGS_GROUP_PARENT_CLASS: &str = "ISettingsGroup";
 const SETTINGS_GROUP_ID_VAR_NAME: &str = "id";
 const SETTINGS_GROUP_DEFAULT_PRESET_VAR_NAME: &str = "defaultPresetIndex";
 
-impl ToWitcherScript for SettingsGroup {
+impl ToWitcherScriptType for SettingsGroup {
     fn ws_type_name(&self) -> String {
         self.class_name.clone()
     }
 
-    fn ws_type_definition(&self, buffer: &mut String) -> bool {
-        buffer.push_str(&format!("class {} extends {}\n", self.ws_type_name(), SETTINGS_GROUP_PARENT_CLASS));
-        buffer.push_str("{\n");
+    fn ws_type_definition(&self, buffer: &mut WitcherScript) -> bool {
+        buffer.push_line(&format!("class {} extends {}", self.ws_type_name(), SETTINGS_GROUP_PARENT_CLASS));
+        buffer.push_indent("{");
 
-        buffer.push_str(&group_class_variables(self));
+        group_class_variables(self, buffer);
+        
+        buffer.new_line();
+        group_default_variable_values(self, buffer);
 
-        buffer.push_str("\n");
-        buffer.push_str(&group_default_variable_values(self));
-
-        buffer.push_str("}\n");
+        buffer.pop_indent("}");
 
         true
     }
 }
 
-fn group_class_variables(group: &SettingsGroup) -> String {
-    let mut code = String::new();
-
+fn group_class_variables(group: &SettingsGroup, buffer: &mut WitcherScript) {
     for var in &group.vars {
-        code += &format!("\tpublic var {} : {};\n", var.var_name, var.ws_type_name());
+        buffer.push_line(&format!("public var {} : {};", var.var_name, var.ws_type_name()));
     }
-
-    return code;
 }
 
-fn group_default_variable_values(group: &SettingsGroup) -> String {
-    let mut code = String::new();
-
-    code += &format!("\tdefault {} = '{}';\n", SETTINGS_GROUP_ID_VAR_NAME, group.id);
-    code += &format!("\tdefault {} = {};\n", SETTINGS_GROUP_DEFAULT_PRESET_VAR_NAME, group.default_preset_index.unwrap_or(0));
-
-    return code;
+fn group_default_variable_values(group: &SettingsGroup, buffer: &mut WitcherScript) {
+    buffer.push_line(&format!("default {} = '{}';", SETTINGS_GROUP_ID_VAR_NAME, group.id))
+          .push_line(&format!("default {} = {};", SETTINGS_GROUP_DEFAULT_PRESET_VAR_NAME, group.default_preset_index.unwrap_or(0)));
 }

@@ -1,6 +1,6 @@
 use roxmltree::Node;
 
-use crate::{utils::{node_pos, id_to_script_name, validate_name}, cli::CLI, traits::FromXMLNode};
+use crate::{utils::{node_pos, id_to_script_name, validate_name}, cli::CLI, traits::FromXmlNode};
 
 #[derive(Debug)]
 pub enum VarType {
@@ -17,7 +17,7 @@ pub enum VarType {
 }
 
 
-impl FromXMLNode for VarType {
+impl FromXmlNode for VarType {
     fn from_xml_node(node: &Node, cli: &CLI) -> Result<Option<Self>, String> {
         let tag_name = node.tag_name().name();
         if tag_name != "Var" {

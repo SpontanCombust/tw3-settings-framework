@@ -1,6 +1,6 @@
 use roxmltree::Node;
 
-use crate::{var_type::VarType, traits::{ToWitcherScript, FromXMLNode}, cli::CLI, utils::{node_pos, validate_name, id_to_script_name, is_integral_range}};
+use crate::{var_type::VarType, traits::{ToWitcherScriptType, FromXmlNode, WitcherScript}, cli::CLI, utils::{node_pos, validate_name, id_to_script_name, is_integral_range}};
 
 pub struct SettingsVar {
     pub id: String,
@@ -8,7 +8,7 @@ pub struct SettingsVar {
     pub var_type: VarType
 }
 
-impl FromXMLNode for SettingsVar {
+impl FromXmlNode for SettingsVar {
     fn from_xml_node(node: &Node, cli: &CLI) -> Result<Option<Self>, String> {
         let tag_name = node.tag_name().name();
         if tag_name != "Var" {
@@ -40,7 +40,7 @@ impl FromXMLNode for SettingsVar {
 
 
 
-impl ToWitcherScript for SettingsVar {
+impl ToWitcherScriptType for SettingsVar {
     fn ws_type_name(&self) -> String {
         match &self.var_type {
             VarType::Toggle => String::from("bool"),
@@ -61,18 +61,18 @@ impl ToWitcherScript for SettingsVar {
         }
     }
 
-    fn ws_type_definition(&self, buffer: &mut String) -> bool {
+    fn ws_type_definition(&self, buffer: &mut WitcherScript) -> bool {
         match &self.var_type {
             VarType::Options {options_array, enum_type} => {
                 if let Some(enum_type) = &enum_type {
-                    buffer.push_str(&format!("enum {}\n", enum_type));
-                    buffer.push_str("{\n");
+                    buffer.push_line(&format!("enum {}", enum_type))
+                          .push_indent("{");
                     
                     for i in 0..options_array.len() {
-                        buffer.push_str(&format!("\t{} = {},\n", options_array[i], i));
+                        buffer.push_line(&format!("{} = {},", options_array[i], i));
                     }
 
-                    buffer.push_str("}\n");
+                    buffer.pop_indent("}");
                     true
                 } else {
                     false

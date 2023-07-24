@@ -5,6 +5,7 @@ mod settings_master;
 mod cli;
 mod utils;
 mod traits;
+mod indented_document;
 
 use std::{fs::OpenOptions, io::{Read, Write}, path::{Path, PathBuf}};
 
@@ -12,9 +13,9 @@ use clap::Parser;
 use cli::CLI;
 use roxmltree::Document;
 use settings_master::SettingsMaster;
-use traits::FromXMLNode;
+use traits::FromXmlNode;
 
-use crate::traits::ToWitcherScript;
+use crate::traits::{ToWitcherScriptType, WitcherScript};
 
 
 fn main() -> Result<(), String>{
@@ -71,26 +72,28 @@ fn main() -> Result<(), String>{
         match SettingsMaster::from_xml_node(&root_node, &cli) {
             Ok(master) => {
                 let master = master.unwrap();
-                let mut code = String::new();
 
-                code += &format!("// Code generated using Mod Settings Framework v{} by SpontanCombust & Aeltoth\n\n", option_env!("CARGO_PKG_VERSION").unwrap());
+                let mut ws = WitcherScript::new();
+
+                ws.push_line(&format!("// Code generated using Mod Settings Framework v{} by SpontanCombust & Aeltoth", option_env!("CARGO_PKG_VERSION").unwrap()))
+                  .new_line();
     
-                master.ws_type_definition(&mut code);
-                code += "\n";
+                master.ws_type_definition(&mut ws);
+                ws.new_line();
     
                 for group in master.groups {
-                    if group.ws_type_definition(&mut code) {
-                        code += "\n";
+                    if group.ws_type_definition(&mut ws) {
+                        ws.new_line();
                     }
     
                     for var in group.vars {
-                        if var.ws_type_definition(&mut code) {
-                            code += "\n";
+                        if var.ws_type_definition(&mut ws) {
+                            ws.new_line();
                         }
                     }
                 }
     
-                if let Err(e) = ws_file.write_all(code.as_bytes()) {
+                if let Err(e) = ws_file.write_all(ws.text.as_bytes()) {
                     return Err(format!("Error writing witcher script output file: {}", e));
                 }
     
