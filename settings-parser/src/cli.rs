@@ -34,12 +34,12 @@ pub struct CLI {
     pub default_preset_keyword: String,
 
     /// Disables the generation of code for value correction.
-    /// After reading from or before writing to user config values will no longer be checked if they are valid,
-    /// i.e. if slider value is in a specified range.
+    /// After reading from or before writing to user config values will no longer be checked if they adhere to the XML,
+    /// e.g. if slider value is in a specified range.
     #[clap(long, display_order=6)]
     pub no_var_validation: bool,
 
-    //TODO pub options_unique_enums: bool,
+    //TODO pub enum_optimization: bool,
 
     /// Treats options vars as regular ints instead of creating custom enum types for them
     /// This essentially brings back the behaviour from before v0.5

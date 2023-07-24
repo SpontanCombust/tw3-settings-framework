@@ -1,43 +1,40 @@
 use roxmltree::Node;
 
-use crate::{var_type::VarType, to_witcher_script::ToWitcherScript, cli::CLI, utils::{node_pos, validate_name, id_to_script_name}};
+use crate::{var_type::VarType, traits::{ToWitcherScript, FromXMLNode}, cli::CLI, utils::{node_pos, validate_name, id_to_script_name, is_integral_range}};
 
 pub struct SettingsVar {
     pub id: String,
-    pub name: String,
+    pub var_name: String,
     pub var_type: VarType
 }
 
-impl SettingsVar {
-    pub fn from_xml(var_node: &Node, group_id: &str, cli: &CLI) -> Result<Option<SettingsVar>, String> {
-        let var_id = match var_node.attribute("id") {
+impl FromXMLNode for SettingsVar {
+    fn from_xml_node(node: &Node, cli: &CLI) -> Result<Option<Self>, String> {
+        let tag_name = node.tag_name().name();
+        if tag_name != "Var" {
+            return Err(format!("Wrong XML node. Expected Var, received {}", tag_name))
+        }
+
+        let var_id = match node.attribute("id") {
             Some(id) => id,
             None => {
-                println!("Var node without id found in Group {} at {}", group_id, node_pos(var_node));
-                return Ok(None);
+                return Err(format!("Var node without id found at {}", node_pos(node)));
             }
         };
     
         if let Err(err) = validate_name(var_id) {
-            return Err(format!("Invalid Var id {} at {}: {}", var_id, node_pos(var_node), err));
+            return Err(format!("Invalid Var id {} at {}: {}", var_id, node_pos(node), err));
         }
         
-        let var_type = match VarType::from_xml(var_node, cli) {
-            Ok(vto) => match vto {
-                Some(vt) => vt,
-                None => return Ok(None),
-            },
-            Err(err) => {
-                println!("Error parsing Var node's display_type in Group {} at {}: {}", group_id, node_pos(var_node), err);
-                return Ok(None);
-            }
-        };
-    
-        return Ok(Some(SettingsVar {
-            id: var_id.to_owned(),
-            name: id_to_script_name(var_id, &cli.omit_prefix),
-            var_type: var_type
-        }));
+        if let Some(var_type) = VarType::from_xml_node(node, cli)? {
+            Ok(Some(SettingsVar {
+                id: var_id.to_owned(),
+                var_name: id_to_script_name(var_id, &cli.omit_prefix),
+                var_type
+            }))
+        } else {
+            Ok(None)
+        }
     }
 }
 
@@ -47,15 +44,15 @@ impl ToWitcherScript for SettingsVar {
     fn ws_type_name(&self) -> String {
         match &self.var_type {
             VarType::Toggle => String::from("bool"),
-            VarType::Options(options) => {
-                if let Some(enum_type) = &options.enum_type {
+            VarType::Options {enum_type, ..} => {
+                if let Some(enum_type) = &enum_type {
                     enum_type.to_owned()
                 } else {
                     String::from("int")
                 }
             },
-            VarType::Slider(slider) => {
-                if slider.is_integral() {
+            VarType::Slider {min, max, div} => {
+                if is_integral_range(*min, *max, *div) {
                     String::from("int")
                 } else {
                     String::from("float")
@@ -64,25 +61,24 @@ impl ToWitcherScript for SettingsVar {
         }
     }
 
-    fn ws_code_body(&self) -> String {
-        let mut code = String::new();
-
+    fn ws_type_definition(&self, buffer: &mut String) -> bool {
         match &self.var_type {
-            VarType::Options(options) => {
-                if let Some(enum_type) = &options.enum_type {
-                    code += &format!("enum {}\n", enum_type);
-                    code += "{\n";
-
-                    for i in 0..options.options_array.len() {
-                        code += &format!("\t{} = {},\n", options.options_array[i], i);
+            VarType::Options {options_array, enum_type} => {
+                if let Some(enum_type) = &enum_type {
+                    buffer.push_str(&format!("enum {}\n", enum_type));
+                    buffer.push_str("{\n");
+                    
+                    for i in 0..options_array.len() {
+                        buffer.push_str(&format!("\t{} = {},\n", options_array[i], i));
                     }
 
-                    code += "}\n";
+                    buffer.push_str("}\n");
+                    true
+                } else {
+                    false
                 }
             },
-            _ => {}
+            _ => false
         }
-
-        code
     }
 }

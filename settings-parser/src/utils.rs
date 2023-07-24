@@ -28,3 +28,7 @@ pub(crate) fn id_to_script_name(id: &str, omit_prefixes: &Vec<String>) -> String
 
     id.to_string()
 }
+
+pub(crate) fn is_integral_range(min: i32, max: i32, div: i32) -> bool {
+    (max - min) % div == 0
+} 

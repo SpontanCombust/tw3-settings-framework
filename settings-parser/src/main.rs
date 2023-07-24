@@ -2,17 +2,19 @@ mod var_type;
 mod settings_var;
 mod settings_group;
 mod settings_master;
-mod to_witcher_script;
 mod cli;
 mod utils;
+mod traits;
 
 use std::{fs::OpenOptions, io::{Read, Write}, path::{Path, PathBuf}};
 
 use clap::Parser;
 use cli::CLI;
+use roxmltree::Document;
 use settings_master::SettingsMaster;
+use traits::FromXMLNode;
 
-use crate::to_witcher_script::ToWitcherScript;
+use crate::traits::ToWitcherScript;
 
 
 fn main() -> Result<(), String>{
@@ -28,6 +30,7 @@ fn main() -> Result<(), String>{
     let mut xml_file = match xml_file {
         Ok(f) => f,
         Err(e) => {
+            //TODO these errors might be to verbose, the last message is the only important one
             return Err(format!("Error opening menu xml file: {}", e));
         }
     };
@@ -57,37 +60,45 @@ fn main() -> Result<(), String>{
         return Err(format!("Error reading menu xml file: {}", e));
     };
 
-    match SettingsMaster::from_xml(xml_text, &cli) {
-        Ok(master) => {
-            let mut code = String::new();
+    let doc = match Document::parse(&xml_text) {
+        Ok(doc) => doc,
+        Err(err) => {
+            return Err(format!("Document parsing error: {}", err))
+        }
+    };
 
-            code += &master.ws_code_body();
-            code += "\n";
+    if let Some(root_node) = doc.descendants().find(|n| n.has_tag_name("UserConfig")) {
+        match SettingsMaster::from_xml_node(&root_node, &cli) {
+            Ok(master) => {
+                let master = master.unwrap();
+                let mut code = String::new();
 
-            for group in master.groups {
-                let group_body = group.ws_code_body();
-                if !group_body.is_empty() {
-                    code += &group.ws_code_body();
-                    code += "\n";
-                }
-
-                for var in group.vars {
-                    let var_body = var.ws_code_body();
-                    if !var_body.is_empty() {
-                        code += &var_body;
+                code += &format!("// Code generated using Mod Settings Framework v{} by SpontanCombust & Aeltoth\n\n", option_env!("CARGO_PKG_VERSION").unwrap());
+    
+                master.ws_type_definition(&mut code);
+                code += "\n";
+    
+                for group in master.groups {
+                    if group.ws_type_definition(&mut code) {
                         code += "\n";
                     }
+    
+                    for var in group.vars {
+                        if var.ws_type_definition(&mut code) {
+                            code += "\n";
+                        }
+                    }
                 }
+    
+                if let Err(e) = ws_file.write_all(code.as_bytes()) {
+                    return Err(format!("Error writing witcher script output file: {}", e));
+                }
+    
+                println!("Successfully parsed {} into {}", cli.xml_file_path, ws_path.to_str().unwrap_or(""));
             }
-
-            if let Err(e) = ws_file.write_all(code.as_bytes()) {
-                return Err(format!("Error writing witcher script output file: {}", e));
+            Err(e) => {
+                return Err(format!("Error parsing menu xml file: {}", e));
             }
-
-            println!("Successfully parsed {} into {}", cli.xml_file_path, ws_path.to_str().unwrap_or(""));
-        }
-        Err(e) => {
-            return Err(format!("Error parsing menu xml file: {}", e));
         }
     }
 

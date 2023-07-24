@@ -1,51 +1,40 @@
 use roxmltree::Node;
 
-use crate::{utils::{node_pos, id_to_script_name, validate_name}, cli::CLI};
+use crate::{utils::{node_pos, id_to_script_name, validate_name}, cli::CLI, traits::FromXMLNode};
 
 #[derive(Debug)]
 pub enum VarType {
     Toggle,
-    Options(OptionsVarType),
-    Slider(SliderVarType)
-    // SubtleSeparator not included as it's just a cosmetic var
-}
-
-
-#[derive(Debug)]
-pub struct OptionsVarType {
-    pub options_array: Vec<String>,
-    pub enum_type: Option<String>
-}
-
-
-#[derive(Debug)]
-pub struct SliderVarType {
-    pub min: i32,
-    pub max: i32,
-    pub div: i32
-}
-
-impl SliderVarType {
-    pub fn is_integral(&self) -> bool {
-        (self.max - self.min) % self.div == 0
+    Options {
+        options_array: Vec<String>,
+        enum_type: Option<String>
+    },
+    Slider {
+        min: i32,
+        max: i32,
+        div: i32
     }
 }
 
 
-impl VarType {
-    pub fn from_xml(var_node: &Node, cli: &CLI) -> Result<Option<VarType>, String> {
-        let display_type = match var_node.attribute("displayType") {
+impl FromXMLNode for VarType {
+    fn from_xml_node(node: &Node, cli: &CLI) -> Result<Option<Self>, String> {
+        let tag_name = node.tag_name().name();
+        if tag_name != "Var" {
+            return Err(format!("Wrong XML node. Expected Var, received {}", tag_name))
+        }
+
+        let display_type = match node.attribute("displayType") {
             Some(dt) => dt,
             None => {
-                println!("Var node without displayType attribute found in at {}", node_pos(var_node));
-                return Ok(None);
+                return Err(format!("Var node without displayType attribute found at {}", node_pos(node)));
             }
         };
 
         if display_type == "TOGGLE" {
             return Ok(Some(VarType::Toggle));
         } else if display_type == "OPTIONS" {
-            if let Some(options_array_node) = var_node.children().find(|ch| ch.has_tag_name("OptionsArray")) {
+            if let Some(options_array_node) = node.children().find(|ch| ch.has_tag_name("OptionsArray")) {
                 let option_nodes = options_array_node.children()
                     .filter(|n| n.has_tag_name("Option"))
                     .collect::<Vec<_>>();
@@ -78,12 +67,12 @@ impl VarType {
                                     .map(|dn| format!("{}_{}", cli.settings_master_name, dn))
                                     .collect::<Vec<_>>();
 
-                Ok(Some(VarType::Options(OptionsVarType { 
+                Ok(Some(VarType::Options { 
                     options_array,
                     enum_type
-                })))
+                }))
             } else {
-                return Err(format!("No OptionsArray node found in var with OPTIONS displayType at {}", node_pos(var_node)));
+                return Err(format!("No OptionsArray node found in var with OPTIONS displayType at {}", node_pos(node)));
             }
         } 
         else if &display_type[0..6] == "SLIDER" {
@@ -125,7 +114,11 @@ impl VarType {
                     return Err(format!("Slider min value is greater than max value: {}", min));
                 }
 
-                Ok(Some(VarType::Slider(SliderVarType { min, max, div })))
+                Ok(Some(VarType::Slider { 
+                    min, 
+                    max, 
+                    div 
+                }))
             }
         } else if display_type == "SUBTLE_SEPARATOR" {
             Ok(None)

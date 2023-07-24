@@ -1,59 +1,55 @@
-use roxmltree::{Document, Node};
+use roxmltree::Node;
 
-use crate::{settings_group::SettingsGroup, to_witcher_script::ToWitcherScript, var_type::VarType, cli::CLI, utils::validate_name};
+use crate::{settings_group::SettingsGroup, traits::{ToWitcherScript, FromXMLNode}, var_type::VarType, cli::CLI, utils::{validate_name, is_integral_range}};
 
-#[derive(Default)]
 pub struct SettingsMaster {
-    pub name: String,
+    pub class_name: String,
     pub mod_version: String,
     pub groups: Vec<SettingsGroup>,
     pub validate_values: bool
 }
 
-impl SettingsMaster {
-    //TODO make from_xml trait
-    pub fn from_xml(xml_text: String, cli: &CLI) -> Result<SettingsMaster, String> {
+impl FromXMLNode for SettingsMaster {
+    fn from_xml_node(node: &Node, cli: &CLI) -> Result<Option<Self>, String> {
+        let tag_name = node.tag_name().name();
+        if tag_name != "UserConfig" {
+            return Err(format!("Wrong XML node. Expected UserConfig, received {}", tag_name))
+        }
+
         if let Err(err) = validate_name(&cli.settings_master_name) {
             return Err(format!("Invalid settings master name: {}", err));
         }
-    
-        let doc = match Document::parse(&xml_text) {
-            Ok(doc) => doc,
-            Err(err) => {
-                return Err(err.to_string())
-            }
-        };
         
-        let mut master = SettingsMaster::default();
-        master.name = cli.settings_master_name.clone();
-        master.mod_version = cli.mod_version.clone();
-        master.validate_values = !cli.no_var_validation;
+        let class_name = cli.settings_master_name.clone();
+        let mod_version = cli.mod_version.clone();
+        let validate_values = !cli.no_var_validation;
+        let mut groups = Vec::<SettingsGroup>::new();
     
-        if let Some(root_node) = doc.descendants().find(|n| n.has_tag_name("UserConfig")) {
-            let group_nodes: Vec<Node> = root_node.children().filter(|n| n.has_tag_name("Group")).collect();
-    
-            if group_nodes.is_empty() {
-                return Err("No Groups found inside UserConfig".to_string());
-            }
-            
-            for group_node in &group_nodes {
-                match SettingsGroup::from_xml(group_node, cli) {
-                    Ok(group_opt) => {
-                        if let Some(group) = group_opt {
-                            master.groups.push(group);
-                        }
+        let group_nodes: Vec<Node> = node.children().filter(|n| n.has_tag_name("Group")).collect();
+
+        if group_nodes.is_empty() {
+            return Err("No Groups found inside UserConfig".to_string());
+        }
+        
+        for group_node in &group_nodes {
+            match SettingsGroup::from_xml_node(group_node, cli) {
+                Ok(group_opt) => {
+                    if let Some(group) = group_opt {
+                        groups.push(group);
                     }
-                    Err(err) => {
-                        return Err(err);
-                    }
+                }
+                Err(err) => {
+                    return Err(err);
                 }
             }
         }
-        else {
-            return Err("No UserConfig root node found".to_string());
-        }
-    
-        return Ok(master);
+            
+        return Ok(Some(SettingsMaster {
+            class_name,
+            mod_version,
+            groups,
+            validate_values,
+        }));
     }
 }
 
@@ -74,146 +70,123 @@ const GROUP_RESET_SETTINGS_TO_DEFAULT_FUNC_NAME: &str = "ResetToDefault";
 
 impl ToWitcherScript for SettingsMaster {
     fn ws_type_name(&self) -> String {
-        self.name.clone()
+        self.class_name.clone()
     }
 
-    fn ws_code_body(&self) -> String {
-        let mut code = String::new();
-        //TODO move to main
-        code += &format!("// Code generated using Mod Settings Framework v{} by SpontanCombust & Aeltoth\n\n", option_env!("CARGO_PKG_VERSION").unwrap());
+    fn ws_type_definition(&self, buffer: &mut String) -> bool {
+        buffer.push_str(&format!("class {} extends {}\n", self.class_name, MASTER_BASE_CLASS_NAME));
+        buffer.push_str("{\n");
 
-        code += &format!("class {} extends {}\n", self.name, MASTER_BASE_CLASS_NAME);
-        code += "{\n";
-
-        code += &default_variable_values(self);
+        default_variable_values(self, buffer);
         
-        code += "\n";
-        code += &settings_class_variables(self);
+        buffer.push_str("\n");
+        settings_class_variables(self, buffer);
 
-        code += "\n";
-        code += &init_function(self);
+        buffer.push_str("\n");
+        init_function(self, buffer);
 
         if self.validate_values {
-            code += "\n";
-            code += &validate_values_function(self);
+            buffer.push_str("\n");
+            validate_values_function(self, buffer);
         }
         
-        code += "\n";
-        code += &read_settings_function(self);
+        buffer.push_str("\n");
+        read_settings_function(self, buffer);
 
-        code += "\n";
-        code += &write_settings_function(self);
+        buffer.push_str("\n");
+        write_settings_function(self, buffer);
 
-        code += "\n";
-        code += &reset_settings_to_default_function(self);
+        buffer.push_str("\n");
+        reset_settings_to_default_function(self, buffer);
 
-        code += "\n";
-        code += &should_reset_to_default_on_init_function(self);
+        buffer.push_str("\n");
+        should_reset_to_default_on_init_function(self, buffer);
 
-        code += "}\n";
+        buffer.push_str("}\n");
 
-        code
+        true
     }
 }
 
-fn settings_class_variables(master: &SettingsMaster) -> String {
-    let mut code = String::new();
+fn settings_class_variables(master: &SettingsMaster, buffer: &mut String) {
+    for group in &master.groups {
+        buffer.push_str(&format!("\tpublic var {} : {};\n", group.var_name, group.ws_type_name()));
+    }
+}
+
+fn default_variable_values(master: &SettingsMaster, buffer: &mut String) {
+    buffer.push_str(&format!("\tdefault {} = \"{}\";\n", MASTER_MOD_VERSION_VAR_NAME, master.mod_version));
+}
+
+fn init_function(master: &SettingsMaster, buffer: &mut String) {
+    buffer.push_str(&format!("\tpublic /* override */ function {}() : void\n", MASTER_INIT_FUNC_NAME));
+    buffer.push_str("\t{\n");
 
     for group in &master.groups {
-        code += &format!("\tpublic var {} : {};\n", group.name, group.ws_type_name());
+        buffer.push_str(&format!("\t\t{} = new {} in this; ", group.var_name, group.ws_type_name()));
+        buffer.push_str(&format!("{}.Init(this);\n", group.var_name));
     }
 
-    return code;
+    buffer.push_str("\n");
+    buffer.push_str(&format!("\t\tsuper.{}();\n", MASTER_INIT_FUNC_NAME));
+
+    buffer.push_str("\t}\n");
 }
 
-fn default_variable_values(master: &SettingsMaster) -> String {
-    let mut code = String::new();
-
-    code += &format!("\tdefault {} = \"{}\";\n", MASTER_MOD_VERSION_VAR_NAME, master.mod_version);
-
-    return code;
-}
-
-fn init_function(master: &SettingsMaster) -> String {
-    let mut code = String::new();
-
-    code += &format!("\tpublic /* override */ function {}() : void\n", MASTER_INIT_FUNC_NAME);
-    code += "\t{\n";
+fn validate_values_function(master: &SettingsMaster, buffer: &mut String) {
+    buffer.push_str(&format!("\tpublic /* override */ function {}() : void\n", MASTER_VALIDATE_VALUES_FUNC_NAME));
+    buffer.push_str("\t{\n");
 
     for group in &master.groups {
-        code += &format!("\t\t{} = new {} in this; ", group.name, group.ws_type_name());
-        code += &format!("{}.Init(this);\n", group.name);
-    }
-
-    code += "\n";
-    code += &format!("\t\tsuper.{}();\n", MASTER_INIT_FUNC_NAME);
-
-    code += "\t}\n";
-
-    return code;
-}
-
-fn validate_values_function(master: &SettingsMaster) -> String {
-    let mut code = String::new();
-
-    code += &format!("\tpublic /* override */ function {}() : void\n", MASTER_VALIDATE_VALUES_FUNC_NAME);
-    code += "\t{\n";
-
-    for group in &master.groups {
-        let mut group_code = String::new();
+        let mut group_has_validation = false;
         for var in &group.vars {
             let validator = match &var.var_type {
-                VarType::Options(options)   => Some(format!("{g}.{v} = Clamp({g}.{v}, {min}, {max});", 
-                                                        g = group.name, 
-                                                        v = var.name, 
-                                                        min = 0, 
-                                                        max = options.options_array.len() - 1)),
-                VarType::Slider(slider)     => Some(format!("{g}.{v} = {func}({g}.{v}, {min}, {max});",
-                                                        g = group.name,
-                                                        v = var.name,
-                                                        func = if slider.is_integral() { "Clamp" } else { "ClampF" },
-                                                        min = slider.min,
-                                                        max = slider.max)),
+                VarType::Options { options_array, .. } => Some(format!("{g}.{v} = Clamp({g}.{v}, {min}, {max});", 
+                                                                         g = group.var_name, 
+                                                                         v = var.var_name, 
+                                                                         min = 0, 
+                                                                         max = options_array.len() - 1)),
+                VarType::Slider { min, max, div } => Some(format!("{g}.{v} = {func}({g}.{v}, {min}, {max});",
+                                                                    g = group.var_name,
+                                                                    v = var.var_name,
+                                                                    func = if is_integral_range(*min, *max, *div) { "Clamp" } else { "ClampF" })),
                 _ => None
             };
 
             if let Some(validator) = validator {
-                group_code += &format!("\t\t{}\n", validator);
+                buffer.push_str(&format!("\t\t{}\n", validator));
+                group_has_validation = true;
             }
         }
 
-        if !group_code.is_empty() {
-            code += &format!("{}\n", group_code);
+        if group_has_validation {
+            buffer.push_str("\n");
         }
     }
 
-    code += "\n";
-    code += &format!("\t\tsuper.{}();\n", MASTER_VALIDATE_VALUES_FUNC_NAME);
+    buffer.push_str("\n");
+    buffer.push_str(&format!("\t\tsuper.{}();\n", MASTER_VALIDATE_VALUES_FUNC_NAME));
 
-    code += "\t}\n";
-
-    return code;
+    buffer.push_str("\t}\n");
 }
 
-fn read_settings_function(master: &SettingsMaster) -> String {
-    let mut code = String::new();
+fn read_settings_function(master: &SettingsMaster, buffer: &mut String) {
+    buffer.push_str(&format!("\tpublic /* override */ function {}() : void\n", MASTER_READ_SETTINGS_FUNC_NAME));
+    buffer.push_str("\t{\n");
 
-    code += &format!("\tpublic /* override */ function {}() : void\n", MASTER_READ_SETTINGS_FUNC_NAME);
-    code += "\t{\n";
-
-    code += "\t\tvar config : CInGameConfigWrapper;\n";
-    code += "\t\tconfig = theGame.GetInGameConfigWrapper();\n";
-    code += "\n";
+    buffer.push_str("\t\tvar config : CInGameConfigWrapper;\n");
+    buffer.push_str("\t\tconfig = theGame.GetInGameConfigWrapper();\n");
+    buffer.push_str("\n");
 
     for group in &master.groups {
         for var in &group.vars {
             let mut get_var_value = format!("{}(config, '{}', '{}')", MASTER_READ_SETTING_VALUE_FUNC_NAME, group.id, var.id);
 
             // surround with type cast if necessary
-            get_var_value = match &var.var_type {
-                VarType::Options(_) => format!("StringToInt({}, 0)", get_var_value),
-                VarType::Slider(slider) => {
-                    if slider.is_integral() {
+            get_var_value = match var.var_type {
+                VarType::Options {..} => format!("StringToInt({}, 0)", get_var_value),
+                VarType::Slider { min, max, div } => {
+                    if is_integral_range(min, max, div) {
                         format!("StringToInt({}, 0)", get_var_value)
                     } else {
                         format!("StringToFloat({}, 0.0)", get_var_value)
@@ -222,94 +195,81 @@ fn read_settings_function(master: &SettingsMaster) -> String {
                 VarType::Toggle => format!("StringToBool({})", get_var_value),
             };
 
-            code += &format!("\t\t{}.{} = {};\n", group.name, var.name, get_var_value);
+            buffer.push_str(&format!("\t\t{}.{} = {};\n", group.var_name, var.var_name, get_var_value));
         }
-        code += "\n";
+        buffer.push_str("\n");
     }
 
-    code += "\n";
+    buffer.push_str("\n");
     if master.validate_values {
-        code += &format!("\t\tthis.{}();\n", MASTER_VALIDATE_VALUES_FUNC_NAME);
+        buffer.push_str(&format!("\t\tthis.{}();\n", MASTER_VALIDATE_VALUES_FUNC_NAME));
     }
-    code += &format!("\t\tsuper.{}();\n", MASTER_READ_SETTINGS_FUNC_NAME);
+    buffer.push_str(&format!("\t\tsuper.{}();\n", MASTER_READ_SETTINGS_FUNC_NAME));
 
-    code += "\t}\n";
-
-    return code;
+    buffer.push_str("\t}\n");
 }
 
-fn write_settings_function(master: &SettingsMaster) -> String {
-    let mut code = String::new();
+fn write_settings_function(master: &SettingsMaster, buffer: &mut String) {
+    buffer.push_str(&format!("\tpublic /* override */ function {}() : void\n", MASTER_WRITE_SETTINGS_FUNC_NAME));
+    buffer.push_str("\t{\n");
 
-    code += &format!("\tpublic /* override */ function {}() : void\n", MASTER_WRITE_SETTINGS_FUNC_NAME);
-    code += "\t{\n";
-
-    code += "\t\tvar config : CInGameConfigWrapper;\n";
-    code += "\t\tconfig = theGame.GetInGameConfigWrapper();\n";
-    code += "\n";
+    buffer.push_str("\t\tvar config : CInGameConfigWrapper;\n");
+    buffer.push_str("\t\tconfig = theGame.GetInGameConfigWrapper();\n");
+    buffer.push_str("\n");
 
     if master.validate_values {
-        code += &format!("\t\tthis.{}();\n", MASTER_VALIDATE_VALUES_FUNC_NAME);
-        code += "\n";
+        buffer.push_str(&format!("\t\tthis.{}();\n", MASTER_VALIDATE_VALUES_FUNC_NAME));
+        buffer.push_str("\n");
     }
 
     for group in &master.groups {
         for var in &group.vars {
-            let var_value_str = match &var.var_type {
-                VarType::Options(_) => format!("IntToString({}.{})", group.name, var.name),
-                VarType::Slider(slider) => {
-                    if slider.is_integral() {
-                        format!("IntToString({}.{})", group.name, var.name)
+            let var_value_str = match var.var_type {
+                VarType::Options {..} => format!("IntToString({}.{})", group.var_name, var.var_name),
+                VarType::Slider { min, max, div } => {
+                    if is_integral_range(min, max, div) {
+                        format!("IntToString({}.{})", group.var_name, var.var_name)
                     } else {
-                        format!("FloatToString({}.{})", group.name, var.name)
+                        format!("FloatToString({}.{})", group.var_name, var.var_name)
                     }
                 }
-                VarType::Toggle => format!("BoolToString({}.{})", group.name, var.name),
+                VarType::Toggle => format!("BoolToString({}.{})", group.var_name, var.var_name),
             };
 
-            code += &format!("\t\t{}(config, '{}', '{}', {});\n", MASTER_WRITE_SETTING_VALUE_FUNC_NAME, group.id, var.id, var_value_str);
+            buffer.push_str(&format!("\t\t{}(config, '{}', '{}', {});\n", MASTER_WRITE_SETTING_VALUE_FUNC_NAME, group.id, var.id, var_value_str));
         }
-        code += "\n";
+        buffer.push_str("\n");
     }
 
-    code += "\n";
-    code += &format!("\t\tsuper.{}();\n", MASTER_WRITE_SETTINGS_FUNC_NAME);
+    buffer.push_str("\n");
+    buffer.push_str(&format!("\t\tsuper.{}();\n", MASTER_WRITE_SETTINGS_FUNC_NAME));
 
-    code += "\t}\n";
-
-    return code;
+    buffer.push_str("\t}\n");
 }
 
-fn reset_settings_to_default_function(master: &SettingsMaster) -> String {
-    let mut code = String::new();
-
-    code += &format!("\tpublic /* override */ function {}() : void\n", MASTER_RESET_SETTINGS_TO_DEFAULT_FUNC_NAME);
-    code += "\t{\n";
+fn reset_settings_to_default_function(master: &SettingsMaster, buffer: &mut String) {
+    buffer.push_str(&format!("\tpublic /* override */ function {}() : void\n", MASTER_RESET_SETTINGS_TO_DEFAULT_FUNC_NAME));
+    buffer.push_str("\t{\n");
 
     for group in &master.groups {
-        code += &format!("\t\t{}.{}();\n", group.name, GROUP_RESET_SETTINGS_TO_DEFAULT_FUNC_NAME);
+        buffer.push_str(&format!("\t\t{}.{}();\n", group.var_name, GROUP_RESET_SETTINGS_TO_DEFAULT_FUNC_NAME));
     }
 
-    code += "\t}\n";
-
-    return code;
+    buffer.push_str("\t}\n");
 }
 
-fn should_reset_to_default_on_init_function(master: &SettingsMaster) -> String {
-    let mut code = String::new();
-    code += &format!("\tpublic /* override */ function {}() : bool\n", MASTER_SHOULD_RESET_TO_DEFAULT_ON_INIT_FUNC_NAME);
-    code += "\t{\n";
+fn should_reset_to_default_on_init_function(master: &SettingsMaster, buffer: &mut String) {
+    buffer.push_str(&format!("\tpublic /* override */ function {}() : bool\n", MASTER_SHOULD_RESET_TO_DEFAULT_ON_INIT_FUNC_NAME));
+    buffer.push_str("\t{\n");
     
-    code += "\t\tvar config : CInGameConfigWrapper;\n";
-    code += "\t\tconfig = theGame.GetInGameConfigWrapper();\n";
-    code += "\n";
+    buffer.push_str("\t\tvar config : CInGameConfigWrapper;\n");
+    buffer.push_str("\t\tconfig = theGame.GetInGameConfigWrapper();\n");
+    buffer.push_str("\n");
      
     let group_id = &master.groups[0].id;
     let var_id = &master.groups[0].vars[0].id;
 
-    code += &format!("\t\treturn config.GetVarValue('{}','{}') == \"\";\n", group_id, var_id);
+    buffer.push_str(&format!("\t\treturn config.GetVarValue('{}','{}') == \"\";\n", group_id, var_id));
     
-    code += "\t}\n";
-
-    return code;
+    buffer.push_str("\t}\n");
 }
