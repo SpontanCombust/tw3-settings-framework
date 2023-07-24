@@ -19,12 +19,12 @@ pub(crate) fn node_pos(node: &Node) -> String {
     format!("line {}, column {}", pos.row, pos.col)
 }
 
-pub(crate) fn id_to_script_name(id: &str, omit_prefix: &Option<String>) -> String {
-    if let Some(prefix) = omit_prefix {
+pub(crate) fn id_to_script_name(id: &str, omit_prefixes: &Vec<String>) -> String {
+    for prefix in omit_prefixes {
         if id.starts_with(prefix) {
             return id[prefix.len()..].to_string();
         }
     } 
 
-    return id.to_string();
+    id.to_string()
 }

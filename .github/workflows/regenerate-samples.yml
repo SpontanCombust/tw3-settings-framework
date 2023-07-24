@@ -28,7 +28,7 @@ jobs:
           cargo run --release --  
           -f="../doc/mod-menu.xml"
           -o="../doc/mod-menu.ws"
-          --omit-prefix="MOD"
+          -p="MOD" -p="mod_"
           -m="MyModSettings"
           -v="1.23"
         working-directory: settings-parser
@@ -38,7 +38,7 @@ jobs:
           -f="../samples/DifficultyMod/bin/config/r4game/user_config_matrix/pc/modSettingsFrameworkSampleDifficultyMod.xml"
           -o="../samples/DifficultyMod/modSettingsFrameworkSampleDifficultyMod/content/scripts/local/difficulty_mod_base.ws"
           -m="ModDifficultySettingsBase"
-          --omit-prefix="DM"
+          -p="DM"
           --default-preset-keyword="DEFAULT"
           -v="1.1"
         working-directory: settings-parser

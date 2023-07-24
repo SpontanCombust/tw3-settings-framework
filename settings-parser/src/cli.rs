@@ -21,12 +21,11 @@ pub struct CLI {
     #[clap(long = "output", short = 'o', display_order=3)]
     pub output_ws_file_path: Option<String>,
 
-    //TODO allow multiple
     /// Prefix to omit from groups and vars when generating code. Case sensitive.
-    #[clap(long, display_order=4)]
-    pub omit_prefix: Option<String>,
+    /// Possible multiple cases.
+    #[clap(long, short = 'p', display_order=4)]
+    pub omit_prefix: Vec<String>,
 
-    //TODO allow multiple
     /// Keyword used in default presets' display_name.
     /// Used to deduce IDs of default presets for config groups so they can be used in ResetToDefault() methods.
     /// If won't find default preset or any preset at that will use 0 as the preset ID.
