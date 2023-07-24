@@ -19,7 +19,7 @@ abstract class ISettingsMaster
     }
 
     // Corrects values to ranges specified in the xml
-    public function ValidateValues() : void
+    public function ValidateSettings() : void
     {
         // generated child class will correct these values in this function
     }

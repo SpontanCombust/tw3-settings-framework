@@ -63,7 +63,7 @@ impl SettingsMaster {
 const MASTER_BASE_CLASS_NAME: &str = "ISettingsMaster";
 const MASTER_MOD_VERSION_VAR_NAME: &str = "modVersion";
 const MASTER_INIT_FUNC_NAME: &str = "Init";
-const MASTER_VALIDATE_VALUES_FUNC_NAME: &str = "ValidateValues";
+const MASTER_VALIDATE_VALUES_FUNC_NAME: &str = "ValidateSettings";
 const MASTER_READ_SETTINGS_FUNC_NAME: &str = "ReadSettings";
 const MASTER_READ_SETTING_VALUE_FUNC_NAME: &str = "ReadSettingValue";
 const MASTER_WRITE_SETTINGS_FUNC_NAME: &str = "WriteSettings";
