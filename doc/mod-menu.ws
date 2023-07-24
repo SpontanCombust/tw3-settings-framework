@@ -89,7 +89,7 @@ class MyModSettings extends ISettingsMaster
 
 class MyModSettings_tab1 extends ISettingsGroup
 {
-	public var option : int;
+	public var option : MyModSettings_mod_opt;
 	public var sliderFloat : float;
 	public var sliderInt : int;
 	public var toggle : bool;
@@ -97,6 +97,13 @@ class MyModSettings_tab1 extends ISettingsGroup
 
 	default id = 'MODtab1';
 	default defaultPresetIndex = 1;
+}
+
+enum MyModSettings_mod_opt
+{
+	MyModSettings_mod_opt1 = 0,
+	MyModSettings_mod_opt2 = 1,
+	MyModSettings_mod_opt2 = 2,
 }
 
 class MyModSettings_tab2subtab1 extends ISettingsGroup
