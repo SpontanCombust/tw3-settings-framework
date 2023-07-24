@@ -1,5 +1,4 @@
-```
-TW3 Settings Framework Parser 0.2.0
+TW3 Settings Framework Parser 0.4.0
 Parses a mod menu XML file and outputs witcher script code representing settings of this menu
 
 USAGE:
@@ -20,8 +19,9 @@ OPTIONS:
             Path of the WitcherScipt output file, by default it's made from the menu xml file name
             in the same directory
 
-        --omit-prefix <OMIT_PREFIX>
-            Prefix to omit from groups and vars when generating code. Case sensitive
+    -p, --omit-prefix <OMIT_PREFIX>
+            Prefix to omit from groups and vars when generating code. Case sensitive. Possible
+            multiple cases
 
         --default-preset-keyword <DEFAULT_PRESET_KEYWORD>
             Keyword used in default presets' display_name. Used to deduce IDs of default presets for
@@ -29,9 +29,17 @@ OPTIONS:
             preset or any preset at that will use 0 as the preset ID. Case insensitive [default:
             default]
 
+        --no-var-validation
+            Disables the generation of code for value correction. After reading from or before
+            writing to user config values will no longer be checked if they are valid, i.e. if
+            slider value is in a specified range
+
+        --options-as-int
+            Treats options vars as regular ints instead of creating custom enum types for them This
+            essentially brings back the behaviour from before v0.5
+
     -h, --help
             Print help information
 
     -V, --version
             Print version information
-```
