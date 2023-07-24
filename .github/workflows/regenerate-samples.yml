@@ -42,6 +42,9 @@ jobs:
           --default-preset-keyword="DEFAULT"
           -v="1.1"
         working-directory: settings-parser
+      - name: CLI specification
+        run: cargo run --release -- -h > "../doc/cli_specification.md"
+        working-directory: settings-parser
       - name: Check for changes in the project
         id: get_changes
         run: echo "changed=$(git status --porcelain | wc -l)" >> $GITHUB_OUTPUT
