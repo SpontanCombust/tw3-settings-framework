@@ -19,7 +19,7 @@ class MyModSettings extends ISettingsMaster
 
 	public /* override */ function ValidateSettings() : void
 	{
-		tab1.option = Clamp(tab1.option, 0, 2);
+		tab1.option = (MyModSettings_opt)Clamp((int)tab1.option, 0, 2);
 		tab1.sliderFloat = ClampF(tab1.sliderFloat, 0, 1);
 		tab1.sliderInt = Clamp(tab1.sliderInt, 0, 100);
 		tab1.version = ClampF(tab1.version, 0, 100);
@@ -34,7 +34,7 @@ class MyModSettings extends ISettingsMaster
 		var config : CInGameConfigWrapper;
 		config = theGame.GetInGameConfigWrapper();
 
-		tab1.option = StringToInt(ReadSettingValue(config, 'MODtab1', 'MODoption'), 0);
+		tab1.option = (MyModSettings_opt)StringToInt(ReadSettingValue(config, 'MODtab1', 'MODoption'), 0);
 		tab1.sliderFloat = StringToFloat(ReadSettingValue(config, 'MODtab1', 'MODsliderFloat'), 0.0);
 		tab1.sliderInt = StringToInt(ReadSettingValue(config, 'MODtab1', 'MODsliderInt'), 0);
 		tab1.toggle = StringToBool(ReadSettingValue(config, 'MODtab1', 'MODtoggle'));
@@ -55,7 +55,7 @@ class MyModSettings extends ISettingsMaster
 
 		this.ValidateSettings();
 
-		WriteSettingValue(config, 'MODtab1', 'MODoption', IntToString(tab1.option));
+		WriteSettingValue(config, 'MODtab1', 'MODoption', IntToString((int)tab1.option));
 		WriteSettingValue(config, 'MODtab1', 'MODsliderFloat', FloatToString(tab1.sliderFloat));
 		WriteSettingValue(config, 'MODtab1', 'MODsliderInt', IntToString(tab1.sliderInt));
 		WriteSettingValue(config, 'MODtab1', 'MODtoggle', BoolToString(tab1.toggle));
