@@ -140,11 +140,12 @@ fn validate_values_function(master: &SettingsMaster, buffer: &mut WitcherScript)
         let mut group_has_validation = false;
         for var in &group.vars {
             let validator = match &var.var_type {
-                VarType::Options { options_array, .. } => Some(format!("{g}.{v} = Clamp({g}.{v}, {min}, {max});", //FIXME no cast between enum and int
-                                                                        g = group.var_name, 
-                                                                        v = var.var_name, 
-                                                                        min = 0, 
-                                                                        max = options_array.len() - 1)),
+                VarType::Options { options_array, enum_type } => Some(format!("{g}.{v} = ({t})Clamp((int){g}.{v}, {min}, {max});",
+                                                                                t = enum_type.as_deref().unwrap_or("int"),
+                                                                                g = group.var_name, 
+                                                                                v = var.var_name, 
+                                                                                min = 0, 
+                                                                                max = options_array.len() - 1)),
                 VarType::Slider { min, max, div } => Some(format!("{g}.{v} = {func}({g}.{v}, {min}, {max});",
                                                                     g = group.var_name,
                                                                     v = var.var_name,
@@ -181,10 +182,10 @@ fn read_settings_function(master: &SettingsMaster, buffer: &mut WitcherScript) {
             let mut get_var_value = format!("{}(config, '{}', '{}')", MASTER_READ_SETTING_VALUE_FUNC_NAME, group.id, var.id);
 
             // surround with type cast if necessary
-            get_var_value = match var.var_type {
-                VarType::Options {..} => format!("StringToInt({}, 0)", get_var_value), //FIXME no cast between enum and int
+            get_var_value = match &var.var_type {
+                VarType::Options {enum_type, ..} => format!("({})StringToInt({}, 0)", enum_type.as_deref().unwrap_or("int"), get_var_value),
                 VarType::Slider { min, max, div } => {
-                    if is_integral_range(min, max, div) {
+                    if is_integral_range(*min, *max, *div) {
                         format!("StringToInt({}, 0)", get_var_value)
                     } else {
                         format!("StringToFloat({}, 0.0)", get_var_value)
@@ -222,7 +223,7 @@ fn write_settings_function(master: &SettingsMaster, buffer: &mut WitcherScript) 
     for group in &master.groups {
         for var in &group.vars {
             let var_value_str = match var.var_type {
-                VarType::Options {..} => format!("IntToString({}.{})", group.var_name, var.var_name), //FIXME no cast between enum and int
+                VarType::Options {..} => format!("IntToString((int){}.{})", group.var_name, var.var_name),
                 VarType::Slider { min, max, div } => {
                     if is_integral_range(min, max, div) {
                         format!("IntToString({}.{})", group.var_name, var.var_name)
