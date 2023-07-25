@@ -57,15 +57,17 @@ impl FromXmlNode for VarType {
                 }
 
                 let prefix = common_str_prefix(&display_names);
-                let enum_name = if cli.options_as_int || prefix.is_none() { 
-                    None 
+                let (enum_name, options_array) = if cli.options_as_int {
+                    (None, display_names) 
+                // } else if let Some(prefix) = prefix {
+                //     Some(format!("{}_{}", cli.settings_master_name, prefix))
                 } else { 
-                    Some(format!("{}_{}", cli.settings_master_name, common_str_prefix(&display_names).unwrap()))
+                    let enum_name = format!("{}_{}", cli.settings_master_name, id_to_script_name(node.attribute("id").unwrap(), &cli.omit_prefix));
+                    let options_array = display_names.iter()
+                                        .map(|dn| format!("{}_{}", enum_name, dn))
+                                        .collect::<Vec<_>>();
+                    (Some(enum_name), options_array)
                 };
-
-                let options_array = display_names.iter()
-                                    .map(|dn| format!("{}_{}", cli.settings_master_name, dn))
-                                    .collect::<Vec<_>>();
 
                 Ok(Some(VarType::Options { 
                     options_array,

@@ -20,13 +20,18 @@ pub(crate) fn node_pos(node: &Node) -> String {
 }
 
 pub(crate) fn id_to_script_name(id: &str, omit_prefixes: &Vec<String>) -> String {
-    for prefix in omit_prefixes {
-        if id.starts_with(prefix) {
-            return id[prefix.len()..].to_string();
-        }
-    } 
+    let mut name = id;
 
-    id.to_string()
+    for prefix in omit_prefixes {
+        if let Some(stripped) = id.strip_prefix(prefix) {
+            name = stripped;
+            break;
+        }
+    }
+
+    name = name.trim_matches('_');
+
+    name.into()
 }
 
 pub(crate) fn is_integral_range(min: i32, max: i32, div: i32) -> bool {
