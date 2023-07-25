@@ -6,8 +6,8 @@ use crate::{utils::{node_pos, id_to_script_name, validate_name}, cli::CLI, trait
 pub enum VarType {
     Toggle,
     Options {
-        options_array: Vec<String>,
-        enum_type: Option<String>
+        options_array: Vec<String>, // Vec of trimmed displayNames in Option nodes
+        enum_name: Option<String> // name of the enum type in WitcherScript, if None then it's int
     },
     Slider {
         min: i32,
@@ -57,7 +57,7 @@ impl FromXmlNode for VarType {
                 }
 
                 let prefix = common_str_prefix(&display_names);
-                let enum_type = if cli.options_as_int || prefix.is_none() { 
+                let enum_name = if cli.options_as_int || prefix.is_none() { 
                     None 
                 } else { 
                     Some(format!("{}_{}", cli.settings_master_name, common_str_prefix(&display_names).unwrap()))
@@ -69,7 +69,7 @@ impl FromXmlNode for VarType {
 
                 Ok(Some(VarType::Options { 
                     options_array,
-                    enum_type
+                    enum_name
                 }))
             } else {
                 return Err(format!("No OptionsArray node found in var with OPTIONS displayType at {}", node_pos(node)));
@@ -111,7 +111,7 @@ impl FromXmlNode for VarType {
 
 
                 if min >= max {
-                    return Err(format!("Slider min value is greater than max value: {}", min));
+                    return Err(format!("Slider min value is greater or equal to max value: {}", min));
                 }
 
                 Ok(Some(VarType::Slider { 

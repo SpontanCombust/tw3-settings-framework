@@ -3,9 +3,9 @@ use roxmltree::Node;
 use crate::{settings_var::SettingsVar, traits::{ToWitcherScriptType, FromXmlNode, WitcherScript}, cli::CLI, utils::{validate_name, node_pos, id_to_script_name}};
 
 pub struct SettingsGroup {
-    pub id: String,
-    pub class_name: String,
-    pub var_name: String,
+    pub id: String, // id attribute in the Var node
+    pub class_name: String, // name of the class for this group in WitcherScript
+    pub var_name: String, // name of an instance of the class for this group in WitcherScript
     pub default_preset_index: Option<u8>,
     pub vars: Vec<SettingsVar>
 }
@@ -53,13 +53,11 @@ impl FromXmlNode for SettingsGroup {
                     default_preset_index,
                     vars: setting_vars,
                 }))
-            }
-            else {
+            } else {
                 println!("Group {} at {} has no vars and will be ignored.", group_id, node_pos(node));
                 Ok(None)
             }
-        }
-        else {
+        } else {
             Err(format!("No id attribute found for Group tag at {}", node_pos(node)))
         }
     }

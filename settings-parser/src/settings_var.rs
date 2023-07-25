@@ -3,8 +3,8 @@ use roxmltree::Node;
 use crate::{var_type::VarType, traits::{ToWitcherScriptType, FromXmlNode, WitcherScript}, cli::CLI, utils::{node_pos, validate_name, id_to_script_name, is_integral_range}};
 
 pub struct SettingsVar {
-    pub id: String,
-    pub var_name: String,
+    pub id: String, // id attribute in the Var node
+    pub var_name: String, // name of a variable inside a group class in WitcherScript
     pub var_type: VarType
 }
 
@@ -44,13 +44,7 @@ impl ToWitcherScriptType for SettingsVar {
     fn ws_type_name(&self) -> String {
         match &self.var_type {
             VarType::Toggle => String::from("bool"),
-            VarType::Options {enum_type, ..} => {
-                if let Some(enum_type) = &enum_type {
-                    enum_type.to_owned()
-                } else {
-                    String::from("int")
-                }
-            },
+            VarType::Options {enum_name, ..} => enum_name.as_deref().unwrap_or("int").into(),
             VarType::Slider {min, max, div} => {
                 if is_integral_range(*min, *max, *div) {
                     String::from("int")
@@ -63,9 +57,9 @@ impl ToWitcherScriptType for SettingsVar {
 
     fn ws_type_definition(&self, buffer: &mut WitcherScript) -> bool {
         match &self.var_type {
-            VarType::Options {options_array, enum_type} => {
-                if let Some(enum_type) = &enum_type {
-                    buffer.push_line(&format!("enum {}", enum_type))
+            VarType::Options {options_array, enum_name} => {
+                if let Some(enum_name) = &enum_name {
+                    buffer.push_line(&format!("enum {}", enum_name))
                           .push_indent("{");
                     
                     for i in 0..options_array.len() {

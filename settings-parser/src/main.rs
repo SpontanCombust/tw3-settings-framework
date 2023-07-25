@@ -31,7 +31,6 @@ fn main() -> Result<(), String>{
     let mut xml_file = match xml_file {
         Ok(f) => f,
         Err(e) => {
-            //TODO these errors might be to verbose, the last message is the only important one
             return Err(format!("Error opening menu xml file: {}", e));
         }
     };
@@ -73,27 +72,27 @@ fn main() -> Result<(), String>{
             Ok(master) => {
                 let master = master.unwrap();
 
-                let mut ws = WitcherScript::new();
+                let mut buffer = WitcherScript::new();
 
-                ws.push_line(&format!("// Code generated using Mod Settings Framework v{} by SpontanCombust & Aeltoth", option_env!("CARGO_PKG_VERSION").unwrap()))
-                  .new_line();
+                buffer.push_line(&format!("// Code generated using Mod Settings Framework v{} by SpontanCombust & Aeltoth", option_env!("CARGO_PKG_VERSION").unwrap()))
+                      .new_line();
     
-                master.ws_type_definition(&mut ws);
-                ws.new_line();
+                master.ws_type_definition(&mut buffer);
+                buffer.new_line();
     
                 for group in master.groups {
-                    if group.ws_type_definition(&mut ws) {
-                        ws.new_line();
+                    if group.ws_type_definition(&mut buffer) {
+                        buffer.new_line();
                     }
     
                     for var in group.vars {
-                        if var.ws_type_definition(&mut ws) {
-                            ws.new_line();
+                        if var.ws_type_definition(&mut buffer) {
+                            buffer.new_line();
                         }
                     }
                 }
     
-                if let Err(e) = ws_file.write_all(ws.text.as_bytes()) {
+                if let Err(e) = ws_file.write_all(buffer.text.as_bytes()) {
                     return Err(format!("Error writing witcher script output file: {}", e));
                 }
     
@@ -103,6 +102,8 @@ fn main() -> Result<(), String>{
                 return Err(format!("Error parsing menu xml file: {}", e));
             }
         }
+    } else {
+        return Err("No UserConfig node found in the document".into());
     }
 
     return Ok(())

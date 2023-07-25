@@ -3,7 +3,7 @@ use roxmltree::Node;
 use crate::{settings_group::SettingsGroup, traits::{ToWitcherScriptType, FromXmlNode, WitcherScript}, var_type::VarType, cli::CLI, utils::{validate_name, is_integral_range}};
 
 pub struct SettingsMaster {
-    pub class_name: String,
+    pub class_name: String, // name of the class in the WitcherScript
     pub mod_version: String,
     pub groups: Vec<SettingsGroup>,
     pub validate_values: bool
@@ -140,8 +140,8 @@ fn validate_values_function(master: &SettingsMaster, buffer: &mut WitcherScript)
         let mut group_has_validation = false;
         for var in &group.vars {
             let validator = match &var.var_type {
-                VarType::Options { options_array, enum_type } => Some(format!("{g}.{v} = ({t})Clamp((int){g}.{v}, {min}, {max});",
-                                                                                t = enum_type.as_deref().unwrap_or("int"),
+                VarType::Options { options_array, enum_name } => Some(format!("{g}.{v} = ({t})Clamp((int){g}.{v}, {min}, {max});",
+                                                                                t = enum_name.as_deref().unwrap_or("int"),
                                                                                 g = group.var_name, 
                                                                                 v = var.var_name, 
                                                                                 min = 0, 
@@ -183,7 +183,7 @@ fn read_settings_function(master: &SettingsMaster, buffer: &mut WitcherScript) {
 
             // surround with type cast if necessary
             get_var_value = match &var.var_type {
-                VarType::Options {enum_type, ..} => format!("({})StringToInt({}, 0)", enum_type.as_deref().unwrap_or("int"), get_var_value),
+                VarType::Options {enum_name, ..} => format!("({})StringToInt({}, 0)", enum_name.as_deref().unwrap_or("int"), get_var_value),
                 VarType::Slider { min, max, div } => {
                     if is_integral_range(*min, *max, *div) {
                         format!("StringToInt({}, 0)", get_var_value)
