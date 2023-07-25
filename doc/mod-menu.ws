@@ -19,7 +19,7 @@ class MyModSettings extends ISettingsMaster
 
 	public /* override */ function ValidateSettings() : void
 	{
-		tab1.option = (MyModSettings_opt)Clamp((int)tab1.option, 0, 2);
+		tab1.option = (MyModSettings_option)Clamp((int)tab1.option, 0, 2);
 		tab1.sliderFloat = ClampF(tab1.sliderFloat, 0, 1);
 		tab1.sliderInt = Clamp(tab1.sliderInt, 0, 100);
 		tab1.version = ClampF(tab1.version, 0, 100);
@@ -34,7 +34,7 @@ class MyModSettings extends ISettingsMaster
 		var config : CInGameConfigWrapper;
 		config = theGame.GetInGameConfigWrapper();
 
-		tab1.option = (MyModSettings_opt)StringToInt(ReadSettingValue(config, 'MODtab1', 'MODoption'), 0);
+		tab1.option = (MyModSettings_option)StringToInt(ReadSettingValue(config, 'MODtab1', 'MODoption'), 0);
 		tab1.sliderFloat = StringToFloat(ReadSettingValue(config, 'MODtab1', 'MODsliderFloat'), 0.0);
 		tab1.sliderInt = StringToInt(ReadSettingValue(config, 'MODtab1', 'MODsliderInt'), 0);
 		tab1.toggle = StringToBool(ReadSettingValue(config, 'MODtab1', 'MODtoggle'));
@@ -86,7 +86,7 @@ class MyModSettings extends ISettingsMaster
 
 class MyModSettings_tab1 extends ISettingsGroup
 {
-	public var option : MyModSettings_opt;
+	public var option : MyModSettings_option;
 	public var sliderFloat : float;
 	public var sliderInt : int;
 	public var toggle : bool;
@@ -96,11 +96,11 @@ class MyModSettings_tab1 extends ISettingsGroup
 	default defaultPresetIndex = 1;
 }
 
-enum MyModSettings_opt
+enum MyModSettings_option
 {
-	MyModSettings_opt1 = 0,
-	MyModSettings_opt2 = 1,
-	MyModSettings_opt2 = 2,
+	MyModSettings_option_opt1 = 0,
+	MyModSettings_option_opt2 = 1,
+	MyModSettings_option_opt2 = 2,
 }
 
 class MyModSettings_tab2subtab1 extends ISettingsGroup
