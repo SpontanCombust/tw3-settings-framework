@@ -11,7 +11,7 @@ pub struct SettingsGroup {
 impl SettingsGroup {
     pub fn from(xml_group: &Group, cli: &CLI) -> Self {    
         let default_preset_index = xml_group.presets_array.iter().enumerate()
-                                            .find(|(_, preset)| preset.contains(&cli.default_preset_keyword))
+                                            .find(|(_, preset)| preset.contains(&cli.default_preset_keyword.to_lowercase()))
                                             .map(|(i, _)| i as u8)
                                             .unwrap_or(0);
             
