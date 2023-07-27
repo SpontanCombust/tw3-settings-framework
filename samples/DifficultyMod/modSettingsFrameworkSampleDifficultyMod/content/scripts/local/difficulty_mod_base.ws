@@ -69,6 +69,6 @@ class ModDifficultySettingsBase_general extends ISettingsGroup
 	public var dmgMultip : float;
 
 	default id = 'DMgeneral';
-	default defaultPresetIndex = 0;
+	default defaultPresetIndex = 1;
 }
 
