@@ -1,6 +1,4 @@
-use roxmltree::Node;
-
-use crate::{settings_group::SettingsGroup, traits::{ToWitcherScriptType, FromXmlNode, WitcherScript}, var_type::VarType, cli::CLI, utils::{validate_name, is_integral_range}};
+use crate::{settings_group::SettingsGroup, traits::{ToWitcherScriptType, WitcherScript}, var_type::VarType, cli::CLI, xml::user_config::UserConfig};
 
 pub struct SettingsMaster {
     pub class_name: String, // name of the class in the WitcherScript
@@ -9,47 +7,19 @@ pub struct SettingsMaster {
     pub validate_values: bool
 }
 
-impl FromXmlNode for SettingsMaster {
-    fn from_xml_node(node: &Node, cli: &CLI) -> Result<Option<Self>, String> {
-        let tag_name = node.tag_name().name();
-        if tag_name != "UserConfig" {
-            return Err(format!("Wrong XML node. Expected UserConfig, received {}", tag_name))
-        }
-
-        if let Err(err) = validate_name(&cli.settings_master_name) {
-            return Err(format!("Invalid settings master name: {}", err));
-        }
-        
+impl SettingsMaster {
+    pub fn from(xml_user_config: &UserConfig, cli: &CLI) -> Self {       
         let class_name = cli.settings_master_name.clone();
         let mod_version = cli.mod_version.clone();
         let validate_values = !cli.no_var_validation;
-        let mut groups = Vec::<SettingsGroup>::new();
-    
-        let group_nodes: Vec<Node> = node.children().filter(|n| n.has_tag_name("Group")).collect();
-
-        if group_nodes.is_empty() {
-            return Err("No Groups found inside UserConfig".to_string());
-        }
-        
-        for group_node in &group_nodes {
-            match SettingsGroup::from_xml_node(group_node, cli) {
-                Ok(group_opt) => {
-                    if let Some(group) = group_opt {
-                        groups.push(group);
-                    }
-                }
-                Err(err) => {
-                    return Err(err);
-                }
-            }
-        }
-            
-        return Ok(Some(SettingsMaster {
+        let groups = xml_user_config.groups.iter().map(|g| SettingsGroup::from(g, cli)).collect();
+       
+        SettingsMaster {
             class_name,
             mod_version,
             groups,
             validate_values,
-        }));
+        }
     }
 }
 
@@ -140,17 +110,15 @@ fn validate_values_function(master: &SettingsMaster, buffer: &mut WitcherScript)
         let mut group_has_validation = false;
         for var in &group.vars {
             let validator = match &var.var_type {
-                VarType::Options { options_array, enum_name } => Some(format!("{g}.{v} = ({t})Clamp((int){g}.{v}, {min}, {max});",
-                                                                                t = enum_name.as_deref().unwrap_or("int"),
-                                                                                g = group.var_name, 
-                                                                                v = var.var_name, 
-                                                                                min = 0, 
-                                                                                max = options_array.len() - 1)),
-                VarType::Slider { min, max, div } => Some(format!("{g}.{v} = {func}({g}.{v}, {min}, {max});",
-                                                                    g = group.var_name,
-                                                                    v = var.var_name,
-                                                                    func = if is_integral_range(*min, *max, *div) { "Clamp" } else { "ClampF" })),
-                _ => None
+                VarType::Int { min, max } => Some(format!("{g}.{v} = Clamp({g}.{v}, {min}, {max});", g = group.var_name, v = var.var_name)),
+                VarType::Float { min, max } => Some(format!("{g}.{v} = ClampF({g}.{v}, {min}, {max});", g = group.var_name, v = var.var_name)),
+                VarType::Enum { name, values } => Some(format!("{g}.{v} = ({t})Clamp((int){g}.{v}, {min}, {max});",
+                                                                t = name,
+                                                                g = group.var_name, 
+                                                                v = var.var_name, 
+                                                                min = 0, 
+                                                                max = values.len() - 1)),
+                _ => None,
             };
 
             if let Some(validator) = validator {
@@ -183,15 +151,10 @@ fn read_settings_function(master: &SettingsMaster, buffer: &mut WitcherScript) {
 
             // surround with type cast if necessary
             get_var_value = match &var.var_type {
-                VarType::Options {enum_name, ..} => format!("({})StringToInt({}, 0)", enum_name.as_deref().unwrap_or("int"), get_var_value),
-                VarType::Slider { min, max, div } => {
-                    if is_integral_range(*min, *max, *div) {
-                        format!("StringToInt({}, 0)", get_var_value)
-                    } else {
-                        format!("StringToFloat({}, 0.0)", get_var_value)
-                    }
-                }
-                VarType::Toggle => format!("StringToBool({})", get_var_value),
+                VarType::Bool => format!("StringToBool({})", get_var_value),
+                VarType::Int {..} => format!("StringToInt({}, 0)", get_var_value),
+                VarType::Float {..} => format!("StringToFloat({}, 0.0)", get_var_value),
+                VarType::Enum { name, .. } => format!("({})StringToInt({}, 0)", name, get_var_value),
             };
 
             buffer.push_line(&format!("{}.{} = {};", group.var_name, var.var_name, get_var_value));
@@ -223,15 +186,10 @@ fn write_settings_function(master: &SettingsMaster, buffer: &mut WitcherScript) 
     for group in &master.groups {
         for var in &group.vars {
             let var_value_str = match var.var_type {
-                VarType::Options {..} => format!("IntToString((int){}.{})", group.var_name, var.var_name),
-                VarType::Slider { min, max, div } => {
-                    if is_integral_range(min, max, div) {
-                        format!("IntToString({}.{})", group.var_name, var.var_name)
-                    } else {
-                        format!("FloatToString({}.{})", group.var_name, var.var_name)
-                    }
-                }
-                VarType::Toggle => format!("BoolToString({}.{})", group.var_name, var.var_name),
+                VarType::Bool => format!("BoolToString({}.{})", group.var_name, var.var_name),
+                VarType::Int {..} => format!("IntToString({}.{})", group.var_name, var.var_name),
+                VarType::Float {..} => format!("FloatToString({}.{})", group.var_name, var.var_name),
+                VarType::Enum {..} => format!("IntToString((int){}.{})", group.var_name, var.var_name),
             };
 
             buffer.push_line(&format!("{}(config, '{}', '{}', {});", MASTER_WRITE_SETTING_VALUE_FUNC_NAME, group.id, var.id, var_value_str));

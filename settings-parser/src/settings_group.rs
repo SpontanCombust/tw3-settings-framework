@@ -1,78 +1,39 @@
-use roxmltree::Node;
-
-use crate::{settings_var::SettingsVar, traits::{ToWitcherScriptType, FromXmlNode, WitcherScript}, cli::CLI, utils::{validate_name, node_pos, id_to_script_name}};
+use crate::{settings_var::SettingsVar, traits::{ToWitcherScriptType, WitcherScript}, cli::CLI, xml::group::Group, utils::id_to_script_name};
 
 pub struct SettingsGroup {
     pub id: String, // id attribute in the Var node
     pub class_name: String, // name of the class for this group in WitcherScript
     pub var_name: String, // name of an instance of the class for this group in WitcherScript
-    pub default_preset_index: Option<u8>,
+    pub default_preset_index: u8,
     pub vars: Vec<SettingsVar>
 }
 
-impl FromXmlNode for SettingsGroup {
-    fn from_xml_node(node: &Node, cli: &CLI) -> Result<Option<Self>, String> {
-        let tag_name = node.tag_name().name();
-        if tag_name != "Group" {
-            return Err(format!("Wrong XML node. Expected Group, received {}", tag_name))
+impl SettingsGroup {
+    pub fn from(xml_group: &Group, cli: &CLI) -> Self {    
+        let default_preset_index = xml_group.presets_array.iter().enumerate()
+                                            .find(|(_, preset)| preset.contains(&cli.default_preset_keyword))
+                                            .map(|(i, _)| i as u8)
+                                            .unwrap_or(0);
+            
+        let id = xml_group.id.clone();
+        let var_name = id_to_script_name(&id, &cli.omit_prefix);
+        let class_name = format!("{}_{}", cli.settings_master_name, var_name); //TODO styling modificator
+        let mut setting_vars = Vec::<SettingsVar>::new();
+
+        for xml_var in &xml_group.visible_vars {
+            if let Some(setting_var) = SettingsVar::from(xml_var, cli) {
+                setting_vars.push(setting_var);
+            }
         }
 
-        if let Some(group_id) = node.attribute("id") {
-            if let Err(err) = validate_name(group_id) {
-                return Err(format!("Invalid Group id {} at {}: {}", group_id, node_pos(node), err));
-            }
-    
-            let mut default_preset_index: Option<u8> = None;
-            if let Some(presets_array_node) = node.children().find(|n| n.has_tag_name("PresetsArray")) {
-                default_preset_index = parse_presets_array_node(&presets_array_node, cli);
-            }
-    
-            if let Some(visible_vars_node) = node.children().find(|n| n.has_tag_name("VisibleVars")) {
-                let var_nodes: Vec<Node> = visible_vars_node.children().filter(|n| n.has_tag_name("Var")).collect();
-    
-                if var_nodes.is_empty() {
-                    println!("Group {} at {} has no vars and will be ignored.", group_id, node_pos(node));
-                    return Ok(None);
-                }
-    
-                let id = group_id.to_owned();
-                let var_name = id_to_script_name(group_id, &cli.omit_prefix);
-                let class_name = format!("{}_{}", cli.settings_master_name, var_name); //TODO styling modificator
-                let mut setting_vars = Vec::<SettingsVar>::new();
-    
-                for var_node in &var_nodes {
-                    if let Some(settings_var) = SettingsVar::from_xml_node(&var_node, cli)? {
-                        setting_vars.push(settings_var);
-                    }
-                }
-    
-                Ok(Some(SettingsGroup {
-                    id,
-                    class_name,
-                    var_name,
-                    default_preset_index,
-                    vars: setting_vars,
-                }))
-            } else {
-                println!("Group {} at {} has no vars and will be ignored.", group_id, node_pos(node));
-                Ok(None)
-            }
-        } else {
-            Err(format!("No id attribute found for Group tag at {}", node_pos(node)))
+        SettingsGroup {
+            id,
+            class_name,
+            var_name,
+            default_preset_index,
+            vars: setting_vars,
         }
     }
-}
-
-fn parse_presets_array_node(presets_array_node: &Node, cli: &CLI) -> Option<u8> {
-    for preset_node in presets_array_node.children() {
-        if preset_node.has_tag_name("Preset") && preset_node.has_attribute("id") && preset_node.has_attribute("displayName") {
-            if preset_node.attribute("displayName").unwrap().contains(&cli.default_preset_keyword.to_lowercase()) {
-                return preset_node.attribute("id").unwrap().parse::<u8>().ok();
-            }
-        }
-    }
-
-    return None;
 }
 
 
@@ -109,5 +70,5 @@ fn group_class_variables(group: &SettingsGroup, buffer: &mut WitcherScript) {
 
 fn group_default_variable_values(group: &SettingsGroup, buffer: &mut WitcherScript) {
     buffer.push_line(&format!("default {} = '{}';", SETTINGS_GROUP_ID_VAR_NAME, group.id))
-          .push_line(&format!("default {} = {};", SETTINGS_GROUP_DEFAULT_PRESET_VAR_NAME, group.default_preset_index.unwrap_or(0)));
+          .push_line(&format!("default {} = {};", SETTINGS_GROUP_DEFAULT_PRESET_VAR_NAME, group.default_preset_index));
 }

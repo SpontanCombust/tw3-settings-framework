@@ -1,11 +1,4 @@
-use roxmltree::Node;
-
-use crate::{cli::CLI, indented_document::IndentedDocument};
-
-// To convert config XML into Rust types
-pub trait FromXmlNode {
-    fn from_xml_node(node: &Node, cli: &CLI) -> Result<Option<Self>, String> where Self: Sized;
-}
+use crate::indented_document::IndentedDocument;
 
 
 pub type WitcherScript = IndentedDocument;

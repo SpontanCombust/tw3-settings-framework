@@ -6,6 +6,7 @@ mod cli;
 mod utils;
 mod traits;
 mod indented_document;
+mod xml;
 
 use std::{fs::OpenOptions, io::{Read, Write}, path::{Path, PathBuf}};
 
@@ -13,13 +14,17 @@ use clap::Parser;
 use cli::CLI;
 use roxmltree::Document;
 use settings_master::SettingsMaster;
-use traits::FromXmlNode;
+use xml::user_config::UserConfig;
 
-use crate::traits::{ToWitcherScriptType, WitcherScript};
+use crate::{traits::{ToWitcherScriptType, WitcherScript}, utils::validate_name};
 
 
 fn main() -> Result<(), String>{
     let cli = CLI::parse();
+
+    if let Err(err) = validate_name(&cli.settings_master_name) {
+        return Err(format!("Invalid settings master name: {}", err));
+    }
 
     let input_file_path = Path::new(&cli.xml_file_path);
     let xml_file = OpenOptions::new()
@@ -67,44 +72,38 @@ fn main() -> Result<(), String>{
         }
     };
 
-    if let Some(root_node) = doc.descendants().find(|n| n.has_tag_name("UserConfig")) {
-        match SettingsMaster::from_xml_node(&root_node, &cli) {
-            Ok(master) => {
-                let master = master.unwrap();
+    match UserConfig::try_from(&doc) {
+        Ok(user_config) => {
+            let settings_master = SettingsMaster::from(&user_config, &cli);
+            let mut buffer = WitcherScript::new();
 
-                let mut buffer = WitcherScript::new();
+            buffer.push_line(&format!("// Code generated using Mod Settings Framework v{} by SpontanCombust & Aeltoth", option_env!("CARGO_PKG_VERSION").unwrap()))
+                  .new_line();
 
-                buffer.push_line(&format!("// Code generated using Mod Settings Framework v{} by SpontanCombust & Aeltoth", option_env!("CARGO_PKG_VERSION").unwrap()))
-                      .new_line();
-    
-                master.ws_type_definition(&mut buffer);
-                buffer.new_line();
-    
-                for group in master.groups {
-                    if group.ws_type_definition(&mut buffer) {
+            settings_master.ws_type_definition(&mut buffer);
+            buffer.new_line();
+
+            for group in settings_master.groups {
+                if group.ws_type_definition(&mut buffer) {
+                    buffer.new_line();
+                }
+
+                for var in group.vars {
+                    if var.ws_type_definition(&mut buffer) {
                         buffer.new_line();
                     }
-    
-                    for var in group.vars {
-                        if var.ws_type_definition(&mut buffer) {
-                            buffer.new_line();
-                        }
-                    }
                 }
-    
-                if let Err(e) = ws_file.write_all(buffer.text.as_bytes()) {
-                    return Err(format!("Error writing witcher script output file: {}", e));
-                }
-    
-                println!("Successfully parsed {} into {}", cli.xml_file_path, ws_path.to_str().unwrap_or(""));
             }
-            Err(e) => {
-                return Err(format!("Error parsing menu xml file: {}", e));
+
+            if let Err(e) = ws_file.write_all(buffer.text.as_bytes()) {
+                return Err(format!("Error writing witcher script output file: {}", e));
             }
+        },
+        Err(err) => {
+            return Err(format!("Error parsing menu xml file: {}", err));
         }
-    } else {
-        return Err("No UserConfig node found in the document".into());
     }
 
+    println!("Successfully parsed {} into {}", cli.xml_file_path, ws_path.to_str().unwrap_or(""));
     return Ok(())
 }

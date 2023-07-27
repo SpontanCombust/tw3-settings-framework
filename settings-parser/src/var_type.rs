@@ -1,131 +1,59 @@
-use roxmltree::Node;
+use crate::{xml::{display_type::DisplayType, var::Var}, cli::CLI, utils::{id_to_script_name, is_integral_range}};
 
-use crate::{utils::{node_pos, id_to_script_name, validate_name}, cli::CLI, traits::FromXmlNode};
-
-#[derive(Debug)]
+//TODO rename to SettingsVarType
 pub enum VarType {
-    Toggle,
-    Options {
-        options_array: Vec<String>, // Vec of trimmed displayNames in Option nodes
-        enum_name: Option<String> // name of the enum type in WitcherScript, if None then it's int
-    },
-    Slider {
+    Bool,
+    Int {
         min: i32,
-        max: i32,
-        div: i32
+        max: i32
+    },
+    Float {
+        min: f32,
+        max: f32
+    },
+    Enum {
+        name: String,
+        values: Vec<String>
     }
 }
 
-
-impl FromXmlNode for VarType {
-    fn from_xml_node(node: &Node, cli: &CLI) -> Result<Option<Self>, String> {
-        let tag_name = node.tag_name().name();
-        if tag_name != "Var" {
-            return Err(format!("Wrong XML node. Expected Var, received {}", tag_name))
-        }
-
-        let display_type = match node.attribute("displayType") {
-            Some(dt) => dt,
-            None => {
-                return Err(format!("Var node without displayType attribute found at {}", node_pos(node)));
-            }
-        };
-
-        if display_type == "TOGGLE" {
-            return Ok(Some(VarType::Toggle));
-        } else if display_type == "OPTIONS" {
-            if let Some(options_array_node) = node.children().find(|ch| ch.has_tag_name("OptionsArray")) {
-                let option_nodes = options_array_node.children()
-                    .filter(|n| n.has_tag_name("Option"))
-                    .collect::<Vec<_>>();
-
-                if option_nodes.is_empty() {
-                    return Err(format!("OptionsArray node at {} is missing Option nodes", node_pos(&options_array_node)));
+impl VarType {
+    pub fn from(var: &Var, cli: &CLI) -> Option<Self> {
+        match &var.display_type {
+            DisplayType::Toggle => {
+                Some(VarType::Bool)
+            },
+            DisplayType::Slider { min, max, div } => {
+                if is_integral_range(*min, *max, *div) {
+                    Some(VarType::Int {
+                        min: *min, 
+                        max: *max
+                    })
+                } else {
+                    Some(VarType::Float { 
+                        min: *min as f32,
+                        max: *max as f32 
+                    })
                 }
-
-                let mut display_names = Vec::new();
-                for option_node in option_nodes {
-                    if let Some(display_name) = option_node.attribute("displayName") {
-                        if let Err(err) = validate_name(display_name) {
-                            return Err(format!("Invalid displayName attribute at {}: {}", node_pos(&option_node), err));
-                        } else {
-                            display_names.push(id_to_script_name(display_name, &cli.omit_prefix));
-                        }
-                    } else {
-                        return Err(format!("Option node at {} is missing displayName attribute", node_pos(&option_node)));
-                    }
-                }
-
-                let prefix = common_str_prefix(&display_names);
-                let (enum_name, options_array) = if cli.options_as_int {
-                    (None, display_names) 
-                // } else if let Some(prefix) = prefix {
-                //     Some(format!("{}_{}", cli.settings_master_name, prefix))
+            },
+            DisplayType::Options(display_names) => {
+                if cli.options_as_int {
+                    None
                 } else { 
-                    let enum_name = format!("{}_{}", cli.settings_master_name, id_to_script_name(node.attribute("id").unwrap(), &cli.omit_prefix));
-                    let options_array = display_names.iter()
-                                        .map(|dn| format!("{}_{}", enum_name, dn))
+                    let enum_name = format!("{}_{}", cli.settings_master_name, id_to_script_name(&var.id, &cli.omit_prefix));
+                    let enum_values = display_names.iter()
+                                        .map(|dn| format!("{}_{}", enum_name, id_to_script_name(&dn, &cli.omit_prefix)))
                                         .collect::<Vec<_>>();
-                    (Some(enum_name), options_array)
-                };
 
-                Ok(Some(VarType::Options { 
-                    options_array,
-                    enum_name
-                }))
-            } else {
-                return Err(format!("No OptionsArray node found in var with OPTIONS displayType at {}", node_pos(node)));
-            }
-        } 
-        else if &display_type[0..6] == "SLIDER" {
-            let spl: Vec<&str> = display_type.split(';').collect();
-
-            if spl.len() == 1 {
-                Err("No slider parameters given".to_string())
-            } else if spl.len() != 4 {
-                Err(format!("Invalid amount of slider parameters. Should be 3, is {}", spl.len() - 1))
-            } else {
-                let min = spl[1].parse::<i32>();
-                if min.is_err() {
-                    return Err(format!("Slider min value parse error: {}", min.unwrap_err()));   
+                    Some(VarType::Enum { 
+                        name: enum_name, 
+                        values: enum_values 
+                    })
                 }
-
-                let min = min.unwrap();
-
-
-                let max = spl[2].parse::<i32>();
-                if max.is_err() {
-                    return Err(format!("Slider max value parse error: {}", max.unwrap_err()));   
-                }
-
-                let max = max.unwrap();
-
-
-                let div = spl[3].parse::<i32>();
-                if div.is_err() {
-                    return Err(format!("Slider div value parse error: {}", div.unwrap_err()));   
-                }
-
-                let div = div.unwrap();
-                if div <= 0 {
-                    return Err("Slider div value must be greater than 0".to_string());
-                }
-
-
-                if min >= max {
-                    return Err(format!("Slider min value is greater or equal to max value: {}", min));
-                }
-
-                Ok(Some(VarType::Slider { 
-                    min, 
-                    max, 
-                    div 
-                }))
-            }
-        } else if display_type == "SUBTLE_SEPARATOR" {
-            Ok(None)
-        } else {
-            Err(format!("Unsupported display type: {}", display_type))
+            },
+            DisplayType::SubtleSeparator => {
+                None
+            },
         }
     }
 }
