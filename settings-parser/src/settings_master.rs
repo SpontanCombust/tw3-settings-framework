@@ -1,5 +1,3 @@
-use std::ops::Deref;
-
 use crate::{
     settings_group::SettingsGroup, 
     traits::{WitcherScriptType, WitcherScript, WitcherScriptTypeDef}, 
@@ -49,6 +47,10 @@ impl SettingsMaster {
             }
         }
 
+        if enums_hierarchy.is_empty() {
+            return Ok(Vec::new());
+        }
+
         // make the ones having the same common prefix be next to each other
         enums_hierarchy.sort_by(|(_, _, e1), (_, _, e2)| e1.common_prefix.cmp(&e2.common_prefix));
 
@@ -74,7 +76,7 @@ impl SettingsMaster {
         enums_hierarchy.dedup_by(|(_, _, e1), (_, _, e2)| e1.common_prefix == e2.common_prefix);
 
         let fetched_enums = enums_hierarchy.iter()
-                            .map(|(_, _, e)| e.deref().clone())
+                            .map(|(_, _, e)| (**e).clone())
                             .collect();
 
         Ok(fetched_enums)
