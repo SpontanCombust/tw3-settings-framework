@@ -1,4 +1,10 @@
-use crate::{settings_var::SettingsVar, traits::{ToWitcherScriptType, WitcherScript}, cli::CLI, xml::group::Group, utils::id_to_script_name};
+use crate::{
+    settings_var::SettingsVar, 
+    traits::{WitcherScriptType, WitcherScript, WitcherScriptTypeDef}, 
+    cli::CLI, 
+    xml::group::Group, 
+    utils::id_to_script_name
+};
 
 pub struct SettingsGroup {
     pub id: String, // id attribute in the Var node
@@ -42,23 +48,24 @@ const SETTINGS_GROUP_PARENT_CLASS: &str = "ISettingsGroup";
 const SETTINGS_GROUP_ID_VAR_NAME: &str = "id";
 const SETTINGS_GROUP_DEFAULT_PRESET_VAR_NAME: &str = "defaultPresetIndex";
 
-impl ToWitcherScriptType for SettingsGroup {
+impl WitcherScriptType for SettingsGroup {
     fn ws_type_name(&self) -> String {
         self.class_name.clone()
     }
 
-    fn ws_type_definition(&self, buffer: &mut WitcherScript) -> bool {
+}
+
+impl WitcherScriptTypeDef for SettingsGroup {
+    fn ws_type_definition(&self, buffer: &mut WitcherScript) {
         buffer.push_line(&format!("class {} extends {}", self.ws_type_name(), SETTINGS_GROUP_PARENT_CLASS));
         buffer.push_indent("{");
-
+    
         group_class_variables(self, buffer);
         
         buffer.new_line();
         group_default_variable_values(self, buffer);
-
+    
         buffer.pop_indent("}");
-
-        true
     }
 }
 

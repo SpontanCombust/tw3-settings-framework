@@ -18,7 +18,7 @@ pub(crate) fn node_pos(node: &Node) -> String {
     let pos = node.document().text_pos_at(node.range().start);
     format!("line {}, column {}", pos.row, pos.col)
 }
-
+//TODO rename to strip_to_script_name or something, make return type &str
 pub(crate) fn id_to_script_name(id: &str, omit_prefixes: &Vec<String>) -> String {
     let mut name = id;
 
@@ -37,3 +37,30 @@ pub(crate) fn id_to_script_name(id: &str, omit_prefixes: &Vec<String>) -> String
 pub(crate) fn is_integral_range(min: i32, max: i32, div: i32) -> bool {
     (max - min) % div == 0
 } 
+
+pub(crate) fn common_str_prefix(v: &Vec<String>) -> &str {
+    let mut common_len = usize::MAX; 
+    for i in 0..v.len() - 1 {
+        let s1 = &v[i];
+        let s2 = &v[i + 1];
+        common_len = std::cmp::min(common_len, common_str_prefix_len(s1, s2));
+    }
+
+    if common_len > 0 {
+        &v[0][0..common_len]
+    } else {
+        ""
+    }
+}
+
+fn common_str_prefix_len(s1: &str, s2: &str) -> usize {
+    let min_len = std::cmp::min(s1.len(), s2.len());
+
+    for i in 0..min_len {
+        if s1.chars().nth(i) != s2.chars().nth(i) {
+            return i;
+        }
+    }
+
+    min_len
+}

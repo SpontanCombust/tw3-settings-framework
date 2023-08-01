@@ -1,4 +1,4 @@
-mod var_type;
+mod settings_var_type;
 mod settings_var;
 mod settings_group;
 mod settings_master;
@@ -7,6 +7,7 @@ mod utils;
 mod traits;
 mod indented_document;
 mod xml;
+mod settings_enum;
 
 use std::{fs::OpenOptions, io::{Read, Write}, path::{Path, PathBuf}};
 
@@ -16,7 +17,7 @@ use roxmltree::Document;
 use settings_master::SettingsMaster;
 use xml::user_config::UserConfig;
 
-use crate::{traits::{ToWitcherScriptType, WitcherScript}, utils::validate_name};
+use crate::{traits::{WitcherScript, WitcherScriptTypeDef}, utils::validate_name};
 
 
 fn main() -> Result<(), String>{
@@ -74,7 +75,8 @@ fn main() -> Result<(), String>{
 
     match UserConfig::try_from(&doc) {
         Ok(user_config) => {
-            let settings_master = SettingsMaster::from(&user_config, &cli);
+            let settings_master = SettingsMaster::from(&user_config, &cli)?;
+
             let mut buffer = WitcherScript::new();
 
             buffer.push_line(&format!("// Code generated using Mod Settings Framework v{} by SpontanCombust & Aeltoth", option_env!("CARGO_PKG_VERSION").unwrap()))
@@ -84,15 +86,13 @@ fn main() -> Result<(), String>{
             buffer.new_line();
 
             for group in settings_master.groups {
-                if group.ws_type_definition(&mut buffer) {
-                    buffer.new_line();
-                }
+                group.ws_type_definition(&mut buffer);
+                buffer.new_line();
+            }
 
-                for var in group.vars {
-                    if var.ws_type_definition(&mut buffer) {
-                        buffer.new_line();
-                    }
-                }
+            for _enum in settings_master.enums {
+                _enum.ws_type_definition(&mut buffer);
+                buffer.new_line();
             }
 
             if let Err(e) = ws_file.write_all(buffer.text.as_bytes()) {

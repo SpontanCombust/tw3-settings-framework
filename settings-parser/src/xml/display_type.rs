@@ -2,9 +2,12 @@ use roxmltree::Node;
 
 use crate::utils::{node_pos, validate_name};
 
+
+pub type OptionsArray = Vec<String>;
+
 pub enum DisplayType {
     Toggle,
-    Options(Vec<String>), // array of displayNames
+    Options(OptionsArray), // array of displayNames
     Slider {
         min: i32,
         max: i32,

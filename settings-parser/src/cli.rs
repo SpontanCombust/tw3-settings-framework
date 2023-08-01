@@ -1,4 +1,4 @@
-use clap::Parser;
+use clap::{Parser, ValueEnum};
 
 #[derive(Parser)]
 #[clap(name = "TW3 Settings Framework Parser")]
@@ -33,16 +33,31 @@ pub struct CLI {
     #[clap(long, default_value="default", display_order=5)]
     pub default_preset_keyword: String,
 
+    /// Controls how OPTION type vars are parsed into WitcherScript
+    /// 
+    /// ints -
+    /// Treats options vars as regular ints instead of creating custom enum types for them.
+    /// This essentially means the behaviour from before v0.5.
+    /// 
+    /// enums-reduce-equal -
+    /// Parses options vars into enums. Then tries to find vars that have the same set of displayName attributes in option node 
+    /// and assigns them one common type.
+    /// Requires that displayNames of all option nodes contain some prefix that determines their relation.
+    /// If two option arrays contain the same set of possible values they are considered to have the same enum type.
+    /// Having mutliple option arrays designated by the same prefix, but having different sets of values is disallowed.
+    /// Uses common option displayName prefix for the name of enum and its values.
+    #[clap(long, arg_enum, default_value="enums-join-equal", display_order=6)]
+    pub option_parsing_mode: OptionParsingMode,
+
     /// Disables the generation of code for value correction.
     /// After reading from or before writing to user config values will no longer be checked if they adhere to the XML,
     /// e.g. if slider value is in a specified range.
-    #[clap(long, display_order=6)]
-    pub no_var_validation: bool,
-
-    //TODO pub enum_optimization: bool,
-
-    /// Treats options vars as regular ints instead of creating custom enum types for them
-    /// This essentially brings back the behaviour from before v0.5
     #[clap(long, display_order=7)]
-    pub options_as_int: bool
+    pub no_var_validation: bool,
+}
+
+#[derive(Clone, Copy, PartialEq, Eq, ValueEnum)]
+pub enum OptionParsingMode {
+    Ints,
+    EnumsJoinEqual,
 }
