@@ -30,14 +30,14 @@ OPTIONS:
             preset or any preset at that will use 0 as the preset ID. Case insensitive [default:
             default]
 
+        --option-parsing-mode <OPTION_PARSING_MODE>
+            Controls how OPTION type vars are parsed into WitcherScript [default: enums-join-equal]
+            [possible values: ints, enums-join-equal]
+
         --no-var-validation
             Disables the generation of code for value correction. After reading from or before
             writing to user config values will no longer be checked if they adhere to the XML, e.g.
             if slider value is in a specified range
-
-        --options-as-int
-            Treats options vars as regular ints instead of creating custom enum types for them This
-            essentially brings back the behaviour from before v0.5
 
     -h, --help
             Print help information
