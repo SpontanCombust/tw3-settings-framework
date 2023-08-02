@@ -2,7 +2,7 @@ use crate::{
     settings_var_type::SettingsVarType, 
     traits::WitcherScriptType, 
     cli::CLI, 
-    utils::id_to_script_name, 
+    utils::strip_prefixes, 
     xml::var::Var
 };
 
@@ -17,7 +17,7 @@ impl SettingsVar {
         SettingsVarType::from(xml_var, cli)
         .and_then(|var_type| Some(SettingsVar {
             id: xml_var.id.clone(),
-            var_name: id_to_script_name(&xml_var.id, &cli.omit_prefix),
+            var_name: strip_prefixes(&xml_var.id, &cli.omit_prefix),
             var_type
         }))       
     }

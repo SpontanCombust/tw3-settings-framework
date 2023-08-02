@@ -1,7 +1,7 @@
 use crate::{
     xml::display_type::OptionsArray, 
     cli::CLI, 
-    utils::{common_str_prefix, id_to_script_name}, 
+    utils::{common_str_prefix, strip_prefixes}, 
     traits::{WitcherScriptType, WitcherScriptTypeDef}
 };
 
@@ -15,7 +15,7 @@ pub struct SettingsEnum {
 impl SettingsEnum {
     pub fn from(options_array: &OptionsArray, cli: &CLI) -> Self {
         let display_names_omit_prefix = options_array.iter()
-                                                     .map(|dn| id_to_script_name(&dn, &cli.omit_prefix))
+                                                     .map(|dn| strip_prefixes(&dn, &cli.omit_prefix))
                                                      .collect::<Vec<_>>();
 
         //TODO if there is no prefix use Var id and print warning

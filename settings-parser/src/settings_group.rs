@@ -3,7 +3,7 @@ use crate::{
     traits::{WitcherScriptType, WitcherScript, WitcherScriptTypeDef}, 
     cli::CLI, 
     xml::group::Group, 
-    utils::id_to_script_name
+    utils::strip_prefixes
 };
 
 pub struct SettingsGroup {
@@ -22,7 +22,7 @@ impl SettingsGroup {
                                             .unwrap_or(0);
             
         let id = xml_group.id.clone();
-        let var_name = id_to_script_name(&id, &cli.omit_prefix);
+        let var_name = strip_prefixes(&id, &cli.omit_prefix);
         let class_name = format!("{}_{}", cli.settings_master_name, var_name); //TODO styling modificator
         let mut setting_vars = Vec::<SettingsVar>::new();
 

@@ -18,11 +18,11 @@ pub(crate) fn node_pos(node: &Node) -> String {
     let pos = node.document().text_pos_at(node.range().start);
     format!("line {}, column {}", pos.row, pos.col)
 }
-//TODO rename to strip_to_script_name or something, make return type &str
-pub(crate) fn id_to_script_name(id: &str, omit_prefixes: &Vec<String>) -> String {
+
+pub(crate) fn strip_prefixes(id: &str, prefixes: &Vec<String>) -> String {
     let mut name = id;
 
-    for prefix in omit_prefixes {
+    for prefix in prefixes {
         if let Some(stripped) = id.strip_prefix(prefix) {
             name = stripped;
             break;
