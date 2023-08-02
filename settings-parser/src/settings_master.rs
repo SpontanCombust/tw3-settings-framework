@@ -54,13 +54,6 @@ impl SettingsMaster {
         // make the ones having the same common prefix be next to each other
         enums_hierarchy.sort_by(|(_, _, e1), (_, _, e2)| e1.common_prefix.cmp(&e2.common_prefix));
 
-        // check whether there are any enums without common prefix (and thus invalid type name)
-        for (sg, sv, se) in enums_hierarchy.iter() {
-            if se.common_prefix.is_empty() {
-                return Err(format!("OptionsArray for var {} in group {} does not have a common prefix", sv.id, sg.id));
-            }
-        }  
-
         // check whether same type enums have the same sets of values
         // different sets of values are not supported (yet)
         for i in 0..enums_hierarchy.len() - 1 {

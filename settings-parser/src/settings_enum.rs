@@ -13,18 +13,30 @@ pub struct SettingsEnum {
 }
 
 impl SettingsEnum {
-    pub fn from(options_array: &OptionsArray, cli: &CLI) -> Self {
-        let display_names_omit_prefix = options_array.iter()
-                                                     .map(|dn| strip_prefixes(&dn, &cli.omit_prefix))
-                                                     .collect::<Vec<_>>();
+    pub fn from(options_array: &OptionsArray, var_id: &str, cli: &CLI) -> Self {
+        let mut common_prefix = common_str_prefix(options_array).to_string();
 
-        //TODO if there is no prefix use Var id and print warning
-        let common_prefix = common_str_prefix(&display_names_omit_prefix).trim_matches('_').to_string();
+        let display_names_suffixes = if common_prefix.is_empty() {
+            options_array.iter()
+            .map(|dn| dn.as_str())
+            .collect::<Vec<_>>()
+        } else {
+            options_array.iter()
+            .map(|dn| dn.strip_prefix(&common_prefix).unwrap())
+            .collect::<Vec<_>>()
+        };
+
+        common_prefix = strip_prefixes(&common_prefix, &cli.omit_prefix);
+
+        if common_prefix.is_empty() {
+            println!("Warning! OptionsArray for var {} does not have a common prefix. Var id will be used instead.", var_id);
+            common_prefix = strip_prefixes(var_id, &cli.omit_prefix);
+        }
 
         let type_name = format!("{}_{}", cli.settings_master_name, common_prefix);
-        let values = display_names_omit_prefix.iter()
-                            .map(|dn| format!("{}_{}", cli.settings_master_name, dn))
-                            .collect::<Vec<_>>();
+        let values = display_names_suffixes.iter()
+                     .map(|suffix| format!("{}_{}_{}", cli.settings_master_name, common_prefix, suffix))
+                     .collect::<Vec<_>>();
 
         SettingsEnum { 
             common_prefix,

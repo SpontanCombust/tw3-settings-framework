@@ -47,7 +47,7 @@ impl SettingsVarType {
                     },
                     OptionParsingMode::EnumsJoinEqual => {
                         Some(SettingsVarType::Enum(
-                            SettingsEnum::from(options_array, cli)
+                            SettingsEnum::from(options_array, &var.id, cli)
                         ))
                     }
                 }
