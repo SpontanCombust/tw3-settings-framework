@@ -49,7 +49,6 @@ fn main() -> Result<(), String>{
     let ws_file = OpenOptions::new()
         .write(true)
         .create(true)
-        .truncate(true)
         .open(&ws_path);
 
     let mut ws_file = match ws_file {
@@ -95,6 +94,9 @@ fn main() -> Result<(), String>{
                 buffer.new_line();
             }
 
+            // clear file content if there is any
+            ws_file.set_len(0).unwrap();
+            
             if let Err(e) = ws_file.write_all(buffer.text.as_bytes()) {
                 return Err(format!("Error writing witcher script output file: {}", e));
             }
