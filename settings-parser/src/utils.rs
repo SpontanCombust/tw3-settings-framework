@@ -19,26 +19,24 @@ pub(crate) fn node_pos(node: &Node) -> String {
     format!("line {}, column {}", pos.row, pos.col)
 }
 
-pub(crate) fn strip_prefixes(id: &str, prefixes: &Vec<String>) -> String {
-    let mut name = id;
+pub(crate) fn strip_prefixes<'a>(s: &'a str, prefixes: &'a [String]) -> &'a str {
+    let mut stripped_s = s;
 
     for prefix in prefixes {
-        if let Some(stripped) = id.strip_prefix(prefix) {
-            name = stripped;
+        if let Some(stripped) = stripped_s.strip_prefix(prefix) {
+            stripped_s = stripped;
             break;
         }
     }
 
-    name = name.trim_matches('_');
-
-    name.into()
+    stripped_s
 }
 
 pub(crate) fn is_integral_range(min: i32, max: i32, div: i32) -> bool {
     (max - min) % div == 0
 } 
 
-pub(crate) fn common_str_prefix(v: &Vec<String>) -> &str {
+pub(crate) fn common_str_prefix(v: &[String]) -> &str {
     let mut common_len = usize::MAX; 
     for i in 0..v.len() - 1 {
         let s1 = &v[i];
