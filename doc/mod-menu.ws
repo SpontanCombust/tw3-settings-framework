@@ -114,8 +114,8 @@ class MyModSettings_tab2subtab2 extends ISettingsGroup
 
 enum MyModSettings_opt
 {
-	MyModSettings_opt1 = 0,
-	MyModSettings_opt2 = 1,
-	MyModSettings_opt2 = 2,
+	MyModSettings_opt_1 = 0,
+	MyModSettings_opt_2 = 1,
+	MyModSettings_opt_2 = 2,
 }
 
