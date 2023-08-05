@@ -2,7 +2,7 @@ use crate::{
     xml::{display_type::DisplayType, var::Var}, 
     cli::{CLI, OptionParsingMode}, 
     utils::is_integral_range, 
-    settings_enum::SettingsEnum
+    settings_enum::{SettingsEnum, SettingsEnumValueMapping}
 };
 
 pub enum SettingsVarType {
@@ -15,7 +15,10 @@ pub enum SettingsVarType {
         min: f32,
         max: f32
     },
-    Enum (SettingsEnum)
+    Enum {
+        val: SettingsEnum,
+        val_mapping: Option<SettingsEnumValueMapping>
+    }
 }
 
 impl SettingsVarType {
@@ -45,10 +48,11 @@ impl SettingsVarType {
                             max: (options_array.len() - 1) as i32
                         })
                     },
-                    OptionParsingMode::EnumsJoinEqual => {
-                        Some(SettingsVarType::Enum(
-                            SettingsEnum::from(options_array, &var.id, cli)
-                        ))
+                    OptionParsingMode::Enums | OptionParsingMode::EnumsJoinEqual => {
+                        Some(SettingsVarType::Enum {
+                            val: SettingsEnum::from(options_array, &var.id, cli),
+                            val_mapping: None
+                        })
                     }
                 }
             },

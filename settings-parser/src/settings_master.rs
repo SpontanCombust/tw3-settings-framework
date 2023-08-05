@@ -1,9 +1,11 @@
+use std::collections::HashMap;
+
 use crate::{
     settings_group::SettingsGroup, 
     traits::{WitcherScriptType, WitcherScript, WitcherScriptTypeDef}, 
     settings_var_type::SettingsVarType, 
-    cli::CLI, xml::user_config::UserConfig, 
-    settings_enum::SettingsEnum
+    cli::{CLI, OptionParsingMode}, xml::user_config::UserConfig, 
+    settings_enum::{SettingsEnum, SettingsEnumValueMapping}
 };
 
 pub struct SettingsMaster {
@@ -16,7 +18,6 @@ pub struct SettingsMaster {
 
 impl SettingsMaster {
     pub fn from(xml_user_config: &UserConfig, cli: &CLI) -> Result<Self, String> {  
-        
         let class_name = cli.settings_master_name.clone();
         let mod_version = cli.mod_version.clone();
         let validate_values = !cli.no_var_validation;
@@ -26,53 +27,145 @@ impl SettingsMaster {
             settings_groups.push(SettingsGroup::from(&group, cli));
         }
 
-        let settings_enums = Self::fetch_enums(&settings_groups)?;
-  
-        Ok(SettingsMaster {
+        let mut settings_master = SettingsMaster {
             class_name,
             mod_version,
             groups: settings_groups,
-            enums: settings_enums,
-            validate_values,
-        })
+            enums: Vec::new(),
+            validate_values
+        };
+
+        if cli.option_parsing_mode != OptionParsingMode::Ints {
+            let needs_enum_value_mappings = settings_master.fetch_enums(cli)?;
+
+            if needs_enum_value_mappings {
+                settings_master.create_enum_value_mappings();
+            }
+        }
+  
+        Ok(settings_master)
     }
 
-    fn fetch_enums(settings_groups: &Vec<SettingsGroup>) -> Result<Vec<SettingsEnum>, String> {
-        let mut enums_hierarchy = Vec::new();
-        for sg in settings_groups.iter() {
+    pub fn has_enum_value_mappings(&self) -> bool {
+        self.groups.iter()
+        .any(|g| g.has_enum_value_mappings())
+    }
+
+    // Returns whether enum value mapping is needed
+    fn fetch_enums(&mut self, cli: &CLI) -> Result<bool, String> {
+        // convenience struct that also contains group id and var id of the options var that enum was made from
+        struct EnumData<'a> {
+            group_id: &'a str,
+            var_id: &'a str,
+            val: &'a SettingsEnum
+        }
+
+        // map where the key is common enum prefix i.e. its type 
+        let mut enum_prefix_map: HashMap<&str, Vec<EnumData>> = HashMap::new();
+        for sg in self.groups.iter() {
             for sv in sg.vars.iter() {
-                if let SettingsVarType::Enum(se) = &sv.var_type {
-                    enums_hierarchy.push((sg, sv, se));
+                if let SettingsVarType::Enum { val, .. } = &sv.var_type {
+                    let prefix = val.common_prefix.as_str();
+                    let data = EnumData {
+                        group_id: sg.id.as_str(),
+                        var_id: sv.id.as_str(),
+                        val
+                    };
+
+                    if let Some(data_vec) = enum_prefix_map.get_mut(prefix) {
+                        data_vec.push(data);
+                    } else {
+                        enum_prefix_map.insert(prefix, vec![data]);
+                    }
                 }
             }
         }
 
-        if enums_hierarchy.is_empty() {
-            return Ok(Vec::new());
+        if enum_prefix_map.is_empty() {
+            return Ok(false);
         }
 
-        // make the ones having the same common prefix be next to each other
-        enums_hierarchy.sort_by(|(_, _, e1), (_, _, e2)| e1.common_prefix.cmp(&e2.common_prefix));
-
-        // check whether same type enums have the same sets of values
-        // different sets of values are not supported (yet)
-        for i in 0..enums_hierarchy.len() - 1 {
-            let h1 = enums_hierarchy[i];
-            let h2 = enums_hierarchy[i + 1];
-            if h1.2.common_prefix == h2.2.common_prefix && h1.2.values != h2.2.values {
-                return Err(format!("Some OptionArrays have the same common prefix, but different sets of values. See {}::{} and {}::{}",
-                                    h1.0.id, h1.1.id, h2.0.id, h2.1.id));
+        let mut enum_value_mapping_needed = false;
+        for (_, data_vec) in enum_prefix_map.iter() {
+            if data_vec.is_empty() {
+                continue;
+            } else if data_vec.len() == 1 {
+                self.enums.push(data_vec[0].val.clone());
+                continue;
             }
+            
+            // an enum type that will contain all possible values from OptionsArrays with the same common prefix 
+            let mut unified_enum = data_vec[0].val.clone();
+            for data in data_vec.iter().skip(1) {
+                // comparison concerns not only the values inside, but how they are ordered
+                if unified_enum.values != data.val.values {
+                    if cli.option_parsing_mode == OptionParsingMode::EnumsJoinEqual {
+                        return Err(format!("Some OptionArrays have the same common prefix, but different sets of values. See {}::{} and {}::{}",
+                                            data_vec[0].group_id, data_vec[0].var_id, data.group_id, data.var_id));
+                    }
+
+                    enum_value_mapping_needed = true;
+
+                    for value in &data.val.values {
+                        if !unified_enum.values.contains(value) {
+                            unified_enum.values.push(value.clone());
+                        }
+                    }
+                }
+            }
+
+            self.enums.push(unified_enum);
         }
 
-        // vec is sorted so this will leave only one ref to each enum type
-        enums_hierarchy.dedup_by(|(_, _, e1), (_, _, e2)| e1.common_prefix == e2.common_prefix);
+        Ok(enum_value_mapping_needed)
+    }
 
-        let fetched_enums = enums_hierarchy.iter()
-                            .map(|(_, _, e)| (**e).clone())
-                            .collect();
+    fn create_enum_value_mappings(&mut self) {
+        let it = self.groups.iter_mut()
+        .flat_map(|g| &mut g.vars)
+        .map(|v| &mut v.var_type)
+        .filter_map(|vt| {
+            if let SettingsVarType::Enum { val, val_mapping } = vt {
+                Some((val, val_mapping))
+            } else {
+                None
+            }
+        });
+        
+        for (val, val_mapping) in it {
+            let mut mapping = SettingsEnumValueMapping::default();
+            let unified_enum = self.enums.iter()
+                               .find(|e| e.common_prefix == val.common_prefix)
+                               .expect(&format!("Unified enum type not found for enum {}", val.type_name));
 
-        Ok(fetched_enums)
+            // no need for any specialized mapping if those types are exactly the same
+            if val == unified_enum {
+                *val_mapping = None;
+                continue;
+            }
+
+            for i in 0..val.values.len() {
+                for j in 0..unified_enum.values.len() {
+                    if val.values[i] == unified_enum.values[j] {
+                        mapping.config_to_unified.insert(i as i32, j as i32);
+                        break;
+                    }
+                }
+            }
+
+            for i in 0..unified_enum.values.len() {
+                for j in 0..val.values.len() {
+                    if unified_enum.values[i] == val.values[j] {
+                        mapping.unified_to_config.insert(i as i32, j as i32);
+                        break;
+                    }
+                    mapping.unified_to_config.insert(i as i32, 0);
+                }
+            }
+
+
+            *val_mapping = Some(mapping);
+        }
     }
 }
 
@@ -89,6 +182,8 @@ const MASTER_WRITE_SETTINGS_FUNC_NAME: &str = "WriteSettings";
 const MASTER_WRITE_SETTING_VALUE_FUNC_NAME: &str = "WriteSettingValue";
 const MASTER_RESET_SETTINGS_TO_DEFAULT_FUNC_NAME: &str = "ResetSettingsToDefault";
 const MASTER_SHOULD_RESET_TO_DEFAULT_ON_INIT_FUNC_NAME: &str = "ShouldResetSettingsToDefaultOnInit";
+const MASTER_ENUM_MAPPING_CONFIG_TO_UNIFIED_FUNC_NAME: &str = "EnumValueMappingConfigToUnified";
+const MASTER_ENUM_MAPPING_UNIFIED_TO_CONFIG_FUNC_NAME: &str = "EnumValueMappingUnifiedToConfig";
 const GROUP_RESET_SETTINGS_TO_DEFAULT_FUNC_NAME: &str = "ResetToDefault";
 
 impl WitcherScriptType for SettingsMaster {
@@ -126,6 +221,14 @@ impl WitcherScriptTypeDef for SettingsMaster {
     
         buffer.new_line();
         should_reset_to_default_on_init_function(self, buffer);
+
+        if self.has_enum_value_mappings() {
+            buffer.new_line();
+            enum_mapping_config_to_unified_function(self, buffer);
+
+            buffer.new_line();
+            enum_mapping_unified_to_config_function(self, buffer);
+        }
     
         buffer.pop_indent("}");
     }
@@ -168,10 +271,10 @@ fn validate_values_function(master: &SettingsMaster, buffer: &mut WitcherScript)
                                                             g = group.var_name, v = var.var_name)),
                 SettingsVarType::Float { min, max } => Some(format!("{g}.{v} = ClampF({g}.{v}, {min}, {max});", 
                                                               g = group.var_name, v = var.var_name)),
-                SettingsVarType::Enum (settings_enum) => Some(format!("{g}.{v} = ({t})Clamp((int){g}.{v}, {min}, {max});",
+                SettingsVarType::Enum { val, .. } => Some(format!("{g}.{v} = ({t})Clamp((int){g}.{v}, {min}, {max});",
                                                                          g = group.var_name, v = var.var_name, 
-                                                                         t = settings_enum.type_name,
-                                                                         min = 0, max = settings_enum.values.len() - 1)),
+                                                                         t = val.type_name,
+                                                                         min = 0, max = val.values.len() - 1)),
                 _ => None,
             };
 
@@ -208,7 +311,7 @@ fn read_settings_function(master: &SettingsMaster, buffer: &mut WitcherScript) {
                 SettingsVarType::Bool => format!("StringToBool({})", get_var_value),
                 SettingsVarType::Int {..} => format!("StringToInt({}, 0)", get_var_value),
                 SettingsVarType::Float {..} => format!("StringToFloat({}, 0.0)", get_var_value),
-                SettingsVarType::Enum (settings_enum) => format!("({})StringToInt({}, 0)", settings_enum.type_name, get_var_value),
+                SettingsVarType::Enum { val, .. } => format!("({})StringToInt({}, 0)", val.type_name, get_var_value),
             };
 
             buffer.push_line(&format!("{}.{} = {};", group.var_name, var.var_name, get_var_value));
@@ -280,4 +383,67 @@ fn should_reset_to_default_on_init_function(master: &SettingsMaster, buffer: &mu
           .push_line(&format!("return config.GetVarValue('{}','{}') == \"\";", group_id, var_id));
     
     buffer.pop_indent("}");
+}
+
+fn enum_mapping_function(master: &SettingsMaster, buffer: &mut WitcherScript, config_to_unified: bool) {
+    buffer.push_line(&format!(  "public /* override */ function {}(groupId: name, varId: name, val: int) : int", 
+                                if config_to_unified {
+                                    MASTER_ENUM_MAPPING_CONFIG_TO_UNIFIED_FUNC_NAME
+                                } else {
+                                    MASTER_ENUM_MAPPING_UNIFIED_TO_CONFIG_FUNC_NAME
+                                }))
+          .push_indent("{");
+
+
+    buffer.push_line("switch(groupId)")
+          .push_line("{");
+
+    for group in &master.groups {
+        if group.has_enum_value_mappings() {
+            buffer.push_indent(&format!("case '{}':", group.id));
+    
+            buffer.push_line("switch(varId)")
+                  .push_line("{");
+            for var in &group.vars {
+                if let Some(mapping) = if let SettingsVarType::Enum { val_mapping, .. } = &var.var_type { val_mapping } else { &None } {
+                    buffer.push_indent(&format!("case '{}':", var.id));
+        
+                    buffer.push_line("switch(val)")
+                          .push_line("{");
+
+                    if config_to_unified {
+                        for (config, unified) in &mapping.config_to_unified {
+                            buffer.push_line(&format!("case {}: return {};", config, unified));
+                        }
+                    } else {
+                        for (unified, config) in &mapping.unified_to_config {
+                            buffer.push_line(&format!("case {}: return {};", unified, config));   
+                        }
+                    }
+
+                    buffer.push_line("}");
+
+                    buffer.pop_indent("");
+                }
+            }
+            buffer.push_line("}");
+
+            buffer.pop_indent("");
+        }
+    }
+
+    buffer.push_line("}");
+
+    buffer.new_line();
+    buffer.push_line("return val;");
+
+    buffer.pop_indent("}");
+}
+
+fn enum_mapping_config_to_unified_function(master: &SettingsMaster, buffer: &mut WitcherScript) {
+    enum_mapping_function(master, buffer, true);
+}
+
+fn enum_mapping_unified_to_config_function(master: &SettingsMaster, buffer: &mut WitcherScript) {
+    enum_mapping_function(master, buffer, false);
 }

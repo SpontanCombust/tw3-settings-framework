@@ -39,6 +39,9 @@ pub struct CLI {
     /// Treats options vars as regular ints instead of creating custom enum types for them.
     /// This essentially means the behaviour from before v0.5.
     /// 
+    /// enums -
+    /// TODO explain 'enums' mode
+    /// 
     /// enums-reduce-equal -
     /// Parses options vars into enums. Then tries to find vars that have the same set of displayName attributes in option node 
     /// and assigns them one common type.
@@ -59,5 +62,6 @@ pub struct CLI {
 #[derive(Clone, Copy, PartialEq, Eq, ValueEnum)]
 pub enum OptionParsingMode {
     Ints,
+    Enums,
     EnumsJoinEqual,
 }

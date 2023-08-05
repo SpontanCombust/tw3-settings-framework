@@ -31,7 +31,7 @@ impl WitcherScriptType for SettingsVar {
             SettingsVarType::Bool => "bool".into(),
             SettingsVarType::Int {..} => "int".into(),
             SettingsVarType::Float {..} => "float".into(),
-            SettingsVarType::Enum (_enum) => _enum.type_name.clone(),
+            SettingsVarType::Enum { val, .. } => val.type_name.clone(),
         }
     }
 }

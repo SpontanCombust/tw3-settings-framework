@@ -3,7 +3,7 @@ use crate::{
     traits::{WitcherScriptType, WitcherScript, WitcherScriptTypeDef}, 
     cli::CLI, 
     xml::group::Group, 
-    utils::strip_prefixes
+    utils::strip_prefixes, settings_var_type::SettingsVarType
 };
 
 pub struct SettingsGroup {
@@ -39,6 +39,17 @@ impl SettingsGroup {
             default_preset_index,
             vars: setting_vars,
         }
+    }
+
+    pub fn has_enum_value_mappings(&self) -> bool {
+        self.vars.iter()
+        .filter_map(|v| {
+            if let SettingsVarType::Enum { val_mapping, .. } = &v.var_type {
+                Some(val_mapping)
+            } else {
+                None
+            }
+        }).any(|m| m.is_some())
     }
 }
 
