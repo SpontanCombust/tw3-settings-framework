@@ -134,6 +134,8 @@ impl SettingsMaster {
         
         for (val, val_mapping) in it {
             let mut mapping = SettingsEnumValueMapping::default();
+            mapping.resize(val.values.len(), 0);
+
             let unified_enum = self.enums.iter()
                                .find(|e| e.common_prefix == val.common_prefix)
                                .expect(&format!("Unified enum type not found for enum {}", val.type_name));
@@ -147,22 +149,11 @@ impl SettingsMaster {
             for i in 0..val.values.len() {
                 for j in 0..unified_enum.values.len() {
                     if val.values[i] == unified_enum.values[j] {
-                        mapping.config_to_unified.insert(i as i32, j as i32);
+                        mapping[i] = j;
                         break;
                     }
                 }
             }
-
-            for i in 0..unified_enum.values.len() {
-                for j in 0..val.values.len() {
-                    if unified_enum.values[i] == val.values[j] {
-                        mapping.unified_to_config.insert(i as i32, j as i32);
-                        break;
-                    }
-                    mapping.unified_to_config.insert(i as i32, 0);
-                }
-            }
-
 
             *val_mapping = Some(mapping);
         }
@@ -423,14 +414,13 @@ fn enum_mapping_function(master: &SettingsMaster, buffer: &mut WitcherScript, co
                     buffer.push_line("switch(val)")
                           .push_line("{");
 
-                    if config_to_unified {
-                        for (config, unified) in &mapping.config_to_unified {
-                            buffer.push_line(&format!("case {}: return {};", config, unified));
-                        }
-                    } else {
-                        for (unified, config) in &mapping.unified_to_config {
-                            buffer.push_line(&format!("case {}: return {};", unified, config));   
-                        }
+                    for i in 0..mapping.len() {
+                        let (k, v) = if config_to_unified { 
+                            (i, mapping[i]) 
+                        } else { 
+                            (mapping[i], i) 
+                        };
+                        buffer.push_line(&format!("case {}: return {};", k, v));
                     }
 
                     buffer.push_line("}");

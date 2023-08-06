@@ -31,6 +31,7 @@ jobs:
           -p="MOD" -p="mod_"
           -m="MyModSettings"
           -v="1.23"
+          --option-parsing-mode=enums
         working-directory: settings-parser
       - name: Parse DifficultyMod sample
         run: >

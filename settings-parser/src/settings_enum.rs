@@ -1,5 +1,3 @@
-use std::collections::HashMap;
-
 use crate::{
     xml::display_type::OptionsArray, 
     cli::CLI, 
@@ -72,12 +70,7 @@ impl WitcherScriptTypeDef for SettingsEnum {
 }
 
 
-#[derive(Default)]
 /// Describes the relationship between values in the unified enum and indices in the specific var in UserConfig.
-pub struct SettingsEnumValueMapping {
-    //TODO turn into simple arrays
-    /// Converts from index in UserConfig's var to integer value of the unified enum.
-    pub config_to_unified: HashMap<i32, i32>,
-    /// Converts from integer value of the unified enum to index in UserConfig's var.
-    pub unified_to_config: HashMap<i32, i32> 
-}
+/// This vec should be the same size as the `values` vec in SettingsEnum.
+/// For each element in said 'values' vec it attributes the value of element in the unified enum for this enum type.
+pub type SettingsEnumValueMapping = Vec<usize>;
