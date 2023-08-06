@@ -311,7 +311,13 @@ fn read_settings_function(master: &SettingsMaster, buffer: &mut WitcherScript) {
                 SettingsVarType::Bool => format!("StringToBool({})", get_var_value),
                 SettingsVarType::Int {..} => format!("StringToInt({}, 0)", get_var_value),
                 SettingsVarType::Float {..} => format!("StringToFloat({}, 0.0)", get_var_value),
-                SettingsVarType::Enum { val, .. } => format!("({})StringToInt({}, 0)", val.type_name, get_var_value),
+                SettingsVarType::Enum { val, val_mapping } => {
+                    get_var_value = format!("StringToInt({}, 0)", get_var_value);
+                    if val_mapping.is_some() {
+                        get_var_value = format!("{}('{}', '{}', {})", MASTER_ENUM_MAPPING_CONFIG_TO_UNIFIED_FUNC_NAME, group.id, var.id, get_var_value);
+                    }
+                    format!("({}){}", val.type_name, get_var_value)
+                }
             };
 
             buffer.push_line(&format!("{}.{} = {};", group.var_name, var.var_name, get_var_value));
@@ -342,11 +348,17 @@ fn write_settings_function(master: &SettingsMaster, buffer: &mut WitcherScript) 
 
     for group in &master.groups {
         for var in &group.vars {
-            let var_value_str = match var.var_type {
+            let var_value_str = match &var.var_type {
                 SettingsVarType::Bool => format!("BoolToString({}.{})", group.var_name, var.var_name),
                 SettingsVarType::Int {..} => format!("IntToString({}.{})", group.var_name, var.var_name),
                 SettingsVarType::Float {..} => format!("FloatToString({}.{})", group.var_name, var.var_name),
-                SettingsVarType::Enum {..} => format!("IntToString((int){}.{})", group.var_name, var.var_name),
+                SettingsVarType::Enum {val_mapping, ..} => { 
+                    let mut var_value_str = format!("(int){}.{}", group.var_name, var.var_name);
+                    if val_mapping.is_some() {
+                        var_value_str = format!("{}('{}', '{}', {})", MASTER_ENUM_MAPPING_UNIFIED_TO_CONFIG_FUNC_NAME, group.id, var.id, var_value_str);
+                    }
+                    format!("IntToString({})", var_value_str)
+                }
             };
 
             buffer.push_line(&format!("{}(config, '{}', '{}', {});", MASTER_WRITE_SETTING_VALUE_FUNC_NAME, group.id, var.id, var_value_str));
@@ -386,7 +398,7 @@ fn should_reset_to_default_on_init_function(master: &SettingsMaster, buffer: &mu
 }
 
 fn enum_mapping_function(master: &SettingsMaster, buffer: &mut WitcherScript, config_to_unified: bool) {
-    buffer.push_line(&format!(  "public /* override */ function {}(groupId: name, varId: name, val: int) : int", 
+    buffer.push_line(&format!("protected /* override */ function {}(groupId: name, varId: name, val: int) : int", 
                                 if config_to_unified {
                                     MASTER_ENUM_MAPPING_CONFIG_TO_UNIFIED_FUNC_NAME
                                 } else {
@@ -435,7 +447,11 @@ fn enum_mapping_function(master: &SettingsMaster, buffer: &mut WitcherScript, co
     buffer.push_line("}");
 
     buffer.new_line();
-    buffer.push_line("return val;");
+    if config_to_unified {
+        buffer.push_line("return val;");
+    } else {
+        buffer.push_line("return 0;");
+    }
 
     buffer.pop_indent("}");
 }

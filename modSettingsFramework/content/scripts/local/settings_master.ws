@@ -49,6 +49,18 @@ abstract class ISettingsMaster
         return false;
     }
 
+    // Returns integer value of the unified enum type for options var index in user config
+    protected function EnumValueMappingConfigToUnified(groupId: name, varId: name, val: int) : int
+    {
+        return 0;
+    }
+
+    // Returns the options var index in user config for integer value of unified enum
+    protected function EnumValueMappingUnifiedToConfig(groupId: name, varId: name, val: int) : int
+    {
+        return 0;
+    }
+
 
 
 
@@ -70,19 +82,6 @@ abstract class ISettingsMaster
     public function ResetSettingValues(config: CInGameConfigWrapper, groupId: name, presetIndex: int) : void
     {
         config.ApplyGroupPreset(groupId, presetIndex);
-    }
-
-
-    // Returns integer value of the unified enum type for options var index in user config
-    public function EnumValueMappingConfigToUnified(groupId: name, varId: name, val: int) : int
-    {
-        return 0;
-    }
-
-    // Returns the options var index in user config for integer value of unified enum
-    public function EnumValueMappingUnifiedToConfig(groupId: name, varId: name, val: int) : int
-    {
-        return 0;
     }
 
 
