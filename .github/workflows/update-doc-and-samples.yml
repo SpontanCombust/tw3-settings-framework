@@ -37,7 +37,7 @@ jobs:
         run: >
           cargo run --release --  
           -f="../samples/DifficultyMod/bin/config/r4game/user_config_matrix/pc/modSettingsFrameworkSampleDifficultyMod.xml"
-          -o="../samples/DifficultyMod/modSettingsFrameworkSampleDifficultyMod/content/scripts/local/difficulty_mod_base.ws"
+          -o="../samples/DifficultyMod/Mods/modSettingsFrameworkSampleDifficultyMod/content/scripts/local/difficulty_mod_base.ws"
           -m="ModDifficultySettingsBase"
           -p="DM"
           --default-preset-keyword="DEFAULT"
