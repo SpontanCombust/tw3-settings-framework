@@ -44,6 +44,17 @@ jobs:
           -v="1.1"
           --no-getter
         working-directory: settings-parser
+      - name: Parse MonsterOfTheWeek sample
+        run: >
+          cargo run --release --  
+          -f="../samples/MonsterOfTheWeek/bin/config/r4game/user_config_matrix/pc/MonsterOfTheWeek.xml"
+          -o="../samples/MonsterOfTheWeek/Mods/modMonsterOfTheWeek/content/scripts/local/monster_of_the_week_settings.ws"
+          -m="MonsterOfTheWeekSettings"
+          -p="MOTW"
+          -p="motw"
+          -v="1.0"
+          --option-parsing-mode=enums
+        working-directory: settings-parser
       - name: CLI specification
         run: |
           echo  '```' > "../doc/cli_specification.md"
