@@ -56,6 +56,10 @@ pub struct CLI {
     /// e.g. if slider value is in a specified range.
     #[clap(long, display_order=7)]
     pub no_var_validation: bool,
+
+    /// Prevents the settings object getter convenience function from being generated
+    #[clap(long, display_order=8)]
+    pub no_getter: bool
 }
 
 #[derive(Clone, Copy, PartialEq, Eq, ValueEnum)]

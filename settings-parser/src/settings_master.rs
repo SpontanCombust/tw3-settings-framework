@@ -13,7 +13,8 @@ pub struct SettingsMaster {
     pub mod_version: String,
     pub groups: Vec<SettingsGroup>,
     pub enums: Vec<SettingsEnum>,
-    pub validate_values: bool
+    pub validate_values: bool,
+    pub generate_getter: bool
 }
 
 impl SettingsMaster {
@@ -21,6 +22,7 @@ impl SettingsMaster {
         let class_name = cli.settings_master_name.clone();
         let mod_version = cli.mod_version.clone();
         let validate_values = !cli.no_var_validation;
+        let generate_getter = !cli.no_getter;
         
         let mut settings_groups = Vec::new();
         for group in xml_user_config.groups.iter() {
@@ -32,7 +34,8 @@ impl SettingsMaster {
             mod_version,
             groups: settings_groups,
             enums: Vec::new(),
-            validate_values
+            validate_values,
+            generate_getter
         };
 
         if cli.option_parsing_mode != OptionParsingMode::Ints {
@@ -222,6 +225,11 @@ impl WitcherScriptTypeDef for SettingsMaster {
         }
     
         buffer.pop_indent("}");
+
+        if self.generate_getter {
+            buffer.new_line();
+            getter_convenience_function(self, buffer);
+        }
     }
 
 }
@@ -453,3 +461,19 @@ fn enum_mapping_config_to_unified_function(master: &SettingsMaster, buffer: &mut
 fn enum_mapping_unified_to_config_function(master: &SettingsMaster, buffer: &mut WitcherScript) {
     enum_mapping_function(master, buffer, false);
 }
+
+fn getter_convenience_function(master: &SettingsMaster, buffer: &mut WitcherScript) {
+    buffer.push_line(&format!("function Get{m}() : {m}", m=master.class_name))
+          .push_indent("{")
+          .push_line(&format!("var settings: {};", master.class_name))
+          .new_line()
+          .push_line(&format!("settings = ({m})GetSettingsMasterRegistry().GetSettings('{m}');", m=master.class_name))
+          .push_line("if(!settings)")
+          .push_indent("{")
+          .push_line(&format!("settings = new {} in theGame;", master.class_name))
+          .push_line(&format!("GetSettingsMasterRegistry().AddSettings(settings, '{}');", master.class_name))
+          .pop_indent("}")
+          .new_line()
+          .push_line("return settings;")  
+          .pop_indent("}");  
+}  
