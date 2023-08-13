@@ -144,20 +144,6 @@ class MyModSettings extends ISettingsMaster
 	}
 }
 
-function GetMyModSettings() : MyModSettings
-{
-	var settings: MyModSettings;
-
-	settings = (MyModSettings)GetSettingsMasterRegistry().GetSettings('MyModSettings');
-	if(!settings)
-	{
-		settings = new MyModSettings in theGame;
-		GetSettingsMasterRegistry().AddSettings(settings, 'MyModSettings');
-	}
-
-	return settings;
-}
-
 class MyModSettings_tab1 extends ISettingsGroup
 {
 	public var option1 : MyModSettings_opt;
@@ -196,3 +182,17 @@ enum MyModSettings_opt
 	MyModSettings_opt4 = 3,
 }
 
+
+function GetMyModSettings() : MyModSettings
+{
+	var settings: MyModSettings;
+
+	settings = (MyModSettings)GetSettingsMasterRegistry().GetSettings('MyModSettings');
+	if(!settings)
+	{
+		settings = new MyModSettings in theGame;
+		GetSettingsMasterRegistry().AddSettings(settings, 'MyModSettings');
+	}
+
+	return settings;
+}
