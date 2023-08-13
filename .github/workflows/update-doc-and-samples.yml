@@ -42,6 +42,7 @@ jobs:
           -p="DM"
           --default-preset-keyword="DEFAULT"
           -v="1.1"
+          --no-getter
         working-directory: settings-parser
       - name: CLI specification
         run: |
