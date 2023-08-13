@@ -19,7 +19,7 @@ abstract class ISettingsGroup
         config = theGame.GetInGameConfigWrapper();
         
         m_parentMaster.ResetSettingValues(config, id, presetIndex);
-
+        //TODO add parameter that says whether this should be done (if all groups are reset it is needlessly done multiple times)
         theGame.SaveUserSettings();
         m_parentMaster.ReadSettings(); // get preset values back from config
     }

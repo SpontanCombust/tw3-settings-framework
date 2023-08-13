@@ -16,8 +16,7 @@
 			</Preset>
 		</PresetsArray>
    		<VisibleVars>
-			<!-- TODO more examples -->
-			<Var id="MODoption1" displayName="mod_tab1_option1" displayType="OPTIONS">
+			<Var id="MODoption" displayName="mod_tab1_option" displayType="OPTIONS">
 				<OptionsArray>
 					<Option id="0" displayName="mod_opt1">
 						<Entry varId="MODoption" value="0"/>
@@ -25,37 +24,8 @@
 					<Option id="1" displayName="mod_opt2">
 						<Entry varId="MODoption" value="1"/>
 					</Option>
-					<Option id="2" displayName="mod_opt3">
-						<Entry varId="MODoption1" value="2"/>
-					</Option>
-				</OptionsArray>
-			</Var>
-			<Var id="MODoption2" displayName="mod_tab1_option2" displayType="OPTIONS">
-				<OptionsArray>
-					<Option id="0" displayName="mod_opt1">
-						<Entry varId="MODoption2" value="0"/>
-					</Option>
-					<Option id="1" displayName="mod_opt3">
-						<Entry varId="MODoption2" value="1"/>
-					</Option>
-					<Option id="2" displayName="mod_opt4">
-						<Entry varId="MODoption2" value="2"/>
-					</Option>
-				</OptionsArray>
-			</Var>
-			<Var id="MODoption3" displayName="mod_tab1_option3" displayType="OPTIONS">
-				<OptionsArray>
-					<Option id="0" displayName="mod_opt1">
-						<Entry varId="MODoption3" value="0"/>
-					</Option>
-					<Option id="1" displayName="mod_opt2">
-						<Entry varId="MODoption3" value="1"/>
-					</Option>
-					<Option id="2" displayName="mod_opt3">
-						<Entry varId="MODoption3" value="2"/>
-					</Option>
-					<Option id="3" displayName="mod_opt4">
-						<Entry varId="MODoption3" value="3"/>
+					<Option id="2" displayName="mod_opt2">
+						<Entry varId="MODoption" value="2"/>
 					</Option>
 				</OptionsArray>
 			</Var>
