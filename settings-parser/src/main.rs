@@ -82,17 +82,6 @@ fn main() -> Result<(), String>{
                   .new_line();
 
             settings_master.ws_type_definition(&mut buffer);
-            buffer.new_line();
-
-            for group in settings_master.groups {
-                group.ws_type_definition(&mut buffer);
-                buffer.new_line();
-            }
-
-            for _enum in settings_master.enums {
-                _enum.ws_type_definition(&mut buffer);
-                buffer.new_line();
-            }
 
             // clear file content if there is any
             ws_file.set_len(0).unwrap();

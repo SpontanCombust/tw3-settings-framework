@@ -225,6 +225,17 @@ impl WitcherScriptTypeDef for SettingsMaster {
         }
     
         buffer.pop_indent("}");
+        buffer.new_line();
+
+        for g in &self.groups {
+            g.ws_type_definition(buffer);
+            buffer.new_line();
+        }
+
+        for e in &self.enums {
+            e.ws_type_definition(buffer);
+            buffer.new_line();
+        }
 
         if self.generate_getter {
             buffer.new_line();
