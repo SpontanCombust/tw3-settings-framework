@@ -1,4 +1,4 @@
-// Code generated using Mod Settings Framework v0.4.0 by SpontanCombust & Aeltoth
+// Code generated using Mod Settings Framework v0.5.0 by SpontanCombust & Aeltoth
 
 class MonsterOfTheWeekSettings extends ISettingsMaster
 {
@@ -218,6 +218,13 @@ class MonsterOfTheWeekSettings_monsters extends ISettingsGroup
 	default defaultPresetIndex = 0;
 }
 
+enum MonsterOfTheWeekSettings_difficulty
+{
+	MonsterOfTheWeekSettings_difficulty_easy = 0,
+	MonsterOfTheWeekSettings_difficulty_medium = 1,
+	MonsterOfTheWeekSettings_difficulty_hard = 2,
+}
+
 enum MonsterOfTheWeekSettings_monster
 {
 	MonsterOfTheWeekSettings_monster_ghoul = 0,
@@ -239,13 +246,6 @@ enum MonsterOfTheWeekSettings_monster
 	MonsterOfTheWeekSettings_monster_shaelmaar = 16,
 	MonsterOfTheWeekSettings_monster_bruxa = 17,
 	MonsterOfTheWeekSettings_monster_fleder = 18,
-}
-
-enum MonsterOfTheWeekSettings_difficulty
-{
-	MonsterOfTheWeekSettings_difficulty_easy = 0,
-	MonsterOfTheWeekSettings_difficulty_medium = 1,
-	MonsterOfTheWeekSettings_difficulty_hard = 2,
 }
 
 
