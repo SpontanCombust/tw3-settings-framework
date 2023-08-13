@@ -6,6 +6,9 @@ struct SSettingsMasterRegistryEntry
 
 class CSettingsMasterRegistry
 {
+    public const var FRAMEWORK_VERSION : name;
+    default FRAMEWORK_VERSION = '0.5';
+
     private var m_settingsEntries : array<SSettingsMasterRegistryEntry>;
 
     public function AddSettings(settingsMaster : ISettingsMaster, id : name) : void
