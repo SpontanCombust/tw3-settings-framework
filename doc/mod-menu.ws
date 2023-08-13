@@ -19,9 +19,7 @@ class MyModSettings extends ISettingsMaster
 
 	public /* override */ function ValidateSettings() : void
 	{
-		tab1.option1 = (MyModSettings_opt)Clamp((int)tab1.option1, 0, 2);
-		tab1.option2 = (MyModSettings_opt)Clamp((int)tab1.option2, 0, 2);
-		tab1.option3 = (MyModSettings_opt)Clamp((int)tab1.option3, 0, 3);
+		tab1.option = (MyModSettings_opt)Clamp((int)tab1.option, 0, 2);
 		tab1.sliderFloat = ClampF(tab1.sliderFloat, 0, 1);
 		tab1.sliderInt = Clamp(tab1.sliderInt, 0, 100);
 		tab1.version = ClampF(tab1.version, 0, 100);
@@ -36,9 +34,7 @@ class MyModSettings extends ISettingsMaster
 		var config : CInGameConfigWrapper;
 		config = theGame.GetInGameConfigWrapper();
 
-		tab1.option1 = (MyModSettings_opt)EnumValueMappingConfigToUnified('MODtab1', 'MODoption1', StringToInt(ReadSettingValue(config, 'MODtab1', 'MODoption1'), 0));
-		tab1.option2 = (MyModSettings_opt)EnumValueMappingConfigToUnified('MODtab1', 'MODoption2', StringToInt(ReadSettingValue(config, 'MODtab1', 'MODoption2'), 0));
-		tab1.option3 = (MyModSettings_opt)StringToInt(ReadSettingValue(config, 'MODtab1', 'MODoption3'), 0);
+		tab1.option = (MyModSettings_opt)StringToInt(ReadSettingValue(config, 'MODtab1', 'MODoption'), 0);
 		tab1.sliderFloat = StringToFloat(ReadSettingValue(config, 'MODtab1', 'MODsliderFloat'), 0.0);
 		tab1.sliderInt = StringToInt(ReadSettingValue(config, 'MODtab1', 'MODsliderInt'), 0);
 		tab1.toggle = StringToBool(ReadSettingValue(config, 'MODtab1', 'MODtoggle'));
@@ -59,9 +55,7 @@ class MyModSettings extends ISettingsMaster
 
 		this.ValidateSettings();
 
-		WriteSettingValue(config, 'MODtab1', 'MODoption1', IntToString(EnumValueMappingUnifiedToConfig('MODtab1', 'MODoption1', (int)tab1.option1)));
-		WriteSettingValue(config, 'MODtab1', 'MODoption2', IntToString(EnumValueMappingUnifiedToConfig('MODtab1', 'MODoption2', (int)tab1.option2)));
-		WriteSettingValue(config, 'MODtab1', 'MODoption3', IntToString((int)tab1.option3));
+		WriteSettingValue(config, 'MODtab1', 'MODoption', IntToString((int)tab1.option));
 		WriteSettingValue(config, 'MODtab1', 'MODsliderFloat', FloatToString(tab1.sliderFloat));
 		WriteSettingValue(config, 'MODtab1', 'MODsliderInt', IntToString(tab1.sliderInt));
 		WriteSettingValue(config, 'MODtab1', 'MODtoggle', BoolToString(tab1.toggle));
@@ -86,69 +80,13 @@ class MyModSettings extends ISettingsMaster
 		var config : CInGameConfigWrapper;
 		config = theGame.GetInGameConfigWrapper();
 
-		return config.GetVarValue('MODtab1','MODoption1') == "";
-	}
-
-	protected /* override */ function EnumValueMappingConfigToUnified(groupId: name, varId: name, val: int) : int
-	{
-		switch(groupId)
-		{
-		case 'MODtab1':
-			switch(varId)
-			{
-			case 'MODoption1':
-				switch(val)
-				{
-				case 0: return 0;
-				case 1: return 1;
-				case 2: return 2;
-				}
-			case 'MODoption2':
-				switch(val)
-				{
-				case 0: return 0;
-				case 1: return 2;
-				case 2: return 3;
-				}
-			}
-		}
-
-		return val;
-	}
-
-	protected /* override */ function EnumValueMappingUnifiedToConfig(groupId: name, varId: name, val: int) : int
-	{
-		switch(groupId)
-		{
-		case 'MODtab1':
-			switch(varId)
-			{
-			case 'MODoption1':
-				switch(val)
-				{
-				case 0: return 0;
-				case 1: return 1;
-				case 2: return 2;
-				}
-			case 'MODoption2':
-				switch(val)
-				{
-				case 0: return 0;
-				case 2: return 1;
-				case 3: return 2;
-				}
-			}
-		}
-
-		return 0;
+		return config.GetVarValue('MODtab1','MODoption') == "";
 	}
 }
 
 class MyModSettings_tab1 extends ISettingsGroup
 {
-	public var option1 : MyModSettings_opt;
-	public var option2 : MyModSettings_opt;
-	public var option3 : MyModSettings_opt;
+	public var option : MyModSettings_opt;
 	public var sliderFloat : float;
 	public var sliderInt : int;
 	public var toggle : bool;
@@ -178,8 +116,7 @@ enum MyModSettings_opt
 {
 	MyModSettings_opt1 = 0,
 	MyModSettings_opt2 = 1,
-	MyModSettings_opt3 = 2,
-	MyModSettings_opt4 = 3,
+	MyModSettings_opt2 = 2,
 }
 
 
