@@ -39,6 +39,9 @@ OPTIONS:
             writing to user config values will no longer be checked if they adhere to the XML, e.g.
             if slider value is in a specified range
 
+        --no-getter
+            Prevents the settings object getter convenience function from being generated
+
     -h, --help
             Print help information
 

@@ -62,6 +62,20 @@ class ModDifficultySettingsBase extends ISettingsMaster
 	}
 }
 
+function GetModDifficultySettingsBase() : ModDifficultySettingsBase
+{
+	var settings: ModDifficultySettingsBase;
+
+	settings = (ModDifficultySettingsBase)GetSettingsMasterRegistry().GetSettings('ModDifficultySettingsBase');
+	if(!settings)
+	{
+		settings = new ModDifficultySettingsBase in theGame;
+		GetSettingsMasterRegistry().AddSettings(settings, 'ModDifficultySettingsBase');
+	}
+
+	return settings;
+}
+
 class ModDifficultySettingsBase_general extends ISettingsGroup
 {
 	public var enabled : bool;
