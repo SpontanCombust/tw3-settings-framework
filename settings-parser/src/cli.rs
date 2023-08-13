@@ -40,16 +40,15 @@ pub struct CLI {
     /// This essentially means the behaviour from before v0.5.
     /// 
     /// enums -
-    /// TODO explain 'enums' mode
-    /// 
-    /// enums-reduce-equal -
     /// Parses options vars into enums. Then tries to find vars that have the same set of displayName attributes in option node 
     /// and assigns them one common type.
     /// Requires that displayNames of all option nodes contain some prefix that determines their relation.
     /// If two option arrays contain the same set of possible values they are considered to have the same enum type.
-    /// Having mutliple option arrays designated by the same prefix, but having different sets of values is disallowed.
-    /// Uses common option displayName prefix for the name of enum and its values.
-    #[clap(long, arg_enum, default_value="enums-join-equal", display_order=6)]
+    /// 
+    /// enums-strict -
+    /// Parses options vars into enums with an exception that having mutliple option arrays designated by the same prefix
+    /// but having different sets of values is disallowed. This prevents possible user mistakes from happening. 
+    #[clap(long, arg_enum, default_value="enums", display_order=6)]
     pub option_parsing_mode: OptionParsingMode,
 
     /// Disables the generation of code for value correction.
@@ -63,5 +62,5 @@ pub struct CLI {
 pub enum OptionParsingMode {
     Ints,
     Enums,
-    EnumsJoinEqual,
+    EnumsStrict,
 }

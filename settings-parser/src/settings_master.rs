@@ -99,7 +99,7 @@ impl SettingsMaster {
             for data in data_vec.iter().skip(1) {
                 // comparison concerns not only the values inside, but how they are ordered
                 if unified_enum.values != data.val.values {
-                    if cli.option_parsing_mode == OptionParsingMode::EnumsJoinEqual {
+                    if cli.option_parsing_mode == OptionParsingMode::EnumsStrict {
                         return Err(format!("Some OptionArrays have the same common prefix, but different sets of values. See {}::{} and {}::{}",
                                             data_vec[0].group_id, data_vec[0].var_id, data.group_id, data.var_id));
                     }

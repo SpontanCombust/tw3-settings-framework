@@ -48,7 +48,7 @@ impl SettingsVarType {
                             max: (options_array.len() - 1) as i32
                         })
                     },
-                    OptionParsingMode::Enums | OptionParsingMode::EnumsJoinEqual => {
+                    OptionParsingMode::Enums | OptionParsingMode::EnumsStrict => {
                         Some(SettingsVarType::Enum {
                             val: SettingsEnum::from(options_array, &var.id, cli),
                             val_mapping: None
