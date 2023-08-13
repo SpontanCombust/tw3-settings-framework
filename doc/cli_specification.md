@@ -31,8 +31,8 @@ OPTIONS:
             default]
 
         --option-parsing-mode <OPTION_PARSING_MODE>
-            Controls how OPTION type vars are parsed into WitcherScript [default: enums-join-equal]
-            [possible values: ints, enums, enums-join-equal]
+            Controls how OPTION type vars are parsed into WitcherScript [default: enums] [possible
+            values: ints, enums, enums-strict]
 
         --no-var-validation
             Disables the generation of code for value correction. After reading from or before
