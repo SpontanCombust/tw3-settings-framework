@@ -36,8 +36,8 @@ jobs:
       - name: Parse DifficultyMod sample
         run: >
           cargo run --release --  
-          -f="../samples/DifficultyMod/bin/config/r4game/user_config_matrix/pc/modSettingsFrameworkSampleDifficultyMod.xml"
-          -o="../samples/DifficultyMod/Mods/modSettingsFrameworkSampleDifficultyMod/content/scripts/local/difficulty_mod_base.ws"
+          -f="../samples/DifficultyMod/bin/config/r4game/user_config_matrix/pc/SampleDifficultyMod.xml"
+          -o="../samples/DifficultyMod/Mods/modSampleDifficultyMod/content/scripts/local/difficulty_mod_base.ws"
           -m="ModDifficultySettingsBase"
           -p="DM"
           --default-preset-keyword="DEFAULT"
@@ -47,8 +47,8 @@ jobs:
       - name: Parse MonsterOfTheWeek sample
         run: >
           cargo run --release --  
-          -f="../samples/MonsterOfTheWeek/bin/config/r4game/user_config_matrix/pc/MonsterOfTheWeek.xml"
-          -o="../samples/MonsterOfTheWeek/Mods/modMonsterOfTheWeek/content/scripts/local/monster_of_the_week_settings.ws"
+          -f="../samples/MonsterOfTheWeek/bin/config/r4game/user_config_matrix/pc/SampleMonsterOfTheWeek.xml"
+          -o="../samples/MonsterOfTheWeek/Mods/modSampleMonsterOfTheWeek/content/scripts/local/monster_of_the_week_settings.ws"
           -m="MonsterOfTheWeekSettings"
           -p="MOTW"
           -p="motw"
