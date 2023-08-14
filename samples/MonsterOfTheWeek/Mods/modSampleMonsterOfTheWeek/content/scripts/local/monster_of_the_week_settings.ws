@@ -192,7 +192,7 @@ class MonsterOfTheWeekSettings extends ISettingsMaster
 			}
 		}
 
-		return 0;
+		return -1;
 	}
 
 	public /* override */ function EnumValueMappingValidateUnified(gId: name, vId: name, val: int) : int
