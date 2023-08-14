@@ -4,6 +4,7 @@ exec function monster_of_the_week()
     var area: EAreaName;
 
     area = theGame.GetCommonMapManager().GetCurrentArea();
+    settings = GetMonsterOfTheWeekSettings();
 
     switch(area) 
     {
