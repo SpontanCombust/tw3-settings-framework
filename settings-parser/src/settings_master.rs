@@ -181,7 +181,7 @@ const MASTER_RESET_SETTINGS_TO_DEFAULT_FUNC_NAME: &str = "ResetSettingsToDefault
 const MASTER_SHOULD_RESET_TO_DEFAULT_ON_INIT_FUNC_NAME: &str = "ShouldResetSettingsToDefaultOnInit";
 const MASTER_ENUM_MAPPING_CONFIG_TO_UNIFIED_FUNC_NAME: &str = "EnumValueMappingConfigToUnified";
 const MASTER_ENUM_MAPPING_UNIFIED_TO_CONFIG_FUNC_NAME: &str = "EnumValueMappingUnifiedToConfig";
-const MASTER_ENUM_MAPPING_VALIDATE_FUNC_NAME: &str = "EnumValueMappingValidate";
+const MASTER_ENUM_MAPPING_VALIDATE_FUNC_NAME: &str = "EnumValueMappingValidateUnified";
 const GROUP_RESET_SETTINGS_TO_DEFAULT_FUNC_NAME: &str = "ResetToDefault";
 
 impl WitcherScriptType for SettingsMaster {
@@ -506,16 +506,13 @@ fn enum_mapping_validate_function(master: &SettingsMaster, buffer: &mut WitcherS
                   .push_line("{");
             for var in &group.vars {
                 if let Some(mapping) = if let SettingsVarType::Enum { val_mapping, .. } = &var.var_type { val_mapping } else { &None } {
-                    let mut sorted_mapping = mapping.clone();
-                    sorted_mapping.sort_by(|v1, v2| v1.cmp(v2));
-
                     buffer.push_line(&format!("case '{}':", var.id)).push_indent();
         
                     buffer.push_line("switch(val)")
                           .push_line("{");
 
-                    for i in 0..sorted_mapping.len() {
-                        buffer.push_line(&format!("case {}: ", sorted_mapping[i]));
+                    for i in 0..mapping.len() {
+                        buffer.push_line(&format!("case {}: ", mapping[i]));
                     }
 
                     buffer.push_indent()
@@ -523,7 +520,7 @@ fn enum_mapping_validate_function(master: &SettingsMaster, buffer: &mut WitcherS
                           .pop_indent()
                           .push_line("default:")
                           .push_indent()
-                          .push_line(&format!("return {};", sorted_mapping[0]))
+                          .push_line(&format!("return {};", mapping[0]))
                           .pop_indent();
 
                     buffer.push_line("}");
