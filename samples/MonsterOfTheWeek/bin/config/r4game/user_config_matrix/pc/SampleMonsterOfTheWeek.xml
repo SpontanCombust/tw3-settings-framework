@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-16"?>
 <UserConfig>
 	<!-- Options with the same set of value -->
-	<Group id="MOTWdifficulty" displayName="Mods.monster_of_the_week.motw_difficulty">
+	<Group id="MOTWdifficulties" displayName="Mods.monster_of_the_week.motw_difficulty">
 		<VisibleVars>
             <Var id="MOTWnoMansLand" displayName="motw_no_mans_land" displayType="OPTIONS">
                 <OptionsArray>

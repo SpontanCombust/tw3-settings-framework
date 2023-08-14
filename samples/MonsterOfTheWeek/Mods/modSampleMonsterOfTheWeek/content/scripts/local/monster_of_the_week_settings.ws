@@ -4,12 +4,12 @@ class MonsterOfTheWeekSettings extends ISettingsMaster
 {
 	default modVersion = "1.0";
 
-	public var difficulty : MonsterOfTheWeekSettings_difficulty;
+	public var difficulties : MonsterOfTheWeekSettings_difficulties;
 	public var monsters : MonsterOfTheWeekSettings_monsters;
 
 	public /* override */ function Init() : void
 	{
-		difficulty = new MonsterOfTheWeekSettings_difficulty in this; difficulty.Init(this);
+		difficulties = new MonsterOfTheWeekSettings_difficulties in this; difficulties.Init(this);
 		monsters = new MonsterOfTheWeekSettings_monsters in this; monsters.Init(this);
 
 		super.Init();
@@ -17,10 +17,10 @@ class MonsterOfTheWeekSettings extends ISettingsMaster
 
 	public /* override */ function ValidateSettings() : void
 	{
-		difficulty.noMansLand = (MonsterOfTheWeekSettings_difficulty)Clamp((int)difficulty.noMansLand, 0, 2);
-		difficulty.skellige = (MonsterOfTheWeekSettings_difficulty)Clamp((int)difficulty.skellige, 0, 2);
-		difficulty.kaerMorhen = (MonsterOfTheWeekSettings_difficulty)Clamp((int)difficulty.kaerMorhen, 0, 2);
-		difficulty.toussaint = (MonsterOfTheWeekSettings_difficulty)Clamp((int)difficulty.toussaint, 0, 2);
+		difficulties.noMansLand = (MonsterOfTheWeekSettings_difficulty)Clamp((int)difficulties.noMansLand, 0, 2);
+		difficulties.skellige = (MonsterOfTheWeekSettings_difficulty)Clamp((int)difficulties.skellige, 0, 2);
+		difficulties.kaerMorhen = (MonsterOfTheWeekSettings_difficulty)Clamp((int)difficulties.kaerMorhen, 0, 2);
+		difficulties.toussaint = (MonsterOfTheWeekSettings_difficulty)Clamp((int)difficulties.toussaint, 0, 2);
 
 		monsters.noMansLand = (MonsterOfTheWeekSettings_monster)Clamp((int)monsters.noMansLand, 0, 6);
 		monsters.skellige = (MonsterOfTheWeekSettings_monster)Clamp((int)monsters.skellige, 0, 8);
@@ -35,10 +35,10 @@ class MonsterOfTheWeekSettings extends ISettingsMaster
 		var config : CInGameConfigWrapper;
 		config = theGame.GetInGameConfigWrapper();
 
-		difficulty.noMansLand = (MonsterOfTheWeekSettings_difficulty)StringToInt(ReadSettingValue(config, 'MOTWdifficulty', 'MOTWnoMansLand'), 0);
-		difficulty.skellige = (MonsterOfTheWeekSettings_difficulty)StringToInt(ReadSettingValue(config, 'MOTWdifficulty', 'MOTWskellige'), 0);
-		difficulty.kaerMorhen = (MonsterOfTheWeekSettings_difficulty)StringToInt(ReadSettingValue(config, 'MOTWdifficulty', 'MOTWkaerMorhen'), 0);
-		difficulty.toussaint = (MonsterOfTheWeekSettings_difficulty)StringToInt(ReadSettingValue(config, 'MOTWdifficulty', 'MOTWtoussaint'), 0);
+		difficulties.noMansLand = (MonsterOfTheWeekSettings_difficulty)StringToInt(ReadSettingValue(config, 'MOTWdifficulties', 'MOTWnoMansLand'), 0);
+		difficulties.skellige = (MonsterOfTheWeekSettings_difficulty)StringToInt(ReadSettingValue(config, 'MOTWdifficulties', 'MOTWskellige'), 0);
+		difficulties.kaerMorhen = (MonsterOfTheWeekSettings_difficulty)StringToInt(ReadSettingValue(config, 'MOTWdifficulties', 'MOTWkaerMorhen'), 0);
+		difficulties.toussaint = (MonsterOfTheWeekSettings_difficulty)StringToInt(ReadSettingValue(config, 'MOTWdifficulties', 'MOTWtoussaint'), 0);
 
 		monsters.noMansLand = (MonsterOfTheWeekSettings_monster)EnumValueMappingConfigToUnified('MOTWmonsters', 'MOTWnoMansLand', StringToInt(ReadSettingValue(config, 'MOTWmonsters', 'MOTWnoMansLand'), 0));
 		monsters.skellige = (MonsterOfTheWeekSettings_monster)EnumValueMappingConfigToUnified('MOTWmonsters', 'MOTWskellige', StringToInt(ReadSettingValue(config, 'MOTWmonsters', 'MOTWskellige'), 0));
@@ -56,10 +56,10 @@ class MonsterOfTheWeekSettings extends ISettingsMaster
 
 		this.ValidateSettings();
 
-		WriteSettingValue(config, 'MOTWdifficulty', 'MOTWnoMansLand', IntToString((int)difficulty.noMansLand));
-		WriteSettingValue(config, 'MOTWdifficulty', 'MOTWskellige', IntToString((int)difficulty.skellige));
-		WriteSettingValue(config, 'MOTWdifficulty', 'MOTWkaerMorhen', IntToString((int)difficulty.kaerMorhen));
-		WriteSettingValue(config, 'MOTWdifficulty', 'MOTWtoussaint', IntToString((int)difficulty.toussaint));
+		WriteSettingValue(config, 'MOTWdifficulties', 'MOTWnoMansLand', IntToString((int)difficulties.noMansLand));
+		WriteSettingValue(config, 'MOTWdifficulties', 'MOTWskellige', IntToString((int)difficulties.skellige));
+		WriteSettingValue(config, 'MOTWdifficulties', 'MOTWkaerMorhen', IntToString((int)difficulties.kaerMorhen));
+		WriteSettingValue(config, 'MOTWdifficulties', 'MOTWtoussaint', IntToString((int)difficulties.toussaint));
 
 		WriteSettingValue(config, 'MOTWmonsters', 'MOTWnoMansLand', IntToString(EnumValueMappingUnifiedToConfig('MOTWmonsters', 'MOTWnoMansLand', (int)monsters.noMansLand)));
 		WriteSettingValue(config, 'MOTWmonsters', 'MOTWskellige', IntToString(EnumValueMappingUnifiedToConfig('MOTWmonsters', 'MOTWskellige', (int)monsters.skellige)));
@@ -71,7 +71,7 @@ class MonsterOfTheWeekSettings extends ISettingsMaster
 
 	public /* override */ function ResetSettingsToDefault() : void
 	{
-		difficulty.ResetToDefault();
+		difficulties.ResetToDefault();
 		monsters.ResetToDefault();
 	}
 
@@ -80,7 +80,7 @@ class MonsterOfTheWeekSettings extends ISettingsMaster
 		var config : CInGameConfigWrapper;
 		config = theGame.GetInGameConfigWrapper();
 
-		return config.GetVarValue('MOTWdifficulty','MOTWnoMansLand') == "";
+		return config.GetVarValue('MOTWdifficulties','MOTWnoMansLand') == "";
 	}
 
 	protected /* override */ function EnumValueMappingConfigToUnified(groupId: name, varId: name, val: int) : int
@@ -196,14 +196,14 @@ class MonsterOfTheWeekSettings extends ISettingsMaster
 	}
 }
 
-class MonsterOfTheWeekSettings_difficulty extends ISettingsGroup
+class MonsterOfTheWeekSettings_difficulties extends ISettingsGroup
 {
 	public var noMansLand : MonsterOfTheWeekSettings_difficulty;
 	public var skellige : MonsterOfTheWeekSettings_difficulty;
 	public var kaerMorhen : MonsterOfTheWeekSettings_difficulty;
 	public var toussaint : MonsterOfTheWeekSettings_difficulty;
 
-	default id = 'MOTWdifficulty';
+	default id = 'MOTWdifficulties';
 	default defaultPresetIndex = 0;
 }
 
@@ -216,6 +216,13 @@ class MonsterOfTheWeekSettings_monsters extends ISettingsGroup
 
 	default id = 'MOTWmonsters';
 	default defaultPresetIndex = 0;
+}
+
+enum MonsterOfTheWeekSettings_difficulty
+{
+	MonsterOfTheWeekSettings_difficulty_easy = 0,
+	MonsterOfTheWeekSettings_difficulty_medium = 1,
+	MonsterOfTheWeekSettings_difficulty_hard = 2,
 }
 
 enum MonsterOfTheWeekSettings_monster
@@ -239,13 +246,6 @@ enum MonsterOfTheWeekSettings_monster
 	MonsterOfTheWeekSettings_monster_shaelmaar = 16,
 	MonsterOfTheWeekSettings_monster_bruxa = 17,
 	MonsterOfTheWeekSettings_monster_fleder = 18,
-}
-
-enum MonsterOfTheWeekSettings_difficulty
-{
-	MonsterOfTheWeekSettings_difficulty_easy = 0,
-	MonsterOfTheWeekSettings_difficulty_medium = 1,
-	MonsterOfTheWeekSettings_difficulty_hard = 2,
 }
 
 
