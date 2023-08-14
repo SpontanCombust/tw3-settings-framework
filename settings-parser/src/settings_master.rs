@@ -178,6 +178,7 @@ const MASTER_RESET_SETTINGS_TO_DEFAULT_FUNC_NAME: &str = "ResetSettingsToDefault
 const MASTER_SHOULD_RESET_TO_DEFAULT_ON_INIT_FUNC_NAME: &str = "ShouldResetSettingsToDefaultOnInit";
 const MASTER_ENUM_MAPPING_CONFIG_TO_UNIFIED_FUNC_NAME: &str = "EnumValueMappingConfigToUnified";
 const MASTER_ENUM_MAPPING_UNIFIED_TO_CONFIG_FUNC_NAME: &str = "EnumValueMappingUnifiedToConfig";
+const MASTER_ENUM_MAPPING_VALIDATE_FUNC_NAME: &str = "EnumValueMappingValidate";
 const GROUP_RESET_SETTINGS_TO_DEFAULT_FUNC_NAME: &str = "ResetToDefault";
 
 impl WitcherScriptType for SettingsMaster {
@@ -222,6 +223,9 @@ impl WitcherScriptTypeDef for SettingsMaster {
 
             buffer.new_line();
             enum_mapping_unified_to_config_function(self, buffer);
+
+            buffer.new_line();
+            enum_mapping_validate_function(self, buffer);
         }
     
         buffer.pop_indent("}");
@@ -278,13 +282,24 @@ fn validate_values_function(master: &SettingsMaster, buffer: &mut WitcherScript)
         for var in &group.vars {
             let validator = match &var.var_type {
                 SettingsVarType::Int { min, max } => Some(format!("{g}.{v} = Clamp({g}.{v}, {min}, {max});", 
-                                                            g = group.var_name, v = var.var_name)),
+                                                                    g = group.var_name, v = var.var_name)),
                 SettingsVarType::Float { min, max } => Some(format!("{g}.{v} = ClampF({g}.{v}, {min}, {max});", 
-                                                              g = group.var_name, v = var.var_name)),
-                SettingsVarType::Enum { val, .. } => Some(format!("{g}.{v} = ({t})Clamp((int){g}.{v}, {min}, {max});",
-                                                                         g = group.var_name, v = var.var_name, 
-                                                                         t = val.type_name,
-                                                                         min = 0, max = val.values.len() - 1)),
+                                                                      g = group.var_name, v = var.var_name)),
+                SettingsVarType::Enum { val, val_mapping } => {
+                    if let Some(_) = val_mapping {
+                        Some(format!("{g}.{v} = ({t}){f}('{gid}', '{vid}', (int){g}.{v});",
+                                       g = group.var_name, v = var.var_name, 
+                                       gid = group.id, vid = var.id,
+                                       t = val.type_name,
+                                       f = MASTER_ENUM_MAPPING_VALIDATE_FUNC_NAME))
+                    } else {
+                        Some(format!("{g}.{v} = ({t})Clamp((int){g}.{v}, {min}, {max});",
+                                       g = group.var_name, v = var.var_name, 
+                                       t = val.type_name,
+                                       min = 0, max = val.values.len() - 1))
+                    }
+                } 
+                
                 _ => None,
             };
 
@@ -471,6 +486,56 @@ fn enum_mapping_config_to_unified_function(master: &SettingsMaster, buffer: &mut
 
 fn enum_mapping_unified_to_config_function(master: &SettingsMaster, buffer: &mut WitcherScript) {
     enum_mapping_function(master, buffer, false);
+}
+
+fn enum_mapping_validate_function(master: &SettingsMaster, buffer: &mut WitcherScript) {
+    buffer.push_line(&format!("protected /* override */ function {}(groupId: name, varId: name, val: int) : int", MASTER_ENUM_MAPPING_VALIDATE_FUNC_NAME))
+          .push_indent("{");
+    
+    buffer.push_line("switch(groupId)")
+          .push_line("{");
+
+    for group in &master.groups {
+        if group.has_enum_value_mappings() {
+            buffer.push_indent(&format!("case '{}':", group.id));
+    
+            buffer.push_line("switch(varId)")
+                  .push_line("{");
+            for var in &group.vars {
+                if let Some(mapping) = if let SettingsVarType::Enum { val_mapping, .. } = &var.var_type { val_mapping } else { &None } {
+                    buffer.push_indent(&format!("case '{}':", var.id));
+        
+                    buffer.push_line("switch(val)")
+                          .push_line("{");
+
+                    for i in 0..mapping.len() {
+                        buffer.push_line(&format!("case {}: ", mapping[i]));
+                    }
+
+                    buffer.push_indent("")
+                          .push_line("return val;")
+                          .pop_indent("")
+                          .push_line("default:")
+                          .push_indent("")
+                          .push_line(&format!("return {};", mapping[0]))
+                          .pop_indent("");
+
+                    buffer.push_line("}");
+
+                    buffer.pop_indent("");
+                }
+            }
+            buffer.push_line("}");
+
+            buffer.pop_indent("");
+        }
+    }
+    buffer.push_line("}");
+
+    buffer.new_line()
+          .push_line("return 0;");
+    
+    buffer.pop_indent("}");
 }
 
 fn getter_convenience_function(master: &SettingsMaster, buffer: &mut WitcherScript) {

@@ -61,6 +61,12 @@ abstract class ISettingsMaster
         return 0;
     }
 
+    // If integer value for given enum variable is correct returns said value, otherwise returns some default valid value
+    protected function EnumValueMappingValidate(groupId: name, varId: name, val: int) : int
+    {
+        return 0;
+    }
+
 
 
 

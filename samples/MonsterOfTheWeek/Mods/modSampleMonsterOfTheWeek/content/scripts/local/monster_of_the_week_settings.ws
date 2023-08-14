@@ -22,10 +22,10 @@ class MonsterOfTheWeekSettings extends ISettingsMaster
 		difficulties.kaerMorhen = (MonsterOfTheWeekSettings_difficulty)Clamp((int)difficulties.kaerMorhen, 0, 2);
 		difficulties.toussaint = (MonsterOfTheWeekSettings_difficulty)Clamp((int)difficulties.toussaint, 0, 2);
 
-		monsters.noMansLand = (MonsterOfTheWeekSettings_monster)Clamp((int)monsters.noMansLand, 0, 6);
-		monsters.skellige = (MonsterOfTheWeekSettings_monster)Clamp((int)monsters.skellige, 0, 8);
-		monsters.kaerMorhen = (MonsterOfTheWeekSettings_monster)Clamp((int)monsters.kaerMorhen, 0, 3);
-		monsters.toussaint = (MonsterOfTheWeekSettings_monster)Clamp((int)monsters.toussaint, 0, 6);
+		monsters.noMansLand = (MonsterOfTheWeekSettings_monster)EnumValueMappingValidate('MOTWmonsters', 'MOTWnoMansLand', (int)monsters.noMansLand);
+		monsters.skellige = (MonsterOfTheWeekSettings_monster)EnumValueMappingValidate('MOTWmonsters', 'MOTWskellige', (int)monsters.skellige);
+		monsters.kaerMorhen = (MonsterOfTheWeekSettings_monster)EnumValueMappingValidate('MOTWmonsters', 'MOTWkaerMorhen', (int)monsters.kaerMorhen);
+		monsters.toussaint = (MonsterOfTheWeekSettings_monster)EnumValueMappingValidate('MOTWmonsters', 'MOTWtoussaint', (int)monsters.toussaint);
 
 		super.ValidateSettings();
 	}
@@ -188,6 +188,74 @@ class MonsterOfTheWeekSettings extends ISettingsMaster
 				case 16: return 4;
 				case 17: return 5;
 				case 18: return 6;
+				}
+			}
+		}
+
+		return 0;
+	}
+
+	protected /* override */ function EnumValueMappingValidate(groupId: name, varId: name, val: int) : int
+	{
+		switch(groupId)
+		{
+		case 'MOTWmonsters':
+			switch(varId)
+			{
+			case 'MOTWnoMansLand':
+				switch(val)
+				{
+				case 0: 
+				case 1: 
+				case 2: 
+				case 3: 
+				case 4: 
+				case 5: 
+				case 6: 
+					return val;
+				default:
+					return 0;
+				}
+			case 'MOTWskellige':
+				switch(val)
+				{
+				case 7: 
+				case 8: 
+				case 1: 
+				case 2: 
+				case 3: 
+				case 4: 
+				case 9: 
+				case 10: 
+				case 11: 
+					return val;
+				default:
+					return 7;
+				}
+			case 'MOTWkaerMorhen':
+				switch(val)
+				{
+				case 8: 
+				case 2: 
+				case 1: 
+				case 3: 
+					return val;
+				default:
+					return 8;
+				}
+			case 'MOTWtoussaint':
+				switch(val)
+				{
+				case 12: 
+				case 13: 
+				case 14: 
+				case 15: 
+				case 16: 
+				case 17: 
+				case 18: 
+					return val;
+				default:
+					return 12;
 				}
 			}
 		}
