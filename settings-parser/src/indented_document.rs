@@ -28,19 +28,13 @@ impl IndentedDocument {
     //     self
     // }
 
-    pub fn push_indent(&mut self, s: &str) -> &mut Self {
-        if !s.is_empty() {
-            self.push_line(s);
-        } 
+    pub fn push_indent(&mut self) -> &mut Self {
         self.current_indent += 1;
         self
     }
 
-    pub fn pop_indent(&mut self, s: &str) -> &mut Self {
+    pub fn pop_indent(&mut self) -> &mut Self {
         self.current_indent -= 1;
-        if !s.is_empty() {
-            self.push_line(s);
-        }
         self
     }
 }

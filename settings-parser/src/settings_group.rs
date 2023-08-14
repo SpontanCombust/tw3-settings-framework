@@ -69,14 +69,14 @@ impl WitcherScriptType for SettingsGroup {
 impl WitcherScriptTypeDef for SettingsGroup {
     fn ws_type_definition(&self, buffer: &mut WitcherScript) {
         buffer.push_line(&format!("class {} extends {}", self.ws_type_name(), SETTINGS_GROUP_PARENT_CLASS));
-        buffer.push_indent("{");
+        buffer.push_line("{").push_indent();
     
         group_class_variables(self, buffer);
         
         buffer.new_line();
         group_default_variable_values(self, buffer);
     
-        buffer.pop_indent("}");
+        buffer.pop_indent().push_line("}");
     }
 }
 

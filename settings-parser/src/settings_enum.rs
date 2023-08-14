@@ -59,13 +59,13 @@ impl WitcherScriptType for SettingsEnum {
 impl WitcherScriptTypeDef for SettingsEnum {
     fn ws_type_definition(&self, buffer: &mut crate::traits::WitcherScript) {
         buffer.push_line(&format!("enum {}", self.type_name))
-              .push_indent("{");
+              .push_line("{").push_indent();
         
         for i in 0..self.values.len() {
             buffer.push_line(&format!("{} = {},", self.values[i], i));
         }
     
-        buffer.pop_indent("}");
+        buffer.pop_indent().push_line("}");
     }
 }
 

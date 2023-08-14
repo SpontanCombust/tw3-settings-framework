@@ -120,6 +120,9 @@ impl SettingsMaster {
             self.enums.push(unified_enum);
         }
 
+        // enum definitions kept being parsed in different order between program runs
+        self.enums.sort_by(|e1, e2| e1.type_name.cmp(&e2.type_name));
+
         Ok(enum_value_mapping_needed)
     }
 
@@ -190,7 +193,7 @@ impl WitcherScriptType for SettingsMaster {
 impl WitcherScriptTypeDef for SettingsMaster {
     fn ws_type_definition(&self, buffer: &mut WitcherScript) {
         buffer.push_line(&format!("class {} extends {}", self.class_name, MASTER_BASE_CLASS_NAME));
-        buffer.push_indent("{");
+        buffer.push_line("{").push_indent();
     
         default_variable_values(self, buffer);
         
@@ -228,7 +231,7 @@ impl WitcherScriptTypeDef for SettingsMaster {
             enum_mapping_validate_function(self, buffer);
         }
     
-        buffer.pop_indent("}");
+        buffer.pop_indent().push_line("}");
         buffer.new_line();
 
         for g in &self.groups {
@@ -261,7 +264,7 @@ fn default_variable_values(master: &SettingsMaster, buffer: &mut WitcherScript) 
 
 fn init_function(master: &SettingsMaster, buffer: &mut WitcherScript) {
     buffer.push_line(&format!("public /* override */ function {}() : void", MASTER_INIT_FUNC_NAME));
-    buffer.push_indent("{");
+    buffer.push_line("{").push_indent();
 
     for group in &master.groups {
         buffer.push_line(&format!("{n} = new {t} in this; {n}.Init(this);", n = group.var_name, t = group.ws_type_name()));
@@ -270,12 +273,12 @@ fn init_function(master: &SettingsMaster, buffer: &mut WitcherScript) {
     buffer.new_line();
     buffer.push_line(&format!("super.{}();", MASTER_INIT_FUNC_NAME));
 
-    buffer.pop_indent("}");
+    buffer.pop_indent().push_line("}");
 }
 
 fn validate_values_function(master: &SettingsMaster, buffer: &mut WitcherScript) {
     buffer.push_line(&format!("public /* override */ function {}() : void", MASTER_VALIDATE_VALUES_FUNC_NAME));
-    buffer.push_indent("{");
+    buffer.push_line("{").push_indent();
 
     for group in &master.groups {
         let mut group_has_validation = false;
@@ -316,12 +319,12 @@ fn validate_values_function(master: &SettingsMaster, buffer: &mut WitcherScript)
 
     buffer.push_line(&format!("super.{}();", MASTER_VALIDATE_VALUES_FUNC_NAME));
 
-    buffer.pop_indent("}");
+    buffer.pop_indent().push_line("}");
 }
 
 fn read_settings_function(master: &SettingsMaster, buffer: &mut WitcherScript) {
     buffer.push_line(&format!("public /* override */ function {}() : void", MASTER_READ_SETTINGS_FUNC_NAME));
-    buffer.push_indent("{");
+    buffer.push_line("{").push_indent();
 
     buffer.push_line("var config : CInGameConfigWrapper;");
     buffer.push_line("config = theGame.GetInGameConfigWrapper();");
@@ -355,12 +358,12 @@ fn read_settings_function(master: &SettingsMaster, buffer: &mut WitcherScript) {
     }
     buffer.push_line(&format!("super.{}();", MASTER_READ_SETTINGS_FUNC_NAME));
 
-    buffer.pop_indent("}");
+    buffer.pop_indent().push_line("}");
 }
 
 fn write_settings_function(master: &SettingsMaster, buffer: &mut WitcherScript) {
     buffer.push_line(&format!("public /* override */ function {}() : void", MASTER_WRITE_SETTINGS_FUNC_NAME))
-          .push_indent("{");
+          .push_line("{").push_indent();
 
     buffer.push_line("var config : CInGameConfigWrapper;")
           .push_line("config = theGame.GetInGameConfigWrapper();")
@@ -393,18 +396,18 @@ fn write_settings_function(master: &SettingsMaster, buffer: &mut WitcherScript) 
 
     buffer.push_line(&format!("super.{}();", MASTER_WRITE_SETTINGS_FUNC_NAME));
           
-    buffer.pop_indent("}");
+    buffer.pop_indent().push_line("}");
 }
 
 fn reset_settings_to_default_function(master: &SettingsMaster, buffer: &mut WitcherScript) {
     buffer.push_line(&format!("public /* override */ function {}() : void", MASTER_RESET_SETTINGS_TO_DEFAULT_FUNC_NAME))
-          .push_indent("{");
+          .push_line("{").push_indent();
 
     for group in &master.groups {
         buffer.push_line(&format!("{}.{}();", group.var_name, GROUP_RESET_SETTINGS_TO_DEFAULT_FUNC_NAME));
     }
 
-    buffer.pop_indent("}");
+    buffer.pop_indent().push_line("}");
 }
 
 fn should_reset_to_default_on_init_function(master: &SettingsMaster, buffer: &mut WitcherScript) {
@@ -412,14 +415,14 @@ fn should_reset_to_default_on_init_function(master: &SettingsMaster, buffer: &mu
     let var_id = &master.groups[0].vars[0].id;
 
     buffer.push_line(&format!("public /* override */ function {}() : bool", MASTER_SHOULD_RESET_TO_DEFAULT_ON_INIT_FUNC_NAME))
-          .push_indent("{");
+          .push_line("{").push_indent();
     
     buffer.push_line("var config : CInGameConfigWrapper;")
           .push_line("config = theGame.GetInGameConfigWrapper();")
           .new_line()
           .push_line(&format!("return config.GetVarValue('{}','{}') == \"\";", group_id, var_id));
     
-    buffer.pop_indent("}");
+    buffer.pop_indent().push_line("}");
 }
 
 fn enum_mapping_function(master: &SettingsMaster, buffer: &mut WitcherScript, config_to_unified: bool) {
@@ -429,7 +432,7 @@ fn enum_mapping_function(master: &SettingsMaster, buffer: &mut WitcherScript, co
                                 } else {
                                     MASTER_ENUM_MAPPING_UNIFIED_TO_CONFIG_FUNC_NAME
                                 }))
-          .push_indent("{");
+          .push_line("{").push_indent();
 
 
     buffer.push_line("switch(groupId)")
@@ -437,13 +440,13 @@ fn enum_mapping_function(master: &SettingsMaster, buffer: &mut WitcherScript, co
 
     for group in &master.groups {
         if group.has_enum_value_mappings() {
-            buffer.push_indent(&format!("case '{}':", group.id));
+            buffer.push_line(&format!("case '{}':", group.id)).push_indent();
     
             buffer.push_line("switch(varId)")
                   .push_line("{");
             for var in &group.vars {
                 if let Some(mapping) = if let SettingsVarType::Enum { val_mapping, .. } = &var.var_type { val_mapping } else { &None } {
-                    buffer.push_indent(&format!("case '{}':", var.id));
+                    buffer.push_line(&format!("case '{}':", var.id)).push_indent();
         
                     buffer.push_line("switch(val)")
                           .push_line("{");
@@ -459,12 +462,12 @@ fn enum_mapping_function(master: &SettingsMaster, buffer: &mut WitcherScript, co
 
                     buffer.push_line("}");
 
-                    buffer.pop_indent("");
+                    buffer.pop_indent();
                 }
             }
             buffer.push_line("}");
 
-            buffer.pop_indent("");
+            buffer.pop_indent();
         }
     }
 
@@ -477,7 +480,7 @@ fn enum_mapping_function(master: &SettingsMaster, buffer: &mut WitcherScript, co
         buffer.push_line("return 0;");
     }
 
-    buffer.pop_indent("}");
+    buffer.pop_indent().push_line("}");
 }
 
 fn enum_mapping_config_to_unified_function(master: &SettingsMaster, buffer: &mut WitcherScript) {
@@ -490,20 +493,20 @@ fn enum_mapping_unified_to_config_function(master: &SettingsMaster, buffer: &mut
 
 fn enum_mapping_validate_function(master: &SettingsMaster, buffer: &mut WitcherScript) {
     buffer.push_line(&format!("protected /* override */ function {}(groupId: name, varId: name, val: int) : int", MASTER_ENUM_MAPPING_VALIDATE_FUNC_NAME))
-          .push_indent("{");
+          .push_line("{").push_indent();
     
     buffer.push_line("switch(groupId)")
           .push_line("{");
 
     for group in &master.groups {
         if group.has_enum_value_mappings() {
-            buffer.push_indent(&format!("case '{}':", group.id));
+            buffer.push_line(&format!("case '{}':", group.id)).push_indent();
     
             buffer.push_line("switch(varId)")
                   .push_line("{");
             for var in &group.vars {
                 if let Some(mapping) = if let SettingsVarType::Enum { val_mapping, .. } = &var.var_type { val_mapping } else { &None } {
-                    buffer.push_indent(&format!("case '{}':", var.id));
+                    buffer.push_line(&format!("case '{}':", var.id)).push_indent();
         
                     buffer.push_line("switch(val)")
                           .push_line("{");
@@ -512,22 +515,22 @@ fn enum_mapping_validate_function(master: &SettingsMaster, buffer: &mut WitcherS
                         buffer.push_line(&format!("case {}: ", mapping[i]));
                     }
 
-                    buffer.push_indent("")
+                    buffer.push_indent()
                           .push_line("return val;")
-                          .pop_indent("")
+                          .pop_indent()
                           .push_line("default:")
-                          .push_indent("")
+                          .push_indent()
                           .push_line(&format!("return {};", mapping[0]))
-                          .pop_indent("");
+                          .pop_indent();
 
                     buffer.push_line("}");
 
-                    buffer.pop_indent("");
+                    buffer.pop_indent();
                 }
             }
             buffer.push_line("}");
 
-            buffer.pop_indent("");
+            buffer.pop_indent();
         }
     }
     buffer.push_line("}");
@@ -535,21 +538,21 @@ fn enum_mapping_validate_function(master: &SettingsMaster, buffer: &mut WitcherS
     buffer.new_line()
           .push_line("return 0;");
     
-    buffer.pop_indent("}");
+    buffer.pop_indent().push_line("}");
 }
 
 fn getter_convenience_function(master: &SettingsMaster, buffer: &mut WitcherScript) {
     buffer.push_line(&format!("function Get{m}() : {m}", m=master.class_name))
-          .push_indent("{")
+          .push_line("{").push_indent()
           .push_line(&format!("var settings: {};", master.class_name))
           .new_line()
           .push_line(&format!("settings = ({m})GetSettingsMasterRegistry().GetSettings('{m}');", m=master.class_name))
           .push_line("if(!settings)")
-          .push_indent("{")
+          .push_line("{").push_indent()
           .push_line(&format!("settings = new {} in theGame;", master.class_name))
           .push_line(&format!("GetSettingsMasterRegistry().AddSettings(settings, '{}');", master.class_name))
-          .pop_indent("}")
+          .pop_indent().push_line("}")
           .new_line()
           .push_line("return settings;")  
-          .pop_indent("}");  
+          .pop_indent().push_line("}");  
 }  
