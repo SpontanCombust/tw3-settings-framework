@@ -83,12 +83,12 @@ class MonsterOfTheWeekSettings extends ISettingsMaster
 		return config.GetVarValue('MOTWdifficulties','MOTWnoMansLand') == "";
 	}
 
-	protected /* override */ function EnumValueMappingConfigToUnified(groupId: name, varId: name, val: int) : int
+	public /* override */ function EnumValueMappingConfigToUnified(gId: name, vId: name, val: int) : int
 	{
-		switch(groupId)
+		switch(gId)
 		{
 		case 'MOTWmonsters':
-			switch(varId)
+			switch(vId)
 			{
 			case 'MOTWnoMansLand':
 				switch(val)
@@ -139,12 +139,12 @@ class MonsterOfTheWeekSettings extends ISettingsMaster
 		return val;
 	}
 
-	protected /* override */ function EnumValueMappingUnifiedToConfig(groupId: name, varId: name, val: int) : int
+	public /* override */ function EnumValueMappingUnifiedToConfig(gId: name, vId: name, val: int) : int
 	{
-		switch(groupId)
+		switch(gId)
 		{
 		case 'MOTWmonsters':
-			switch(varId)
+			switch(vId)
 			{
 			case 'MOTWnoMansLand':
 				switch(val)
@@ -160,12 +160,12 @@ class MonsterOfTheWeekSettings extends ISettingsMaster
 			case 'MOTWskellige':
 				switch(val)
 				{
-				case 7: return 0;
-				case 8: return 1;
-				case 1: return 2;
-				case 2: return 3;
-				case 3: return 4;
-				case 4: return 5;
+				case 1: return 0;
+				case 2: return 1;
+				case 3: return 2;
+				case 4: return 3;
+				case 7: return 4;
+				case 8: return 5;
 				case 9: return 6;
 				case 10: return 7;
 				case 11: return 8;
@@ -173,10 +173,10 @@ class MonsterOfTheWeekSettings extends ISettingsMaster
 			case 'MOTWkaerMorhen':
 				switch(val)
 				{
-				case 8: return 0;
+				case 1: return 0;
 				case 2: return 1;
-				case 1: return 2;
-				case 3: return 3;
+				case 3: return 2;
+				case 8: return 3;
 				}
 			case 'MOTWtoussaint':
 				switch(val)
@@ -195,12 +195,12 @@ class MonsterOfTheWeekSettings extends ISettingsMaster
 		return 0;
 	}
 
-	protected /* override */ function EnumValueMappingValidate(groupId: name, varId: name, val: int) : int
+	public /* override */ function EnumValueMappingValidate(gId: name, vId: name, val: int) : int
 	{
-		switch(groupId)
+		switch(gId)
 		{
 		case 'MOTWmonsters':
-			switch(varId)
+			switch(vId)
 			{
 			case 'MOTWnoMansLand':
 				switch(val)
@@ -219,29 +219,29 @@ class MonsterOfTheWeekSettings extends ISettingsMaster
 			case 'MOTWskellige':
 				switch(val)
 				{
-				case 7: 
-				case 8: 
 				case 1: 
 				case 2: 
 				case 3: 
 				case 4: 
+				case 7: 
+				case 8: 
 				case 9: 
 				case 10: 
 				case 11: 
 					return val;
 				default:
-					return 7;
+					return 1;
 				}
 			case 'MOTWkaerMorhen':
 				switch(val)
 				{
-				case 8: 
-				case 2: 
 				case 1: 
+				case 2: 
 				case 3: 
+				case 8: 
 					return val;
 				default:
-					return 8;
+					return 1;
 				}
 			case 'MOTWtoussaint':
 				switch(val)

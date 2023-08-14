@@ -426,7 +426,7 @@ fn should_reset_to_default_on_init_function(master: &SettingsMaster, buffer: &mu
 }
 
 fn enum_mapping_function(master: &SettingsMaster, buffer: &mut WitcherScript, config_to_unified: bool) {
-    buffer.push_line(&format!("protected /* override */ function {}(groupId: name, varId: name, val: int) : int", 
+    buffer.push_line(&format!("public /* override */ function {}(gId: name, vId: name, val: int) : int", 
                                 if config_to_unified {
                                     MASTER_ENUM_MAPPING_CONFIG_TO_UNIFIED_FUNC_NAME
                                 } else {
@@ -435,14 +435,14 @@ fn enum_mapping_function(master: &SettingsMaster, buffer: &mut WitcherScript, co
           .push_line("{").push_indent();
 
 
-    buffer.push_line("switch(groupId)")
+    buffer.push_line("switch(gId)")
           .push_line("{");
 
     for group in &master.groups {
         if group.has_enum_value_mappings() {
             buffer.push_line(&format!("case '{}':", group.id)).push_indent();
     
-            buffer.push_line("switch(varId)")
+            buffer.push_line("switch(vId)")
                   .push_line("{");
             for var in &group.vars {
                 if let Some(mapping) = if let SettingsVarType::Enum { val_mapping, .. } = &var.var_type { val_mapping } else { &None } {
@@ -451,11 +451,19 @@ fn enum_mapping_function(master: &SettingsMaster, buffer: &mut WitcherScript, co
                     buffer.push_line("switch(val)")
                           .push_line("{");
 
-                    for i in 0..mapping.len() {
+                    let sorted_mapping = if config_to_unified {
+                        mapping.clone()
+                    } else {
+                        let mut m = mapping.clone();
+                        m.sort_by(|v1, v2| v1.cmp(v2));
+                        m
+                    };
+
+                    for i in 0..sorted_mapping.len() {
                         let (k, v) = if config_to_unified { 
-                            (i, mapping[i]) 
+                            (i, sorted_mapping[i]) 
                         } else { 
-                            (mapping[i], i) 
+                            (sorted_mapping[i], i) 
                         };
                         buffer.push_line(&format!("case {}: return {};", k, v));
                     }
@@ -492,27 +500,30 @@ fn enum_mapping_unified_to_config_function(master: &SettingsMaster, buffer: &mut
 }
 
 fn enum_mapping_validate_function(master: &SettingsMaster, buffer: &mut WitcherScript) {
-    buffer.push_line(&format!("protected /* override */ function {}(groupId: name, varId: name, val: int) : int", MASTER_ENUM_MAPPING_VALIDATE_FUNC_NAME))
+    buffer.push_line(&format!("public /* override */ function {}(gId: name, vId: name, val: int) : int", MASTER_ENUM_MAPPING_VALIDATE_FUNC_NAME))
           .push_line("{").push_indent();
     
-    buffer.push_line("switch(groupId)")
+    buffer.push_line("switch(gId)")
           .push_line("{");
 
     for group in &master.groups {
         if group.has_enum_value_mappings() {
             buffer.push_line(&format!("case '{}':", group.id)).push_indent();
     
-            buffer.push_line("switch(varId)")
+            buffer.push_line("switch(vId)")
                   .push_line("{");
             for var in &group.vars {
                 if let Some(mapping) = if let SettingsVarType::Enum { val_mapping, .. } = &var.var_type { val_mapping } else { &None } {
+                    let mut sorted_mapping = mapping.clone();
+                    sorted_mapping.sort_by(|v1, v2| v1.cmp(v2));
+
                     buffer.push_line(&format!("case '{}':", var.id)).push_indent();
         
                     buffer.push_line("switch(val)")
                           .push_line("{");
 
-                    for i in 0..mapping.len() {
-                        buffer.push_line(&format!("case {}: ", mapping[i]));
+                    for i in 0..sorted_mapping.len() {
+                        buffer.push_line(&format!("case {}: ", sorted_mapping[i]));
                     }
 
                     buffer.push_indent()
@@ -520,7 +531,7 @@ fn enum_mapping_validate_function(master: &SettingsMaster, buffer: &mut WitcherS
                           .pop_indent()
                           .push_line("default:")
                           .push_indent()
-                          .push_line(&format!("return {};", mapping[0]))
+                          .push_line(&format!("return {};", sorted_mapping[0]))
                           .pop_indent();
 
                     buffer.push_line("}");
