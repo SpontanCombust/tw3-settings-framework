@@ -451,19 +451,11 @@ fn enum_mapping_function(master: &SettingsMaster, buffer: &mut WitcherScript, co
                     buffer.push_line("switch(val)")
                           .push_line("{");
 
-                    let sorted_mapping = if config_to_unified {
-                        mapping.clone()
-                    } else {
-                        let mut m = mapping.clone();
-                        m.sort_by(|v1, v2| v1.cmp(v2));
-                        m
-                    };
-
-                    for i in 0..sorted_mapping.len() {
+                    for i in 0..mapping.len() {
                         let (k, v) = if config_to_unified { 
-                            (i, sorted_mapping[i]) 
+                            (i, mapping[i]) 
                         } else { 
-                            (sorted_mapping[i], i) 
+                            (mapping[i], i) 
                         };
                         buffer.push_line(&format!("case {}: return {};", k, v));
                     }

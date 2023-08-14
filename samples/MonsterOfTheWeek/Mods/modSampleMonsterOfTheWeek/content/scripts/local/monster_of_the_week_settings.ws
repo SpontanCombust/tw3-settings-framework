@@ -160,12 +160,12 @@ class MonsterOfTheWeekSettings extends ISettingsMaster
 			case 'MOTWskellige':
 				switch(val)
 				{
-				case 1: return 0;
-				case 2: return 1;
-				case 3: return 2;
-				case 4: return 3;
-				case 7: return 4;
-				case 8: return 5;
+				case 7: return 0;
+				case 8: return 1;
+				case 1: return 2;
+				case 2: return 3;
+				case 3: return 4;
+				case 4: return 5;
 				case 9: return 6;
 				case 10: return 7;
 				case 11: return 8;
@@ -173,10 +173,10 @@ class MonsterOfTheWeekSettings extends ISettingsMaster
 			case 'MOTWkaerMorhen':
 				switch(val)
 				{
-				case 1: return 0;
+				case 8: return 0;
 				case 2: return 1;
-				case 3: return 2;
-				case 8: return 3;
+				case 1: return 2;
+				case 3: return 3;
 				}
 			case 'MOTWtoussaint':
 				switch(val)
