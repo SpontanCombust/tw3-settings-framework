@@ -22,10 +22,10 @@ class MonsterOfTheWeekSettings extends ISettingsMaster
 		difficulties.kaerMorhen = (MonsterOfTheWeekSettings_difficulty)Clamp((int)difficulties.kaerMorhen, 0, 2);
 		difficulties.toussaint = (MonsterOfTheWeekSettings_difficulty)Clamp((int)difficulties.toussaint, 0, 2);
 
-		monsters.noMansLand = (MonsterOfTheWeekSettings_monster)EnumValueMappingValidate('MOTWmonsters', 'MOTWnoMansLand', (int)monsters.noMansLand);
-		monsters.skellige = (MonsterOfTheWeekSettings_monster)EnumValueMappingValidate('MOTWmonsters', 'MOTWskellige', (int)monsters.skellige);
-		monsters.kaerMorhen = (MonsterOfTheWeekSettings_monster)EnumValueMappingValidate('MOTWmonsters', 'MOTWkaerMorhen', (int)monsters.kaerMorhen);
-		monsters.toussaint = (MonsterOfTheWeekSettings_monster)EnumValueMappingValidate('MOTWmonsters', 'MOTWtoussaint', (int)monsters.toussaint);
+		monsters.noMansLand = (MonsterOfTheWeekSettings_monster)EnumValueMappingValidateUnified('MOTWmonsters', 'MOTWnoMansLand', (int)monsters.noMansLand);
+		monsters.skellige = (MonsterOfTheWeekSettings_monster)EnumValueMappingValidateUnified('MOTWmonsters', 'MOTWskellige', (int)monsters.skellige);
+		monsters.kaerMorhen = (MonsterOfTheWeekSettings_monster)EnumValueMappingValidateUnified('MOTWmonsters', 'MOTWkaerMorhen', (int)monsters.kaerMorhen);
+		monsters.toussaint = (MonsterOfTheWeekSettings_monster)EnumValueMappingValidateUnified('MOTWmonsters', 'MOTWtoussaint', (int)monsters.toussaint);
 
 		super.ValidateSettings();
 	}
@@ -195,7 +195,7 @@ class MonsterOfTheWeekSettings extends ISettingsMaster
 		return 0;
 	}
 
-	public /* override */ function EnumValueMappingValidate(gId: name, vId: name, val: int) : int
+	public /* override */ function EnumValueMappingValidateUnified(gId: name, vId: name, val: int) : int
 	{
 		switch(gId)
 		{
@@ -219,29 +219,29 @@ class MonsterOfTheWeekSettings extends ISettingsMaster
 			case 'MOTWskellige':
 				switch(val)
 				{
+				case 7: 
+				case 8: 
 				case 1: 
 				case 2: 
 				case 3: 
 				case 4: 
-				case 7: 
-				case 8: 
 				case 9: 
 				case 10: 
 				case 11: 
 					return val;
 				default:
-					return 1;
+					return 7;
 				}
 			case 'MOTWkaerMorhen':
 				switch(val)
 				{
-				case 1: 
-				case 2: 
-				case 3: 
 				case 8: 
+				case 2: 
+				case 1: 
+				case 3: 
 					return val;
 				default:
-					return 1;
+					return 8;
 				}
 			case 'MOTWtoussaint':
 				switch(val)
