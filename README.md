@@ -12,7 +12,7 @@
 
 [Remarks](#remarks)
 
-[Documentation](#documentation)
+[Details and documentation](#documentation)
 
 ---
 
@@ -106,7 +106,7 @@ The most common usage of this would be overriding `ReadSettings()` method to run
 
 
 ## Documentation
-[More details about the framework](doc/details.md)
+[Further reading](doc/details.md)
 
 [WitcherScript class specification](doc/class_specification.md)
 
