@@ -474,11 +474,7 @@ fn enum_mapping_function(master: &SettingsMaster, buffer: &mut WitcherScript, co
     buffer.push_line("}");
 
     buffer.new_line();
-    if config_to_unified {
-        buffer.push_line("return val;");
-    } else {
-        buffer.push_line("return -1;");
-    }
+    buffer.push_line("return -1;");
 
     buffer.pop_indent().push_line("}");
 }

@@ -50,19 +50,21 @@ abstract class ISettingsMaster
     }
 
     // Returns integer value of the unified enum type for options var index in user config
+    // If the config value is not valid for given option, should return -1
     public function EnumValueMappingConfigToUnified(groupId: name, varId: name, val: int) : int
     {
-        return 0;
+        return -1;
     }
 
     // Returns the options var index in user config for integer value of unified enum
-    // If the unified value is not valid for given option should return -1
+    // If the unified value is not valid for given option, should return -1
     public function EnumValueMappingUnifiedToConfig(groupId: name, varId: name, val: int) : int
     {
-        return 0;
+        return -1;
     }
 
-    // If integer value for given enum variable is correct returns said value, otherwise returns the smallest valid value
+    // If integer value for given enum variable is correct returns said value
+    // Otherwise returns the smallest valid value
     public function EnumValueMappingValidateUnified(groupId: name, varId: name, val: int) : int
     {
         return 0;

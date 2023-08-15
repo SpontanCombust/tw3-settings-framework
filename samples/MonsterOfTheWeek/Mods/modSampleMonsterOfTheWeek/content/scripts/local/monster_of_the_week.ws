@@ -33,25 +33,40 @@ exec function monster_of_the_week_next_monster()
 
     settings = GetMonsterOfTheWeekSettings();
 
+    // In this example all options' values are advanced by one
     // Unified enums don't work well in situations where you want to get the next value for an option,
     // as these (integer) values underneath for a specific option are not sequential.
     // Therefore config-unified conversions need to be used here.
     // This is not a very practical example. It is merely to show whether framework behaves properly.
+
+    LogChannel('MOTW', "Before");
+    LogChannel('MOTW', "NML: " + settings.monsters.noMansLand);
+    LogChannel('MOTW', "Skellige: " + settings.monsters.skellige);
+    LogChannel('MOTW', "Kaer Morhen: " + settings.monsters.kaerMorhen);
+    LogChannel('MOTW', "Toussaint: " + settings.monsters.toussaint);
+
     i = settings.EnumValueMappingUnifiedToConfig('MOTWmonsters', 'MOTWnoMansLand', (int)settings.monsters.noMansLand);
     settings.monsters.noMansLand = (MonsterOfTheWeekSettings_monster)settings.EnumValueMappingConfigToUnified('MOTWmonsters', 'MOTWnoMansLand', i + 1);
-    LogChannel('MOTW', "NML: " + i + ", " + settings.monsters.noMansLand);
+    LogChannel('MOTW', "NML: " + i + " -> " + (i + 1));
 
     i = settings.EnumValueMappingUnifiedToConfig('MOTWmonsters', 'MOTWskellige', (int)settings.monsters.skellige);
     settings.monsters.skellige = (MonsterOfTheWeekSettings_monster)settings.EnumValueMappingConfigToUnified('MOTWmonsters', 'MOTWskellige', i + 1);
-    LogChannel('MOTW', "Skellige: " + i + ", " + settings.monsters.skellige);
+    LogChannel('MOTW', "Skellige: " + i + " -> " + (i + 1));
 
     i = settings.EnumValueMappingUnifiedToConfig('MOTWmonsters', 'MOTWkaerMorhen', (int)settings.monsters.kaerMorhen);
     settings.monsters.kaerMorhen = (MonsterOfTheWeekSettings_monster)settings.EnumValueMappingConfigToUnified('MOTWmonsters', 'MOTWkaerMorhen', i + 1);
-    LogChannel('MOTW', "Kaer Morhen: " + i + ", " + settings.monsters.kaerMorhen);
+    LogChannel('MOTW', "Kaer Morhen: " + i + " -> " + (i + 1));
 
     i = settings.EnumValueMappingUnifiedToConfig('MOTWmonsters', 'MOTWtoussaint', (int)settings.monsters.toussaint);
     settings.monsters.toussaint = (MonsterOfTheWeekSettings_monster)settings.EnumValueMappingConfigToUnified('MOTWmonsters', 'MOTWtoussaint', i + 1);
-    LogChannel('MOTW', "Toussaint: " + i + ", " + settings.monsters.toussaint);
+    LogChannel('MOTW', "Toussaint: " + i + " -> " + (i + 1));
 
+    // validation happens before writing
     settings.WriteSettings();
+
+    LogChannel('MOTW', "After");
+    LogChannel('MOTW', "NML: " + settings.monsters.noMansLand);
+    LogChannel('MOTW', "Skellige: " + settings.monsters.skellige);
+    LogChannel('MOTW', "Kaer Morhen: " + settings.monsters.kaerMorhen);
+    LogChannel('MOTW', "Toussaint: " + settings.monsters.toussaint);
 }

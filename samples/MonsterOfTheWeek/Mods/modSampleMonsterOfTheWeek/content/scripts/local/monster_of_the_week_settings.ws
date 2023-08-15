@@ -136,7 +136,7 @@ class MonsterOfTheWeekSettings extends ISettingsMaster
 			}
 		}
 
-		return val;
+		return -1;
 	}
 
 	public /* override */ function EnumValueMappingUnifiedToConfig(gId: name, vId: name, val: int) : int
