@@ -18,6 +18,12 @@ abstract class ISettingsMaster
         ReadSettings();
     }
 
+    // Corrects values to ranges specified in the xml
+    public function ValidateSettings() : void
+    {
+        // generated child class will correct these values in this function
+    }
+
     // Reads all settings from CInGameConfigWrapper using ReadSettingValue and sets class variables
     public function ReadSettings() : void 
     {
@@ -43,27 +49,48 @@ abstract class ISettingsMaster
         return false;
     }
 
+    // Returns integer value of the unified enum type for options var index in user config
+    // If the config value is not valid for given option, should return -1
+    public function EnumValueMappingConfigToUnified(groupId: name, varId: name, val: int) : int
+    {
+        return -1;
+    }
+
+    // Returns the options var index in user config for integer value of unified enum
+    // If the unified value is not valid for given option, should return -1
+    public function EnumValueMappingUnifiedToConfig(groupId: name, varId: name, val: int) : int
+    {
+        return -1;
+    }
+
+    // If integer value for given enum variable is correct returns said value
+    // Otherwise returns the smallest valid value
+    public function EnumValueMappingValidateUnified(groupId: name, varId: name, val: int) : int
+    {
+        return 0;
+    }
+
 
 
 
     // ==== Get/Set functions - to be potentially overriden by the developer if default is not enough ====
 
     // Fetches setting value from CInGameConfigWrapper
-    public function ReadSettingValue(config: CInGameConfigWrapper, groupId: name, varId: name) : string
+    public function ReadSettingValue(config: CInGameConfigWrapper, gId: name, vId: name) : string
     {
-        return config.GetVarValue(groupId, varId);
+        return config.GetVarValue(gId, vId);
     }
 
     // Writes setting value into CInGameConfigWrapper
-    public function WriteSettingValue(config: CInGameConfigWrapper, groupId: name, varId: name, value: string) : void
+    public function WriteSettingValue(config: CInGameConfigWrapper, gId: name, vId: name, value: string) : void
     {
-        config.SetVarValue(groupId, varId, value);
+        config.SetVarValue(gId, vId, value);
     }
 
     // Applies a preset to a group in CInGameConfigWrapper
-    public function ResetSettingValues(config: CInGameConfigWrapper, groupId: name, presetIndex: int) : void
+    public function ResetSettingValues(config: CInGameConfigWrapper, gId: name, presetIndex: int) : void
     {
-        config.ApplyGroupPreset(groupId, presetIndex);
+        config.ApplyGroupPreset(gId, presetIndex);
     }
 
 

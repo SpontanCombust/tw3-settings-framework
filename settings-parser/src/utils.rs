@@ -19,12 +19,46 @@ pub(crate) fn node_pos(node: &Node) -> String {
     format!("line {}, column {}", pos.row, pos.col)
 }
 
-pub(crate) fn id_to_script_name(id: &str, omit_prefix: &Option<String>) -> String {
-    if let Some(prefix) = omit_prefix {
-        if id.starts_with(prefix) {
-            return id[prefix.len()..].to_string();
-        }
-    } 
+pub(crate) fn strip_prefixes<'a>(s: &'a str, prefixes: &'a [String]) -> &'a str {
+    let mut stripped_s = s;
 
-    return id.to_string();
+    for prefix in prefixes {
+        if let Some(stripped) = stripped_s.strip_prefix(prefix) {
+            stripped_s = stripped;
+            break;
+        }
+    }
+
+    stripped_s
+}
+
+pub(crate) fn is_integral_range(min: i32, max: i32, div: i32) -> bool {
+    (max - min) % div == 0
+} 
+
+pub(crate) fn common_str_prefix(v: &[String]) -> &str {
+    let mut common_len = usize::MAX; 
+    for i in 0..v.len() - 1 {
+        let s1 = &v[i];
+        let s2 = &v[i + 1];
+        common_len = std::cmp::min(common_len, common_str_prefix_len(s1, s2));
+    }
+
+    if common_len > 0 {
+        &v[0][0..common_len]
+    } else {
+        ""
+    }
+}
+
+fn common_str_prefix_len(s1: &str, s2: &str) -> usize {
+    let min_len = std::cmp::min(s1.len(), s2.len());
+
+    for i in 0..min_len {
+        if s1.chars().nth(i) != s2.chars().nth(i) {
+            return i;
+        }
+    }
+
+    min_len
 }

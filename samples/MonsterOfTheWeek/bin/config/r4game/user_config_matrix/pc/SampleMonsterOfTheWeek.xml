@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-16"?>
+<UserConfig>
+	<!-- Options with the same set of value -->
+	<Group id="MOTWdifficulties" displayName="Mods.monster_of_the_week.motw_difficulty">
+		<VisibleVars>
+            <Var id="MOTWnoMansLand" displayName="motw_no_mans_land" displayType="OPTIONS">
+                <OptionsArray>
+                    <Option id="0" displayName="motw_difficulty_easy">
+                        <Entry varId="MOTWNoMansLand" value="0"/>
+                    </Option>
+                    <Option id="1" displayName="motw_difficulty_medium">
+                        <Entry varId="MOTWNoMansLand" value="1"/>
+                    </Option>
+                    <Option id="2" displayName="motw_difficulty_hard">
+                        <Entry varId="MOTWNoMansLand" value="2"/>
+                    </Option>
+                </OptionsArray>
+            </Var>
+			<Var id="MOTWskellige" displayName="motw_skellige" displayType="OPTIONS">
+                <OptionsArray>
+                    <Option id="0" displayName="motw_difficulty_easy">
+                        <Entry varId="MOTWSkellige" value="0"/>
+                    </Option>
+                    <Option id="1" displayName="motw_difficulty_medium">
+                        <Entry varId="MOTWSkellige" value="1"/>
+                    </Option>
+                    <Option id="2" displayName="motw_difficulty_hard">
+                        <Entry varId="MOTWSkellige" value="2"/>
+                    </Option>
+                </OptionsArray>
+            </Var>
+			<Var id="MOTWkaerMorhen" displayName="motw_kaer_morhen" displayType="OPTIONS">
+                <OptionsArray>
+                    <Option id="0" displayName="motw_difficulty_easy">
+                        <Entry varId="MOTWKaerMorhen" value="0"/>
+                    </Option>
+                    <Option id="1" displayName="motw_difficulty_medium">
+                        <Entry varId="MOTWKaerMorhen" value="1"/>
+                    </Option>
+                    <Option id="2" displayName="motw_difficulty_hard">
+                        <Entry varId="MOTWKaerMorhen" value="2"/>
+                    </Option>
+                </OptionsArray>
+            </Var>
+			<Var id="MOTWtoussaint" displayName="motw_toussaint" displayType="OPTIONS">
+                <OptionsArray>
+                    <Option id="0" displayName="motw_difficulty_easy">
+                        <Entry varId="MOTWtoussaint" value="0"/>
+                    </Option>
+                    <Option id="1" displayName="motw_difficulty_medium">
+                        <Entry varId="MOTWtoussaint" value="1"/>
+                    </Option>
+                    <Option id="2" displayName="motw_difficulty_hard">
+                        <Entry varId="MOTWtoussaint" value="2"/>
+                    </Option>
+                </OptionsArray>
+            </Var>
+        </VisibleVars>
+    </Group>
+    <!-- Options with different sets of values -->
+	<Group id="MOTWmonsters" displayName="Mods.monster_of_the_week.motw_monsters">
+		<VisibleVars>
+            <Var id="MOTWnoMansLand" displayName="motw_no_mans_land" displayType="OPTIONS">
+                <OptionsArray>
+                    <Option id="0" displayName="motw_monster_ghoul">
+                        <Entry varId="MOTWNoMansLand" value="0"/>
+                    </Option>
+                    <Option id="1" displayName="motw_monster_griffin">
+                        <Entry varId="MOTWNoMansLand" value="1"/>
+                    </Option>
+                    <Option id="2" displayName="motw_monster_wolf">
+                        <Entry varId="MOTWNoMansLand" value="2"/>
+                    </Option>
+                    <Option id="3" displayName="motw_monster_nekker">
+                        <Entry varId="MOTWNoMansLand" value="3"/>
+                    </Option>
+                    <Option id="4" displayName="motw_monster_leshen">
+                        <Entry varId="MOTWNoMansLand" value="4"/>
+                    </Option>
+                    <Option id="5" displayName="motw_monster_golem">
+                        <Entry varId="MOTWNoMansLand" value="5"/>
+                    </Option>
+                    <Option id="6" displayName="motw_monster_wraith">
+                        <Entry varId="MOTWNoMansLand" value="6"/>
+                    </Option>
+                </OptionsArray>
+            </Var>
+			<Var id="MOTWskellige" displayName="motw_skellige" displayType="OPTIONS">
+                <OptionsArray>
+                    <Option id="0" displayName="motw_monster_siren">
+                        <Entry varId="MOTWskellige" value="0"/>
+                    </Option>
+                    <Option id="1" displayName="motw_monster_bear">
+                        <Entry varId="MOTWskellige" value="1"/>
+                    </Option>
+                    <Option id="2" displayName="motw_monster_griffin">
+                        <Entry varId="MOTWskellige" value="2"/>
+                    </Option>
+                    <Option id="3" displayName="motw_monster_wolf">
+                        <Entry varId="MOTWskellige" value="3"/>
+                    </Option>
+                    <Option id="4" displayName="motw_monster_nekker">
+                        <Entry varId="MOTWskellige" value="4"/>
+                    </Option>
+                    <Option id="5" displayName="motw_monster_leshen">
+                        <Entry varId="MOTWskellige" value="5"/>
+                    </Option>
+                    <Option id="6" displayName="motw_monster_cyclops">
+                        <Entry varId="MOTWskellige" value="6"/>
+                    </Option>
+                    <Option id="7" displayName="motw_monster_werewolf">
+                        <Entry varId="MOTWskellige" value="7"/>
+                    </Option>
+                    <Option id="8" displayName="motw_monster_harpy">
+                        <Entry varId="MOTWskellige" value="8"/>
+                    </Option>
+                </OptionsArray>
+            </Var>
+			<Var id="MOTWkaerMorhen" displayName="motw_kaer_morhen" displayType="OPTIONS">
+                <OptionsArray>
+                    <Option id="0" displayName="motw_monster_bear">
+                        <Entry varId="MOTWkaerMorhen" value="0"/>
+                    </Option>
+                    <Option id="1" displayName="motw_monster_wolf">
+                        <Entry varId="MOTWkaerMorhen" value="1"/>
+                    </Option>
+                    <Option id="2" displayName="motw_monster_griffin">
+                        <Entry varId="MOTWkaerMorhen" value="2"/>
+                    </Option>
+                    <Option id="3" displayName="motw_monster_nekker">
+                        <Entry varId="MOTWkaerMorhen" value="3"/>
+                    </Option>
+                </OptionsArray>
+            </Var>
+            <Var id="MOTWtoussaint" displayName="motw_toussaint" displayType="OPTIONS">
+                <OptionsArray>
+                    <Option id="0" displayName="motw_monster_archespore">
+                        <Entry varId="MOTWtoussaint" value="0"/>
+                    </Option>
+                    <Option id="1" displayName="motw_monster_panther">
+                        <Entry varId="MOTWtoussaint" value="1"/>
+                    </Option>
+                    <Option id="2" displayName="motw_monster_slyzard">
+                        <Entry varId="MOTWtoussaint" value="2"/>
+                    </Option>
+                    <Option id="3" displayName="motw_monster_centipede">
+                        <Entry varId="MOTWtoussaint" value="3"/>
+                    </Option>
+                    <Option id="4" displayName="motw_monster_shaelmaar">
+                        <Entry varId="MOTWtoussaint" value="4"/>
+                    </Option>
+                    <Option id="5" displayName="motw_monster_bruxa">
+                        <Entry varId="MOTWtoussaint" value="5"/>
+                    </Option>
+                    <Option id="6" displayName="motw_monster_fleder">
+                        <Entry varId="MOTWtoussaint" value="6"/>
+                    </Option>
+                </OptionsArray>
+            </Var>
+        </VisibleVars>
+    </Group>
+</UserConfig>

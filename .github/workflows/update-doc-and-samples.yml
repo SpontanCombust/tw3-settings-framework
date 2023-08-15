@@ -1,4 +1,4 @@
-name: regenerate-samples
+name: update-doc-and-samples
 
 on:
   push:
@@ -28,19 +28,38 @@ jobs:
           cargo run --release --  
           -f="../doc/mod-menu.xml"
           -o="../doc/mod-menu.ws"
-          --omit-prefix="MOD"
+          -p="MOD" -p="mod_"
           -m="MyModSettings"
           -v="1.23"
+          --option-parsing-mode=enums
         working-directory: settings-parser
       - name: Parse DifficultyMod sample
         run: >
           cargo run --release --  
-          -f="../samples/DifficultyMod/bin/config/r4game/user_config_matrix/pc/modSettingsFrameworkSampleDifficultyMod.xml"
-          -o="../samples/DifficultyMod/modSettingsFrameworkSampleDifficultyMod/content/scripts/local/difficulty_mod_base.ws"
+          -f="../samples/DifficultyMod/bin/config/r4game/user_config_matrix/pc/SampleDifficultyMod.xml"
+          -o="../samples/DifficultyMod/Mods/modSampleDifficultyMod/content/scripts/local/difficulty_mod_base.ws"
           -m="ModDifficultySettingsBase"
-          --omit-prefix="DM"
+          -p="DM"
           --default-preset-keyword="DEFAULT"
           -v="1.1"
+          --no-getter
+        working-directory: settings-parser
+      - name: Parse MonsterOfTheWeek sample
+        run: >
+          cargo run --release --  
+          -f="../samples/MonsterOfTheWeek/bin/config/r4game/user_config_matrix/pc/SampleMonsterOfTheWeek.xml"
+          -o="../samples/MonsterOfTheWeek/Mods/modSampleMonsterOfTheWeek/content/scripts/local/monster_of_the_week_settings.ws"
+          -m="MonsterOfTheWeekSettings"
+          -p="MOTW"
+          -p="motw"
+          -v="1.0"
+          --option-parsing-mode=enums
+        working-directory: settings-parser
+      - name: CLI specification
+        run: |
+          echo  '```' > "../doc/cli_specification.md"
+          cargo run --release -- -h >> "../doc/cli_specification.md"
+          echo  '```' >> "../doc/cli_specification.md"
         working-directory: settings-parser
       - name: Check for changes in the project
         id: get_changes
@@ -49,5 +68,6 @@ jobs:
         if: steps.get_changes.outputs.changed != 0
         uses: EndBug/add-and-commit@v7
         with:
-          message: "Update samples"
+          message: "Update doc and samples"
+          default_author: github_actions
     

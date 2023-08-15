@@ -1,4 +1,4 @@
-// Code generated using Mod Settings Framework v0.4.0 by SpontanCombust & Aeltoth
+// Code generated using Mod Settings Framework v0.5.0 by SpontanCombust & Aeltoth
 
 class MyModSettings extends ISettingsMaster
 {
@@ -8,7 +8,7 @@ class MyModSettings extends ISettingsMaster
 	public var tab2subtab1 : MyModSettings_tab2subtab1;
 	public var tab2subtab2 : MyModSettings_tab2subtab2;
 
-	public function Init() : void
+	public /* override */ function Init() : void
 	{
 		tab1 = new MyModSettings_tab1 in this; tab1.Init(this);
 		tab2subtab1 = new MyModSettings_tab2subtab1 in this; tab2subtab1.Init(this);
@@ -17,12 +17,24 @@ class MyModSettings extends ISettingsMaster
 		super.Init();
 	}
 
-	public function ReadSettings() : void
+	public /* override */ function ValidateSettings() : void
+	{
+		tab1.option = (MyModSettings_opt)Clamp((int)tab1.option, 0, 2);
+		tab1.sliderFloat = ClampF(tab1.sliderFloat, 0, 1);
+		tab1.sliderInt = Clamp(tab1.sliderInt, 0, 100);
+		tab1.version = ClampF(tab1.version, 0, 100);
+
+		tab2subtab1.anotherSlider = ClampF(tab2subtab1.anotherSlider, -100, 100);
+
+		super.ValidateSettings();
+	}
+
+	public /* override */ function ReadSettings() : void
 	{
 		var config : CInGameConfigWrapper;
 		config = theGame.GetInGameConfigWrapper();
 
-		tab1.option = StringToInt(ReadSettingValue(config, 'MODtab1', 'MODoption'), 0);
+		tab1.option = (MyModSettings_opt)StringToInt(ReadSettingValue(config, 'MODtab1', 'MODoption'), 0);
 		tab1.sliderFloat = StringToFloat(ReadSettingValue(config, 'MODtab1', 'MODsliderFloat'), 0.0);
 		tab1.sliderInt = StringToInt(ReadSettingValue(config, 'MODtab1', 'MODsliderInt'), 0);
 		tab1.toggle = StringToBool(ReadSettingValue(config, 'MODtab1', 'MODtoggle'));
@@ -32,16 +44,18 @@ class MyModSettings extends ISettingsMaster
 
 		tab2subtab2.anotherToggle = StringToBool(ReadSettingValue(config, 'MODtab2subtab2', 'anotherToggle'));
 
-
+		this.ValidateSettings();
 		super.ReadSettings();
 	}
 
-	public function WriteSettings() : void
+	public /* override */ function WriteSettings() : void
 	{
 		var config : CInGameConfigWrapper;
 		config = theGame.GetInGameConfigWrapper();
 
-		WriteSettingValue(config, 'MODtab1', 'MODoption', IntToString(tab1.option));
+		this.ValidateSettings();
+
+		WriteSettingValue(config, 'MODtab1', 'MODoption', IntToString((int)tab1.option));
 		WriteSettingValue(config, 'MODtab1', 'MODsliderFloat', FloatToString(tab1.sliderFloat));
 		WriteSettingValue(config, 'MODtab1', 'MODsliderInt', IntToString(tab1.sliderInt));
 		WriteSettingValue(config, 'MODtab1', 'MODtoggle', BoolToString(tab1.toggle));
@@ -51,18 +65,17 @@ class MyModSettings extends ISettingsMaster
 
 		WriteSettingValue(config, 'MODtab2subtab2', 'anotherToggle', BoolToString(tab2subtab2.anotherToggle));
 
-
 		super.WriteSettings();
 	}
 
-	public function ResetSettingsToDefault() : void
+	public /* override */ function ResetSettingsToDefault() : void
 	{
 		tab1.ResetToDefault();
 		tab2subtab1.ResetToDefault();
 		tab2subtab2.ResetToDefault();
 	}
 
-	public function ShouldResetSettingsToDefaultOnInit() : bool
+	public /* override */ function ShouldResetSettingsToDefaultOnInit() : bool
 	{
 		var config : CInGameConfigWrapper;
 		config = theGame.GetInGameConfigWrapper();
@@ -73,7 +86,7 @@ class MyModSettings extends ISettingsMaster
 
 class MyModSettings_tab1 extends ISettingsGroup
 {
-	public var option : int;
+	public var option : MyModSettings_opt;
 	public var sliderFloat : float;
 	public var sliderInt : int;
 	public var toggle : bool;
@@ -99,3 +112,24 @@ class MyModSettings_tab2subtab2 extends ISettingsGroup
 	default defaultPresetIndex = 0;
 }
 
+enum MyModSettings_opt
+{
+	MyModSettings_opt1 = 0,
+	MyModSettings_opt2 = 1,
+	MyModSettings_opt2 = 2,
+}
+
+
+function GetMyModSettings() : MyModSettings
+{
+	var settings: MyModSettings;
+
+	settings = (MyModSettings)GetSettingsMasterRegistry().GetSettings('MyModSettings');
+	if(!settings)
+	{
+		settings = new MyModSettings in theGame;
+		GetSettingsMasterRegistry().AddSettings(settings, 'MyModSettings');
+	}
+
+	return settings;
+}

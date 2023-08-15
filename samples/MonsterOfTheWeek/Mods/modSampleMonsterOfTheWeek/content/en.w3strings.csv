@@ -1,0 +1,32 @@
+;meta[language=en]
+; id | key(hex) | key(str) | text
+2119001000||panel_Mods|Mods
+2119001001||panel_monster_of_the_week|Monster of the week
+2119001002||panel_motw_difficulty|Difficulty
+2119001003||option_motw_no_mans_land|No Man's Land
+2119001004||option_motw_skellige|Skellige
+2119001005||option_motw_kaer_morhen|Kaer Morhen
+2119001006||option_motw_toussaint|Toussaint
+2119001007||preset_value_motw_difficulty_easy|Easy
+2119001008||preset_value_motw_difficulty_medium|Medium
+2119001009||preset_value_motw_difficulty_hard|Hard
+2119001010||panel_motw_monsters|Monsters
+2119001011||preset_value_motw_monster_ghoul|Ghoul
+2119001012||preset_value_motw_monster_griffin|Griffin
+2119001013||preset_value_motw_monster_wolf|Wolf
+2119001014||preset_value_motw_monster_nekker|Nekker
+2119001015||preset_value_motw_monster_leshen|Leshen
+2119001016||preset_value_motw_monster_golem|Golem
+2119001017||preset_value_motw_monster_wraith|Wraith
+2119001018||preset_value_motw_monster_siren|Siren
+2119001019||preset_value_motw_monster_bear|Bear
+2119001020||preset_value_motw_monster_cyclops|Cyclops
+2119001021||preset_value_motw_monster_werewolf|Werewolf
+2119001022||preset_value_motw_monster_harpy|Harpy
+2119001023||preset_value_motw_monster_archespore|Archespore
+2119001024||preset_value_motw_monster_panther|Panther
+2119001025||preset_value_motw_monster_slyzard|Slyzard
+2119001026||preset_value_motw_monster_centipede|Giant centipede
+2119001027||preset_value_motw_monster_shaelmaar|Shaelmaar
+2119001028||preset_value_motw_monster_bruxa|Bruxa
+2119001029||preset_value_motw_monster_fleder|Fleder
