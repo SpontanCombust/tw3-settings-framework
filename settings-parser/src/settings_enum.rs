@@ -13,7 +13,7 @@ pub struct SettingsEnum {
 }
 
 impl SettingsEnum {
-    pub fn from(options_array: &OptionsArray, var_id: &str, cli: &CLI) -> Self {
+    pub fn from(options_array: &OptionsArray, var_id: &str, master_class_name: &str, cli: &CLI) -> Self {
         // with stripped mod prefix
         let options_array = options_array.iter()
                             .map(|o| strip_prefixes(o, &cli.omit_prefix).trim_start_matches('_').to_string())
@@ -36,9 +36,9 @@ impl SettingsEnum {
             common_prefix = format!("{}_", strip_prefixes(var_id, &cli.omit_prefix).trim_matches('_'));
         }
 
-        let type_name = format!("{}_{}", cli.settings_master_name, common_prefix.trim_end_matches('_'));
+        let type_name = format!("{}_{}", master_class_name, common_prefix.trim_end_matches('_'));
         let values = options_array_suffixes.iter()
-                     .map(|suffix| format!("{}_{}{}", cli.settings_master_name, common_prefix, suffix))
+                     .map(|suffix| format!("{}_{}{}", master_class_name, common_prefix, suffix))
                      .collect::<Vec<_>>();
 
         SettingsEnum { 

@@ -29,7 +29,6 @@ jobs:
           "../doc/mod-menu.xml"
           -o="../doc/mod-menu.ws"
           -p="MOD" -p="mod_"
-          -m="MyModSettings"
           -v="1.23"
           --option-parsing-mode=enums
         working-directory: settings-parser
@@ -38,7 +37,6 @@ jobs:
           cargo run --release --  
           "../samples/DifficultyMod/bin/config/r4game/user_config_matrix/pc/SampleDifficultyMod.xml"
           -o="../samples/DifficultyMod/Mods/modSampleDifficultyMod/content/scripts/local/difficulty_mod_base.ws"
-          -m="ModDifficultySettingsBase"
           -p="DM"
           --default-preset-keyword="DEFAULT"
           -v="1.1"
@@ -49,7 +47,6 @@ jobs:
           cargo run --release --  
           "../samples/MonsterOfTheWeek/bin/config/r4game/user_config_matrix/pc/SampleMonsterOfTheWeek.xml"
           -o="../samples/MonsterOfTheWeek/Mods/modSampleMonsterOfTheWeek/content/scripts/local/monster_of_the_week_settings.ws"
-          -m="MonsterOfTheWeekSettings"
           -p="MOTW"
           -p="motw"
           -v="1.0"

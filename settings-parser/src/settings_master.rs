@@ -18,15 +18,15 @@ pub struct SettingsMaster {
 }
 
 impl SettingsMaster {
-    pub fn from(xml_user_config: &UserConfig, cli: &CLI) -> Result<Self, String> {  
-        let class_name = cli.settings_master_name.clone();
+    pub fn from(xml_user_config: UserConfig, cli: &CLI) -> Result<Self, String> {  
+        let class_name = xml_user_config.class_name;
         let mod_version = cli.mod_version.clone();
         let validate_values = !cli.no_var_validation;
         let generate_getter = !cli.no_getter;
         
         let mut settings_groups = Vec::new();
         for group in xml_user_config.groups.iter() {
-            settings_groups.push(SettingsGroup::from(&group, cli));
+            settings_groups.push(SettingsGroup::from(&group, &class_name, cli));
         }
 
         let mut settings_master = SettingsMaster {

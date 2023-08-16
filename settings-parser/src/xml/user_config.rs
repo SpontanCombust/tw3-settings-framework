@@ -3,6 +3,7 @@ use roxmltree::{Document, Node};
 use super::group::Group;
 
 pub struct UserConfig {
+    pub class_name: String,
     pub groups: Vec<Group>
 }
 
@@ -12,6 +13,13 @@ impl TryFrom<&Document<'_>> for UserConfig {
 
     fn try_from(doc: &Document) -> Result<Self, Self::Error> {
         if let Some(root_node) = doc.descendants().find(|n| n.has_tag_name("UserConfig")) {
+            let class_name = root_node.attribute("msfClass");
+            if class_name.is_none() {
+                return Err("No msfClass attribute found in UserConfig".to_string());
+            }
+            
+            let class_name = class_name.unwrap().to_string();
+
             let group_nodes: Vec<Node> = root_node.children()
                                         .filter(|n| n.has_tag_name("Group"))
                                         .collect();
@@ -31,6 +39,7 @@ impl TryFrom<&Document<'_>> for UserConfig {
             }
 
             Ok(UserConfig { 
+                class_name,
                 groups 
             })
         } else {

@@ -15,7 +15,7 @@ pub struct SettingsGroup {
 }
 
 impl SettingsGroup {
-    pub fn from(xml_group: &Group, cli: &CLI) -> Self {    
+    pub fn from(xml_group: &Group, master_class_name: &str, cli: &CLI) -> Self {    
         let default_preset_index = xml_group.presets_array.iter().enumerate()
                                             .find(|(_, preset)| preset.contains(&cli.default_preset_keyword.to_lowercase()))
                                             .map(|(i, _)| i as u8)
@@ -23,11 +23,11 @@ impl SettingsGroup {
             
         let id = xml_group.id.clone();
         let var_name = strip_prefixes(&id, &cli.omit_prefix).trim_start_matches('_').into();
-        let class_name = format!("{}_{}", cli.settings_master_name, var_name); //TODO styling modificator
+        let class_name = format!("{}_{}", master_class_name, var_name); //TODO styling modificator
         let mut setting_vars = Vec::<SettingsVar>::new();
 
         for xml_var in &xml_group.visible_vars {
-            if let Some(setting_var) = SettingsVar::from(xml_var, cli) {
+            if let Some(setting_var) = SettingsVar::from(xml_var, master_class_name, cli) {
                 setting_vars.push(setting_var);
             }
         }

@@ -108,6 +108,8 @@ The most common usage of this would be overriding `ReadSettings()` method to run
 ## Documentation
 [Further reading](doc/details.md)
 
+[XML specification](doc/xml_specification.md)
+
 [WitcherScript class specification](doc/class_specification.md)
 
 [Parser CLI specification](doc/cli_specification.md)
