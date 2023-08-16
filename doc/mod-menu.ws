@@ -4,15 +4,15 @@ class MyModSettings extends ISettingsMaster
 {
 	default modVersion = "1.23";
 
-	public var tab1 : MyModSettings_tab1;
-	public var tab2subtab1 : MyModSettings_tab2subtab1;
-	public var tab2subtab2 : MyModSettings_tab2subtab2;
+	public var tab1 : MyModSettingsTab1;
+	public var tab2subtab1 : MyModSettingsTab2Subtab1;
+	public var tab2subtab2 : MyModSettingsTab2Subtab2;
 
 	public /* override */ function Init() : void
 	{
-		tab1 = new MyModSettings_tab1 in this; tab1.Init(this);
-		tab2subtab1 = new MyModSettings_tab2subtab1 in this; tab2subtab1.Init(this);
-		tab2subtab2 = new MyModSettings_tab2subtab2 in this; tab2subtab2.Init(this);
+		tab1 = new MyModSettingsTab1 in this; tab1.Init(this);
+		tab2subtab1 = new MyModSettingsTab2Subtab1 in this; tab2subtab1.Init(this);
+		tab2subtab2 = new MyModSettingsTab2Subtab2 in this; tab2subtab2.Init(this);
 
 		super.Init();
 	}
@@ -85,7 +85,7 @@ class MyModSettings extends ISettingsMaster
 	}
 }
 
-class MyModSettings_tab1 extends ISettingsGroup
+class MyModSettingsTab1 extends ISettingsGroup
 {
 	public var option : MyModSettings_opt;
 	public var sliderFloat : float;
@@ -97,7 +97,7 @@ class MyModSettings_tab1 extends ISettingsGroup
 	default defaultPresetIndex = 1;
 }
 
-class MyModSettings_tab2subtab1 extends ISettingsGroup
+class MyModSettingsTab2Subtab1 extends ISettingsGroup
 {
 	public var anotherSlider : float;
 
@@ -105,7 +105,7 @@ class MyModSettings_tab2subtab1 extends ISettingsGroup
 	default defaultPresetIndex = 0;
 }
 
-class MyModSettings_tab2subtab2 extends ISettingsGroup
+class MyModSettingsTab2Subtab2 extends ISettingsGroup
 {
 	public var anotherToggle : bool;
 

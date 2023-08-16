@@ -9,10 +9,6 @@ ARGS:
     <XML_FILE_PATH>    Path to the menu xml file. (REQUIRED)
 
 OPTIONS:
-    -v, --mod-version <MOD_VERSION>
-            Version of the mod in format. Format is arbitrary, but preferably a real number
-            [default: 1.0]
-
     -o, --output <OUTPUT_WS_FILE_PATH>
             Path of the WitcherScipt output file, by default it's made from the menu xml file name
             in the same directory
