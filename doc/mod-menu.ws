@@ -34,17 +34,18 @@ class MyModSettings extends ISettingsMaster
 		var config : CInGameConfigWrapper;
 		config = theGame.GetInGameConfigWrapper();
 
-		tab1.option = (MyModSettings_opt)StringToInt(ReadSettingValue(config, 'MODtab1', 'MODoption'), 0);
-		tab1.sliderFloat = StringToFloat(ReadSettingValue(config, 'MODtab1', 'MODsliderFloat'), 0.0);
-		tab1.sliderInt = StringToInt(ReadSettingValue(config, 'MODtab1', 'MODsliderInt'), 0);
-		tab1.toggle = StringToBool(ReadSettingValue(config, 'MODtab1', 'MODtoggle'));
-		tab1.version = StringToFloat(ReadSettingValue(config, 'MODtab1', 'MODversion'), 0.0);
+		tab1.option = (MyModSettings_opt)ReadIntSettingValue(config, 'MODtab1', 'MODoption');
+		tab1.sliderFloat = ReadFloatSettingValue(config, 'MODtab1', 'MODsliderFloat');
+		tab1.sliderInt = ReadIntSettingValue(config, 'MODtab1', 'MODsliderInt');
+		tab1.toggle = ReadBoolSettingValue(config, 'MODtab1', 'MODtoggle');
+		tab1.version = ReadFloatSettingValue(config, 'MODtab1', 'MODversion');
 
-		tab2subtab1.anotherSlider = StringToFloat(ReadSettingValue(config, 'MODtab2subtab1', 'anotherSlider'), 0.0);
+		tab2subtab1.anotherSlider = ReadFloatSettingValue(config, 'MODtab2subtab1', 'anotherSlider');
 
-		tab2subtab2.anotherToggle = StringToBool(ReadSettingValue(config, 'MODtab2subtab2', 'anotherToggle'));
+		tab2subtab2.anotherToggle = ReadBoolSettingValue(config, 'MODtab2subtab2', 'anotherToggle');
 
-		this.ValidateSettings();
+		ValidateSettings();
+
 		super.ReadSettings();
 	}
 
@@ -53,17 +54,17 @@ class MyModSettings extends ISettingsMaster
 		var config : CInGameConfigWrapper;
 		config = theGame.GetInGameConfigWrapper();
 
-		this.ValidateSettings();
+		ValidateSettings();
 
-		WriteSettingValue(config, 'MODtab1', 'MODoption', IntToString((int)tab1.option));
-		WriteSettingValue(config, 'MODtab1', 'MODsliderFloat', FloatToString(tab1.sliderFloat));
-		WriteSettingValue(config, 'MODtab1', 'MODsliderInt', IntToString(tab1.sliderInt));
-		WriteSettingValue(config, 'MODtab1', 'MODtoggle', BoolToString(tab1.toggle));
-		WriteSettingValue(config, 'MODtab1', 'MODversion', FloatToString(tab1.version));
+		WriteIntSettingValue(config, 'MODtab1', 'MODoption', (int)tab1.option);
+		WriteFloatSettingValue(config, 'MODtab1', 'MODsliderFloat', tab1.sliderFloat);
+		WriteIntSettingValue(config, 'MODtab1', 'MODsliderInt', tab1.sliderInt);
+		WriteBoolSettingValue(config, 'MODtab1', 'MODtoggle', tab1.toggle);
+		WriteFloatSettingValue(config, 'MODtab1', 'MODversion', tab1.version);
 
-		WriteSettingValue(config, 'MODtab2subtab1', 'anotherSlider', FloatToString(tab2subtab1.anotherSlider));
+		WriteFloatSettingValue(config, 'MODtab2subtab1', 'anotherSlider', tab2subtab1.anotherSlider);
 
-		WriteSettingValue(config, 'MODtab2subtab2', 'anotherToggle', BoolToString(tab2subtab2.anotherToggle));
+		WriteBoolSettingValue(config, 'MODtab2subtab2', 'anotherToggle', tab2subtab2.anotherToggle);
 
 		super.WriteSettings();
 	}

@@ -35,17 +35,18 @@ class MonsterOfTheWeekSettings extends ISettingsMaster
 		var config : CInGameConfigWrapper;
 		config = theGame.GetInGameConfigWrapper();
 
-		difficulties.noMansLand = (MonsterOfTheWeekSettings_difficulty)StringToInt(ReadSettingValue(config, 'MOTWdifficulties', 'MOTWnoMansLand'), 0);
-		difficulties.skellige = (MonsterOfTheWeekSettings_difficulty)StringToInt(ReadSettingValue(config, 'MOTWdifficulties', 'MOTWskellige'), 0);
-		difficulties.kaerMorhen = (MonsterOfTheWeekSettings_difficulty)StringToInt(ReadSettingValue(config, 'MOTWdifficulties', 'MOTWkaerMorhen'), 0);
-		difficulties.toussaint = (MonsterOfTheWeekSettings_difficulty)StringToInt(ReadSettingValue(config, 'MOTWdifficulties', 'MOTWtoussaint'), 0);
+		difficulties.noMansLand = (MonsterOfTheWeekSettings_difficulty)ReadIntSettingValue(config, 'MOTWdifficulties', 'MOTWnoMansLand');
+		difficulties.skellige = (MonsterOfTheWeekSettings_difficulty)ReadIntSettingValue(config, 'MOTWdifficulties', 'MOTWskellige');
+		difficulties.kaerMorhen = (MonsterOfTheWeekSettings_difficulty)ReadIntSettingValue(config, 'MOTWdifficulties', 'MOTWkaerMorhen');
+		difficulties.toussaint = (MonsterOfTheWeekSettings_difficulty)ReadIntSettingValue(config, 'MOTWdifficulties', 'MOTWtoussaint');
 
-		monsters.noMansLand = (MonsterOfTheWeekSettings_monster)EnumValueMappingConfigToUnified('MOTWmonsters', 'MOTWnoMansLand', StringToInt(ReadSettingValue(config, 'MOTWmonsters', 'MOTWnoMansLand'), 0));
-		monsters.skellige = (MonsterOfTheWeekSettings_monster)EnumValueMappingConfigToUnified('MOTWmonsters', 'MOTWskellige', StringToInt(ReadSettingValue(config, 'MOTWmonsters', 'MOTWskellige'), 0));
-		monsters.kaerMorhen = (MonsterOfTheWeekSettings_monster)EnumValueMappingConfigToUnified('MOTWmonsters', 'MOTWkaerMorhen', StringToInt(ReadSettingValue(config, 'MOTWmonsters', 'MOTWkaerMorhen'), 0));
-		monsters.toussaint = (MonsterOfTheWeekSettings_monster)EnumValueMappingConfigToUnified('MOTWmonsters', 'MOTWtoussaint', StringToInt(ReadSettingValue(config, 'MOTWmonsters', 'MOTWtoussaint'), 0));
+		monsters.noMansLand = (MonsterOfTheWeekSettings_monster)ReadUnifiedEnumSettingValue(config, 'MOTWmonsters', 'MOTWnoMansLand');
+		monsters.skellige = (MonsterOfTheWeekSettings_monster)ReadUnifiedEnumSettingValue(config, 'MOTWmonsters', 'MOTWskellige');
+		monsters.kaerMorhen = (MonsterOfTheWeekSettings_monster)ReadUnifiedEnumSettingValue(config, 'MOTWmonsters', 'MOTWkaerMorhen');
+		monsters.toussaint = (MonsterOfTheWeekSettings_monster)ReadUnifiedEnumSettingValue(config, 'MOTWmonsters', 'MOTWtoussaint');
 
-		this.ValidateSettings();
+		ValidateSettings();
+
 		super.ReadSettings();
 	}
 
@@ -54,17 +55,17 @@ class MonsterOfTheWeekSettings extends ISettingsMaster
 		var config : CInGameConfigWrapper;
 		config = theGame.GetInGameConfigWrapper();
 
-		this.ValidateSettings();
+		ValidateSettings();
 
-		WriteSettingValue(config, 'MOTWdifficulties', 'MOTWnoMansLand', IntToString((int)difficulties.noMansLand));
-		WriteSettingValue(config, 'MOTWdifficulties', 'MOTWskellige', IntToString((int)difficulties.skellige));
-		WriteSettingValue(config, 'MOTWdifficulties', 'MOTWkaerMorhen', IntToString((int)difficulties.kaerMorhen));
-		WriteSettingValue(config, 'MOTWdifficulties', 'MOTWtoussaint', IntToString((int)difficulties.toussaint));
+		WriteIntSettingValue(config, 'MOTWdifficulties', 'MOTWnoMansLand', (int)difficulties.noMansLand);
+		WriteIntSettingValue(config, 'MOTWdifficulties', 'MOTWskellige', (int)difficulties.skellige);
+		WriteIntSettingValue(config, 'MOTWdifficulties', 'MOTWkaerMorhen', (int)difficulties.kaerMorhen);
+		WriteIntSettingValue(config, 'MOTWdifficulties', 'MOTWtoussaint', (int)difficulties.toussaint);
 
-		WriteSettingValue(config, 'MOTWmonsters', 'MOTWnoMansLand', IntToString(EnumValueMappingUnifiedToConfig('MOTWmonsters', 'MOTWnoMansLand', (int)monsters.noMansLand)));
-		WriteSettingValue(config, 'MOTWmonsters', 'MOTWskellige', IntToString(EnumValueMappingUnifiedToConfig('MOTWmonsters', 'MOTWskellige', (int)monsters.skellige)));
-		WriteSettingValue(config, 'MOTWmonsters', 'MOTWkaerMorhen', IntToString(EnumValueMappingUnifiedToConfig('MOTWmonsters', 'MOTWkaerMorhen', (int)monsters.kaerMorhen)));
-		WriteSettingValue(config, 'MOTWmonsters', 'MOTWtoussaint', IntToString(EnumValueMappingUnifiedToConfig('MOTWmonsters', 'MOTWtoussaint', (int)monsters.toussaint)));
+		WriteUnifiedEnumSettingValue(config, 'MOTWmonsters', 'MOTWnoMansLand', (int)monsters.noMansLand);
+		WriteUnifiedEnumSettingValue(config, 'MOTWmonsters', 'MOTWskellige', (int)monsters.skellige);
+		WriteUnifiedEnumSettingValue(config, 'MOTWmonsters', 'MOTWkaerMorhen', (int)monsters.kaerMorhen);
+		WriteUnifiedEnumSettingValue(config, 'MOTWmonsters', 'MOTWtoussaint', (int)monsters.toussaint);
 
 		super.WriteSettings();
 	}
