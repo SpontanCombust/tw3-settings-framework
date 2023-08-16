@@ -23,7 +23,7 @@ impl SettingsGroup {
             
         let id = xml_group.id.clone();
         let var_name = strip_prefixes(&id, &cli.omit_prefix).trim_start_matches('_').into();
-        let class_name = format!("{}_{}", master_class_name, var_name); //TODO styling modificator
+        let class_name = xml_group.class_name.as_ref().unwrap_or(&format!("{}_{}", master_class_name, var_name)).to_string();
         let mut setting_vars = Vec::<SettingsVar>::new();
 
         for xml_var in &xml_group.visible_vars {

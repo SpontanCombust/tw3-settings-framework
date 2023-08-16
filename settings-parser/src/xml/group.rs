@@ -7,6 +7,7 @@ use super::var::Var;
 pub struct Group {
     pub id: String,
     pub display_name: String,
+    pub class_name: Option<String>,
     pub presets_array: Vec<String>, // array of displayNames,
     pub visible_vars: Vec<Var>
 }
@@ -42,6 +43,8 @@ impl TryFrom<&Node<'_, '_>> for Group {
         // if let Err(err) = validate_name(group_display_name) {
         //     return Err(format!("Invalid Group displayName {} at {}: {}", group_display_name, node_pos(node), err));
         // }
+
+        let class_name = node.attribute("msfClass").map(|s| s.to_string());
 
 
         let mut preset_elements = Vec::<(usize, &str)>::new();
@@ -90,7 +93,8 @@ impl TryFrom<&Node<'_, '_>> for Group {
         Ok(Group {
             id: group_id,
             display_name: group_display_name,
-            presets_array: presets_array,
+            class_name,
+            presets_array,
             visible_vars,
         })
     }

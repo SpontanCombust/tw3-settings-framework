@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-16"?>
 <UserConfig msfClass="MyModSettings" msfVersion="1.23">
-	<Group id="MODtab1" displayName="Mods.my_mod.my_mod_tab1">
+	<Group id="MODtab1" displayName="Mods.my_mod.my_mod_tab1" msfClass="MyModSettingsTab1">
 		<PresetsArray>
 			<Preset id="0" displayName="MOD_preset_hard">
 				<Entry varId="MODoption" value="2"/>
@@ -37,15 +37,15 @@
     </Group>
 	
 	
-	<Group id="MODtab2" displayName="Mods.my_mod.my_mod_tab2">
+	<Group id="MODtab2" displayName="Mods.my_mod.my_mod_tab2" msfClass="MyModSettingsTab2">
 	</Group>
     	
-   	<Group id="MODtab2subtab1" displayName="Mods.my_mod.my_mod_tab2.subtap1">
+   	<Group id="MODtab2subtab1" displayName="Mods.my_mod.my_mod_tab2.subtap1" msfClass="MyModSettingsTab2Subtab1">
 		<VisibleVars>
 				<Var id="anotherSlider" displayName="mod_another_slider" displayType="SLIDER;-100;100;1000"/>
 		</VisibleVars>
     </Group>
-	<Group id="MODtab2subtab2" displayName="Mods.my_mod.my_mod_tab2.subtap2">
+	<Group id="MODtab2subtab2" displayName="Mods.my_mod.my_mod_tab2.subtap2" msfClass="MyModSettingsTab2Subtab2">
 		<VisibleVars>
 				<Var id="anotherToggle" displayName="mod_another_toggle" displayType="TOGGLE" />
 		</VisibleVars>
