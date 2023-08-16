@@ -3,15 +3,12 @@ TW3 Settings Framework Parser 0.5.0
 Parses a mod menu XML file and outputs witcher script code representing settings of this menu
 
 USAGE:
-    settings_parser [OPTIONS] --master <SETTINGS_MASTER_NAME> <XML_FILE_PATH>
+    settings_parser [OPTIONS] <XML_FILE_PATH>
 
 ARGS:
     <XML_FILE_PATH>    Path to the menu xml file. (REQUIRED)
 
 OPTIONS:
-    -m, --master <SETTINGS_MASTER_NAME>
-            Name to use for the settings master class. (REQUIRED)
-
     -v, --mod-version <MOD_VERSION>
             Version of the mod in format. Format is arbitrary, but preferably a real number
             [default: 1.0]
