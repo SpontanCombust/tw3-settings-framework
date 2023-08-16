@@ -15,12 +15,12 @@ pub struct SettingsGroup {
 }
 
 impl SettingsGroup {
-    pub fn from(xml_group: &Group, master_class_name: &str, cli: &CLI) -> Self {    
-        let default_preset_index = xml_group.presets_array.iter().enumerate()
-                                            .find(|(_, preset)| preset.contains(&cli.default_preset_keyword.to_lowercase()))
-                                            .map(|(i, _)| i as u8)
-                                            .unwrap_or(0);
-            
+    pub fn from(xml_group: &Group, master_class_name: &str, cli: &CLI) -> Result<Self, String> {    
+        let default_preset_index = xml_group.default_preset_index.unwrap_or(0);
+        if xml_group.presets_array.len() > 0 && default_preset_index as usize >= xml_group.presets_array.len() {
+            return Err(format!("Invalid default preset index in Group {}", xml_group.id));
+        }
+
         let id = xml_group.id.clone();
         let var_name = strip_prefixes(&id, &cli.omit_prefix).trim_start_matches('_').into();
         let class_name = xml_group.class_name.as_ref().unwrap_or(&format!("{}_{}", master_class_name, var_name)).to_string();
@@ -32,13 +32,13 @@ impl SettingsGroup {
             }
         }
 
-        SettingsGroup {
+        Ok(SettingsGroup {
             id,
             class_name,
             var_name,
             default_preset_index,
             vars: setting_vars,
-        }
+        })
     }
 
     pub fn has_enum_value_mappings(&self) -> bool {

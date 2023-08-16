@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-16"?>
 <UserConfig msfClass="ModDifficultySettingsBase" msfVersion="1.1">
 	<Group id="DMgeneral" displayName="Mods.difficulty_mod">	
-        <PresetsArray>
+        <PresetsArray msfDefault="1">
         	<Preset id="0" displayName="dm_preset_easy">
 				<Entry varId="DMenabled" value="true"/>
 				<Entry varId="DMhealthMultip" value="0.5"/>
 				<Entry varId="DMdmgMultip" value="0.5"/>
 			</Preset>
-        	<Preset id="1" displayName="dm_default_preset_normal">
+        	<Preset id="1" displayName="dm_preset_normal">
 				<Entry varId="DMenabled" value="true"/>
 				<Entry varId="DMhealthMultip" value="1.0"/>
 				<Entry varId="DMdmgMultip" value="1.0"/>

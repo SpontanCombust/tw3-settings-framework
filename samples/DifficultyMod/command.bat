@@ -1,1 +1,1 @@
-settings_parser.exe "bin/config/r4game/user_config_matrix/pc/SampleDifficultyMod.xml" --omit-prefix="DM" --default-preset-keyword="DEFAULT" -o="Mods/modSampleDifficultyMod/content/scripts/local/difficulty_mod_base.ws" --no-getter
+settings_parser.exe "bin/config/r4game/user_config_matrix/pc/SampleDifficultyMod.xml" --omit-prefix="DM" -o="Mods/modSampleDifficultyMod/content/scripts/local/difficulty_mod_base.ws" --no-getter

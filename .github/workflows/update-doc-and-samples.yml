@@ -37,7 +37,6 @@ jobs:
           "../samples/DifficultyMod/bin/config/r4game/user_config_matrix/pc/SampleDifficultyMod.xml"
           -o="../samples/DifficultyMod/Mods/modSampleDifficultyMod/content/scripts/local/difficulty_mod_base.ws"
           -p="DM"
-          --default-preset-keyword="DEFAULT"
           --no-getter
         working-directory: settings-parser
       - name: Parse MonsterOfTheWeek sample

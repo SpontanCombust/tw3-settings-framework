@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-16"?>
 <UserConfig msfClass="MyModSettings" msfVersion="1.23">
 	<Group id="MODtab1" displayName="Mods.my_mod.my_mod_tab1" msfClass="MyModSettingsTab1">
-		<PresetsArray>
+		<PresetsArray msfDefault="1">
 			<Preset id="0" displayName="MOD_preset_hard">
 				<Entry varId="MODoption" value="2"/>
 				<Entry varId="MODsliderFloat" value="1.0"/>
 				<Entry varId="MODsliderInt" value="100"/>
 				<Entry varId="MODtoggle" value="true"/>
 			</Preset>
-			<Preset id="1" displayName="MOD_default_preset_easy">
+			<Preset id="1" displayName="MOD_preset_easy">
 				<Entry varId="MODoption" value="0"/>
 				<Entry varId="MODsliderFloat" value="0.5"/>
 				<Entry varId="MODsliderInt" value="50"/>

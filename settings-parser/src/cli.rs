@@ -17,13 +17,6 @@ pub struct CLI {
     #[clap(long, short = 'p', display_order=1)]
     pub omit_prefix: Vec<String>,
 
-    /// Keyword used in default presets' display_name.
-    /// Used to deduce IDs of default presets for config groups so they can be used in ResetToDefault() methods.
-    /// If won't find default preset or any preset at that will use 0 as the preset ID.
-    /// Case insensitive.
-    #[clap(long, default_value="default", display_order=2)]
-    pub default_preset_keyword: String,
-
     /// Controls how OPTION type vars are parsed into WitcherScript
     /// - ints:
     /// Treats options vars as regular ints instead of creating custom enum types for them.
@@ -36,17 +29,17 @@ pub struct CLI {
     /// - enums-strict:
     /// Parses options vars into enums with an exception that having mutliple option arrays designated by the same prefix
     /// but having different sets of values is disallowed. This prevents possible user mistakes from happening. 
-    #[clap(long, arg_enum, default_value="enums", verbatim_doc_comment, display_order=3)]
+    #[clap(long, arg_enum, default_value="enums", verbatim_doc_comment, display_order=2)]
     pub option_parsing_mode: OptionParsingMode,
 
     /// Disables the generation of code for value correction.
     /// After reading from or before writing to user config values will no longer be checked if they adhere to the XML,
     /// e.g. if slider value is in a specified range.
-    #[clap(long, display_order=4)]
+    #[clap(long, display_order=3)]
     pub no_var_validation: bool,
 
     /// Prevents the settings object getter convenience function from being generated
-    #[clap(long, display_order=5)]
+    #[clap(long, display_order=4)]
     pub no_getter: bool
 }
 
