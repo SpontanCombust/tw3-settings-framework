@@ -17,12 +17,6 @@ OPTIONS:
             Prefix to omit from groups and vars when generating code. Case sensitive. Possible
             multiple cases
 
-        --default-preset-keyword <DEFAULT_PRESET_KEYWORD>
-            Keyword used in default presets' display_name. Used to deduce IDs of default presets for
-            config groups so they can be used in ResetToDefault() methods. If won't find default
-            preset or any preset at that will use 0 as the preset ID. Case insensitive [default:
-            default]
-
         --option-parsing-mode <OPTION_PARSING_MODE>
             Controls how OPTION type vars are parsed into WitcherScript
             - ints:
