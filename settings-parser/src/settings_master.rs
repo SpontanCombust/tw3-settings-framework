@@ -174,15 +174,59 @@ const MASTER_MOD_VERSION_VAR_NAME: &str = "modVersion";
 const MASTER_INIT_FUNC_NAME: &str = "Init";
 const MASTER_VALIDATE_VALUES_FUNC_NAME: &str = "ValidateSettings";
 const MASTER_READ_SETTINGS_FUNC_NAME: &str = "ReadSettings";
-const MASTER_READ_SETTING_VALUE_FUNC_NAME: &str = "ReadSettingValue";
+// const MASTER_READ_SETTING_VALUE_FUNC_NAME: &str = "ReadSettingValue";
 const MASTER_WRITE_SETTINGS_FUNC_NAME: &str = "WriteSettings";
-const MASTER_WRITE_SETTING_VALUE_FUNC_NAME: &str = "WriteSettingValue";
+// const MASTER_WRITE_SETTING_VALUE_FUNC_NAME: &str = "WriteSettingValue";
 const MASTER_RESET_SETTINGS_TO_DEFAULT_FUNC_NAME: &str = "ResetSettingsToDefault";
 const MASTER_SHOULD_RESET_TO_DEFAULT_ON_INIT_FUNC_NAME: &str = "ShouldResetSettingsToDefaultOnInit";
 const MASTER_ENUM_MAPPING_CONFIG_TO_UNIFIED_FUNC_NAME: &str = "EnumValueMappingConfigToUnified";
 const MASTER_ENUM_MAPPING_UNIFIED_TO_CONFIG_FUNC_NAME: &str = "EnumValueMappingUnifiedToConfig";
 const MASTER_ENUM_MAPPING_VALIDATE_FUNC_NAME: &str = "EnumValueMappingValidateUnified";
 const GROUP_RESET_SETTINGS_TO_DEFAULT_FUNC_NAME: &str = "ResetToDefault";
+
+trait ReadSettingValueFnName {
+    fn read_setting_value_fn(&self) -> &'static str;
+}
+
+impl ReadSettingValueFnName for SettingsVarType {
+    fn read_setting_value_fn(&self) -> &'static str {
+        match self {
+            SettingsVarType::Bool => "ReadBoolSettingValue",
+            SettingsVarType::Int {..} => "ReadIntSettingValue",
+            SettingsVarType::Float {..} => "ReadFloatSettingValue",
+            SettingsVarType::Enum { val_mapping, .. } => {
+                if val_mapping.is_some() {
+                    "ReadUnifiedEnumSettingValue"
+                } else {
+                    "ReadIntSettingValue"
+                }
+            }
+        }
+    }
+}
+
+trait WriteSettingValueFnName {
+    fn write_setting_value_fn(&self) -> &'static str;
+}
+
+impl WriteSettingValueFnName for SettingsVarType {
+    fn write_setting_value_fn(&self) -> &'static str {
+        match self {
+            SettingsVarType::Bool => "WriteBoolSettingValue",
+            SettingsVarType::Int {..} => "WriteIntSettingValue",
+            SettingsVarType::Float {..} => "WriteFloatSettingValue",
+            SettingsVarType::Enum { val_mapping, .. } => {
+                if val_mapping.is_some() {
+                    "WriteUnifiedEnumSettingValue"
+                } else {
+                    "WriteIntSettingValue"
+                }
+            }
+        }
+    }
+}
+
+
 
 impl WitcherScriptType for SettingsMaster {
     fn ws_type_name(&self) -> String {
@@ -332,29 +376,27 @@ fn read_settings_function(master: &SettingsMaster, buffer: &mut WitcherScript) {
 
     for group in &master.groups {
         for var in &group.vars {
-            let mut get_var_value = format!("{}(config, '{}', '{}')", MASTER_READ_SETTING_VALUE_FUNC_NAME, group.id, var.id);
-
-            // surround with type cast if necessary
-            get_var_value = match &var.var_type {
-                SettingsVarType::Bool => format!("StringToBool({})", get_var_value),
-                SettingsVarType::Int {..} => format!("StringToInt({}, 0)", get_var_value),
-                SettingsVarType::Float {..} => format!("StringToFloat({}, 0.0)", get_var_value),
-                SettingsVarType::Enum { val, val_mapping } => {
-                    get_var_value = format!("StringToInt({}, 0)", get_var_value);
-                    if val_mapping.is_some() {
-                        get_var_value = format!("{}('{}', '{}', {})", MASTER_ENUM_MAPPING_CONFIG_TO_UNIFIED_FUNC_NAME, group.id, var.id, get_var_value);
-                    }
-                    format!("({}){}", val.type_name, get_var_value)
-                }
+            // add type cast if it's an enum
+            let type_cast = if let SettingsVarType::Enum { val, .. } = &var.var_type {
+                format!("({})", val.type_name)
+            } else {
+                "".into()
             };
 
-            buffer.push_line(&format!("{}.{} = {};", group.var_name, var.var_name, get_var_value));
+            let read_setting_value = format!("{gn}.{vn} = {tc}{func}(config, '{gid}', '{vid}');",
+                                            gn = group.var_name, vn = var.var_name,
+                                            tc = type_cast,
+                                            func = var.var_type.read_setting_value_fn(),
+                                            gid = group.id, vid = var.id);
+
+            buffer.push_line(&read_setting_value);
         }
         buffer.new_line();
     }
 
     if master.validate_values {
-        buffer.push_line(&format!("this.{}();", MASTER_VALIDATE_VALUES_FUNC_NAME));
+        buffer.push_line(&format!("{}();", MASTER_VALIDATE_VALUES_FUNC_NAME))
+              .new_line();
     }
     buffer.push_line(&format!("super.{}();", MASTER_READ_SETTINGS_FUNC_NAME));
 
@@ -370,26 +412,26 @@ fn write_settings_function(master: &SettingsMaster, buffer: &mut WitcherScript) 
           .new_line();
 
     if master.validate_values {
-        buffer.push_line(&format!("this.{}();", MASTER_VALIDATE_VALUES_FUNC_NAME))
+        buffer.push_line(&format!("{}();", MASTER_VALIDATE_VALUES_FUNC_NAME))
               .new_line();
     }
 
     for group in &master.groups {
         for var in &group.vars {
-            let var_value_str = match &var.var_type {
-                SettingsVarType::Bool => format!("BoolToString({}.{})", group.var_name, var.var_name),
-                SettingsVarType::Int {..} => format!("IntToString({}.{})", group.var_name, var.var_name),
-                SettingsVarType::Float {..} => format!("FloatToString({}.{})", group.var_name, var.var_name),
-                SettingsVarType::Enum {val_mapping, ..} => { 
-                    let mut var_value_str = format!("(int){}.{}", group.var_name, var.var_name);
-                    if val_mapping.is_some() {
-                        var_value_str = format!("{}('{}', '{}', {})", MASTER_ENUM_MAPPING_UNIFIED_TO_CONFIG_FUNC_NAME, group.id, var.id, var_value_str);
-                    }
-                    format!("IntToString({})", var_value_str)
-                }
+            // add type cast if it's an enum
+            let type_cast = if let SettingsVarType::Enum {..} = &var.var_type {
+                "(int)"
+            } else {
+                ""
             };
 
-            buffer.push_line(&format!("{}(config, '{}', '{}', {});", MASTER_WRITE_SETTING_VALUE_FUNC_NAME, group.id, var.id, var_value_str));
+            let write_setting_value = format!("{func}(config, '{gid}', '{vid}', {tc}{gn}.{vn});", 
+                                            func = var.var_type.write_setting_value_fn(),
+                                            gid = group.id, vid = var.id,
+                                            tc = type_cast,
+                                            gn = group.var_name, vn = var.var_name);
+
+            buffer.push_line(&write_setting_value);
         }
         buffer.new_line();
     }

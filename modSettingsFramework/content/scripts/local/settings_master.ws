@@ -98,6 +98,8 @@ abstract class ISettingsMaster
 
     // ====================== Utility functions ======================
 
+    // these bool conversion functions are here for sanity sake, 
+    // because an implicit conversion from string to bool doesn't sit right with me
     protected function StringToBool(s: string) : bool
     {
         if(s == "false" || s == "" || !s) {
@@ -114,5 +116,47 @@ abstract class ISettingsMaster
         } else {
             return "false";
         }
+    }
+
+
+    protected function ReadIntSettingValue(config: CInGameConfigWrapper, gId: name, vId: name) : int
+    {
+        return StringToInt(ReadSettingValue(config, gId, vId), 0);
+    }
+
+    protected function ReadFloatSettingValue(config: CInGameConfigWrapper, gId: name, vId: name) : float
+    {
+        return StringToFloat(ReadSettingValue(config, gId, vId), 0.0);
+    }
+
+    protected function ReadBoolSettingValue(config: CInGameConfigWrapper, gId: name, vId: name) : bool
+    {
+        return StringToBool(ReadSettingValue(config, gId, vId));
+    }
+
+    protected function ReadUnifiedEnumSettingValue(config: CInGameConfigWrapper, gId: name, vId: name) : int
+    {
+        return EnumValueMappingConfigToUnified(gId, vId, ReadIntSettingValue(config, gId, vId));
+    }
+
+
+    protected function WriteIntSettingValue(config: CInGameConfigWrapper, gId: name, vId: name, value: int) : void
+    {
+        WriteSettingValue(config, gId, vId, IntToString(value));
+    }
+
+    protected function WriteFloatSettingValue(config: CInGameConfigWrapper, gId: name, vId: name, value: float) : void
+    {
+        WriteSettingValue(config, gId, vId, FloatToString(value));
+    }
+
+    protected function WriteBoolSettingValue(config: CInGameConfigWrapper, gId: name, vId: name, value: bool) : void
+    {
+        WriteSettingValue(config, gId, vId, BoolToString(value));
+    }
+
+    protected function WriteUnifiedEnumSettingValue(config: CInGameConfigWrapper, gId: name, vId: name, value: int) : void
+    {
+        WriteIntSettingValue(config, gId, vId, EnumValueMappingUnifiedToConfig(gId, vId, value));
     }
 }
