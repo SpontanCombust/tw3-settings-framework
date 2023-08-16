@@ -29,7 +29,6 @@ jobs:
           "../doc/mod-menu.xml"
           -o="../doc/mod-menu.ws"
           -p="MOD" -p="mod_"
-          -v="1.23"
           --option-parsing-mode=enums
         working-directory: settings-parser
       - name: Parse DifficultyMod sample
@@ -39,7 +38,6 @@ jobs:
           -o="../samples/DifficultyMod/Mods/modSampleDifficultyMod/content/scripts/local/difficulty_mod_base.ws"
           -p="DM"
           --default-preset-keyword="DEFAULT"
-          -v="1.1"
           --no-getter
         working-directory: settings-parser
       - name: Parse MonsterOfTheWeek sample
@@ -49,7 +47,6 @@ jobs:
           -o="../samples/MonsterOfTheWeek/Mods/modSampleMonsterOfTheWeek/content/scripts/local/monster_of_the_week_settings.ws"
           -p="MOTW"
           -p="motw"
-          -v="1.0"
           --option-parsing-mode=enums
         working-directory: settings-parser
       - name: CLI specification

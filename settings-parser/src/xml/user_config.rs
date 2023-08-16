@@ -4,6 +4,7 @@ use super::group::Group;
 
 pub struct UserConfig {
     pub class_name: String,
+    pub mod_version: Option<String>,
     pub groups: Vec<Group>
 }
 
@@ -17,8 +18,9 @@ impl TryFrom<&Document<'_>> for UserConfig {
             if class_name.is_none() {
                 return Err("No msfClass attribute found in UserConfig".to_string());
             }
-            
             let class_name = class_name.unwrap().to_string();
+
+            let mod_version = root_node.attribute("msfVersion").map(|s| s.to_string());
 
             let group_nodes: Vec<Node> = root_node.children()
                                         .filter(|n| n.has_tag_name("Group"))
@@ -40,6 +42,7 @@ impl TryFrom<&Document<'_>> for UserConfig {
 
             Ok(UserConfig { 
                 class_name,
+                mod_version,
                 groups 
             })
         } else {
