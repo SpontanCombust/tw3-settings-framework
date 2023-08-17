@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-16"?>
-<UserConfig msfClass="MonsterOfTheWeekSettings">
+<UserConfig msfClass="MonsterOfTheWeekSettings" msfPrefix="MOTW;motw_">
 	<!-- Options with the same set of value -->
 	<Group id="MOTWdifficulties" displayName="Mods.monster_of_the_week.motw_difficulty">
 		<VisibleVars>

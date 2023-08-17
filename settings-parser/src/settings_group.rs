@@ -15,7 +15,7 @@ pub struct SettingsGroup {
 }
 
 impl SettingsGroup {
-    pub fn from(xml_group: &Group, master_class_name: &str, cli: &CLI) -> Result<Self, String> {    
+    pub fn from(xml_group: &Group, master_class_name: &str, prefixes: &Vec<String>, cli: &CLI) -> Result<Self, String> {    
         let default_preset_index = xml_group.default_preset_index.unwrap_or(0);
         if xml_group.presets_array.len() > 0 && default_preset_index as usize >= xml_group.presets_array.len() {
             return Err(format!("Invalid default preset index in Group {}", xml_group.id));
@@ -25,13 +25,13 @@ impl SettingsGroup {
         let var_name = if let Some(variable_name) = &xml_group.variable_name {
             variable_name.clone()
         } else {
-            strip_prefixes(&id, &cli.omit_prefix).trim_start_matches('_').into()
+            strip_prefixes(&id, prefixes).trim_start_matches('_').into()
         };
         let class_name = format!("{}_{}", master_class_name, var_name); //xml_group.class_name.as_ref().unwrap_or(&format!("{}_{}", master_class_name, var_name)).to_string();
         let mut setting_vars = Vec::<SettingsVar>::new();
 
         for xml_var in &xml_group.visible_vars {
-            if let Some(setting_var) = SettingsVar::from(xml_var, master_class_name, cli) {
+            if let Some(setting_var) = SettingsVar::from(xml_var, master_class_name, prefixes, cli) {
                 setting_vars.push(setting_var);
             }
         }

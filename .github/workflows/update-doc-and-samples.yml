@@ -28,7 +28,6 @@ jobs:
           cargo run --release --  
           "../doc/mod-menu.xml"
           -o="../doc/mod-menu.ws"
-          -p="MOD" -p="mod_"
           --option-parsing-mode=enums
         working-directory: settings-parser
       - name: Parse DifficultyMod sample
@@ -36,7 +35,6 @@ jobs:
           cargo run --release --  
           "../samples/DifficultyMod/bin/config/r4game/user_config_matrix/pc/SampleDifficultyMod.xml"
           -o="../samples/DifficultyMod/Mods/modSampleDifficultyMod/content/scripts/local/difficulty_mod_base.ws"
-          -p="DM"
           --no-getter
         working-directory: settings-parser
       - name: Parse MonsterOfTheWeek sample
@@ -44,8 +42,6 @@ jobs:
           cargo run --release --  
           "../samples/MonsterOfTheWeek/bin/config/r4game/user_config_matrix/pc/SampleMonsterOfTheWeek.xml"
           -o="../samples/MonsterOfTheWeek/Mods/modSampleMonsterOfTheWeek/content/scripts/local/monster_of_the_week_settings.ws"
-          -p="MOTW"
-          -p="motw"
           --option-parsing-mode=enums
         working-directory: settings-parser
       - name: CLI specification

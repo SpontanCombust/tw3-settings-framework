@@ -5,6 +5,7 @@ use super::group::Group;
 pub struct UserConfig {
     pub class_name: String,
     pub mod_version: Option<String>,
+    pub mod_prefixes: Vec<String>,
     pub groups: Vec<Group>
 }
 
@@ -21,6 +22,15 @@ impl TryFrom<&Document<'_>> for UserConfig {
             let class_name = class_name.unwrap().to_string();
 
             let mod_version = root_node.attribute("msfVersion").map(|s| s.to_string());
+
+            let mod_prefixes = if let Some(prefixes) = root_node.attribute("msfPrefix") {
+                prefixes.split(';')
+                .filter(|s| !s.is_empty())
+                .map(|s| s.to_string())
+                .collect::<Vec<_>>()
+            } else {
+                Vec::new()
+            };
 
             let group_nodes: Vec<Node> = root_node.children()
                                         .filter(|n| n.has_tag_name("Group"))
@@ -43,6 +53,7 @@ impl TryFrom<&Document<'_>> for UserConfig {
             Ok(UserConfig { 
                 class_name,
                 mod_version,
+                mod_prefixes,
                 groups 
             })
         } else {

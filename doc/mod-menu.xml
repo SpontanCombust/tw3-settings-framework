@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-16"?>
-<UserConfig msfClass="MyModSettings" msfVersion="1.23">
+<UserConfig msfClass="MyModSettings" msfVersion="1.23" msfPrefix="MOD;mod_">
 	<Group id="MODtab1" displayName="Mods.my_mod.my_mod_tab1" msfClass="MyModSettingsTab1">
 		<PresetsArray msfDefault="1">
 			<Preset id="0" displayName="MOD_preset_hard">

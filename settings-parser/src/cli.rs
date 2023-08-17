@@ -12,11 +12,6 @@ pub struct CLI {
     #[clap(long = "output", short = 'o', display_order=0)]
     pub output_ws_file_path: Option<String>,
 
-    /// Prefix to omit from groups and vars when generating code. Case sensitive.
-    /// Possible multiple cases.
-    #[clap(long, short = 'p', display_order=1)]
-    pub omit_prefix: Vec<String>,
-
     /// Controls how OPTION type vars are parsed into WitcherScript
     /// - ints:
     /// Treats options vars as regular ints instead of creating custom enum types for them.
@@ -29,17 +24,17 @@ pub struct CLI {
     /// - enums-strict:
     /// Parses options vars into enums with an exception that having mutliple option arrays designated by the same prefix
     /// but having different sets of values is disallowed. This prevents possible user mistakes from happening. 
-    #[clap(long, arg_enum, default_value="enums", verbatim_doc_comment, display_order=2)]
+    #[clap(long, arg_enum, default_value="enums", verbatim_doc_comment, display_order=1)]
     pub option_parsing_mode: OptionParsingMode,
 
     /// Disables the generation of code for value correction.
     /// After reading from or before writing to user config values will no longer be checked if they adhere to the XML,
     /// e.g. if slider value is in a specified range.
-    #[clap(long, display_order=3)]
+    #[clap(long, display_order=2)]
     pub no_var_validation: bool,
 
     /// Prevents the settings object getter convenience function from being generated
-    #[clap(long, display_order=4)]
+    #[clap(long, display_order=3)]
     pub no_getter: bool
 }
 

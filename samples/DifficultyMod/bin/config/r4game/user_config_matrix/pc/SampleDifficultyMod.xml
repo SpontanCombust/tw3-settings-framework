@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-16"?>
-<UserConfig msfClass="ModDifficultySettingsBase" msfVersion="1.1">
+<UserConfig msfClass="ModDifficultySettingsBase" msfVersion="1.1" msfPrefix="DM">
 	<Group id="DMgeneral" displayName="Mods.difficulty_mod">	
         <PresetsArray msfDefault="1">
         	<Preset id="0" displayName="dm_preset_easy">

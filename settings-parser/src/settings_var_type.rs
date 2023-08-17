@@ -22,7 +22,7 @@ pub enum SettingsVarType {
 }
 
 impl SettingsVarType {
-    pub fn from(var: &Var, master_class_name: &str, cli: &CLI) -> Option<Self> {
+    pub fn from(var: &Var, master_class_name: &str, prefixes: &Vec<String>, cli: &CLI) -> Option<Self> {
         match &var.display_type {
             DisplayType::Toggle => {
                 Some(SettingsVarType::Bool)
@@ -50,7 +50,7 @@ impl SettingsVarType {
                     },
                     OptionParsingMode::Enums | OptionParsingMode::EnumsStrict => {
                         Some(SettingsVarType::Enum {
-                            val: SettingsEnum::from(options_array, &var.id, master_class_name, cli),
+                            val: SettingsEnum::from(options_array, &var.id, master_class_name, prefixes, cli),
                             val_mapping: None
                         })
                     }
