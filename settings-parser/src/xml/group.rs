@@ -7,7 +7,7 @@ use super::var::Var;
 pub struct Group {
     pub id: String,
     pub display_name: String,
-    pub class_name: Option<String>,
+    // pub class_name: Option<String>,
     pub variable_name: Option<String>,
     pub presets_array: Vec<String>,
     pub default_preset_index: Option<u8>,
@@ -42,7 +42,7 @@ impl TryFrom<&Node<'_, '_>> for Group {
         }
         let group_display_name = group_display_name.unwrap().to_owned();
 
-        let class_name = node.attribute("msfClass").map(|s| s.to_string());
+        // let class_name = node.attribute("msfClass").map(|s| s.to_string());
 
         let variable_name = node.attribute("msfVariable").map(|s| s.to_string());
 
@@ -111,7 +111,7 @@ impl TryFrom<&Node<'_, '_>> for Group {
         Ok(Group {
             id: group_id,
             display_name: group_display_name,
-            class_name,
+            // class_name,
             variable_name,
             presets_array,
             default_preset_index,
