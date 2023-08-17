@@ -8,6 +8,7 @@ pub struct Group {
     pub id: String,
     pub display_name: String,
     pub class_name: Option<String>,
+    pub variable_name: Option<String>,
     pub presets_array: Vec<String>,
     pub default_preset_index: Option<u8>,
     pub visible_vars: Vec<Var>
@@ -42,6 +43,8 @@ impl TryFrom<&Node<'_, '_>> for Group {
         let group_display_name = group_display_name.unwrap().to_owned();
 
         let class_name = node.attribute("msfClass").map(|s| s.to_string());
+
+        let variable_name = node.attribute("msfVariable").map(|s| s.to_string());
 
         let mut preset_elements = Vec::<(usize, &str)>::new();
         if let Some(presets_array_node) = node.children().find(|n| n.has_tag_name("PresetsArray")) {
@@ -109,6 +112,7 @@ impl TryFrom<&Node<'_, '_>> for Group {
             id: group_id,
             display_name: group_display_name,
             class_name,
+            variable_name,
             presets_array,
             default_preset_index,
             visible_vars,

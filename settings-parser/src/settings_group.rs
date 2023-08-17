@@ -22,7 +22,11 @@ impl SettingsGroup {
         }
 
         let id = xml_group.id.clone();
-        let var_name = strip_prefixes(&id, &cli.omit_prefix).trim_start_matches('_').into();
+        let var_name = if let Some(variable_name) = &xml_group.variable_name {
+            variable_name.clone()
+        } else {
+            strip_prefixes(&id, &cli.omit_prefix).trim_start_matches('_').into()
+        };
         let class_name = xml_group.class_name.as_ref().unwrap_or(&format!("{}_{}", master_class_name, var_name)).to_string();
         let mut setting_vars = Vec::<SettingsVar>::new();
 

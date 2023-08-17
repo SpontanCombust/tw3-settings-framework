@@ -6,6 +6,7 @@ use super::display_type::DisplayType;
 
 pub struct Var {
     pub id: String,
+    pub variable_name: Option<String>,
     pub display_name: String,
     pub display_type: DisplayType
 }
@@ -40,13 +41,12 @@ impl TryFrom<&Node<'_, '_>> for Var {
             },
         };
 
-        // if let Err(err) = validate_name(display_name) {
-        //     return Err(format!("Invalid Var displayName {} at {}: {}", id, node_pos(node), err));
-        // }
+        let variable_name = node.attribute("msfVariable").map(|s| s.to_string());
 
         
         Ok(Var {
             id: id.to_owned(),
+            variable_name,
             display_name: display_name.to_owned(),
             display_type: DisplayType::try_from(node)?,
         })
