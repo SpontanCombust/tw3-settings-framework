@@ -13,10 +13,6 @@ OPTIONS:
             Path of the WitcherScipt output file, by default it's made from the menu xml file name
             in the same directory
 
-    -p, --omit-prefix <OMIT_PREFIX>
-            Prefix to omit from groups and vars when generating code. Case sensitive. Possible
-            multiple cases
-
         --option-parsing-mode <OPTION_PARSING_MODE>
             Controls how OPTION type vars are parsed into WitcherScript
             - ints:
