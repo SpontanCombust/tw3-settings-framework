@@ -19,7 +19,7 @@ class MyModSettings extends ISettingsMaster
 
 	public /* override */ function ValidateSettings() : void
 	{
-		tab1.option = (MyModSettings_opt)Clamp((int)tab1.option, 0, 2);
+		tab1.option = (MyModSettings_mod_opt)Clamp((int)tab1.option, 0, 2);
 		tab1.sliderFloat = ClampF(tab1.sliderFloat, 0, 1);
 		tab1.sliderInt = Clamp(tab1.sliderInt, 0, 100);
 		tab1.version = ClampF(tab1.version, 0, 100);
@@ -34,11 +34,11 @@ class MyModSettings extends ISettingsMaster
 		var config : CInGameConfigWrapper;
 		config = theGame.GetInGameConfigWrapper();
 
-		tab1.option = (MyModSettings_opt)ReadIntSettingValue(config, 'MODtab1', 'MODoption');
-		tab1.sliderFloat = ReadFloatSettingValue(config, 'MODtab1', 'MODsliderFloat');
-		tab1.sliderInt = ReadIntSettingValue(config, 'MODtab1', 'MODsliderInt');
-		tab1.toggle = ReadBoolSettingValue(config, 'MODtab1', 'MODtoggle');
-		tab1.version = ReadFloatSettingValue(config, 'MODtab1', 'MODversion');
+		tab1.option = (MyModSettings_mod_opt)ReadIntSettingValue(config, 'MODtab1', 'option');
+		tab1.sliderFloat = ReadFloatSettingValue(config, 'MODtab1', 'sliderFloat');
+		tab1.sliderInt = ReadIntSettingValue(config, 'MODtab1', 'sliderInt');
+		tab1.toggle = ReadBoolSettingValue(config, 'MODtab1', 'toggle');
+		tab1.version = ReadFloatSettingValue(config, 'MODtab1', 'version');
 
 		tab2subtab1.anotherSlider = ReadFloatSettingValue(config, 'MODtab2subtab1', 'anotherSlider');
 
@@ -56,11 +56,11 @@ class MyModSettings extends ISettingsMaster
 
 		ValidateSettings();
 
-		WriteIntSettingValue(config, 'MODtab1', 'MODoption', (int)tab1.option);
-		WriteFloatSettingValue(config, 'MODtab1', 'MODsliderFloat', tab1.sliderFloat);
-		WriteIntSettingValue(config, 'MODtab1', 'MODsliderInt', tab1.sliderInt);
-		WriteBoolSettingValue(config, 'MODtab1', 'MODtoggle', tab1.toggle);
-		WriteFloatSettingValue(config, 'MODtab1', 'MODversion', tab1.version);
+		WriteIntSettingValue(config, 'MODtab1', 'option', (int)tab1.option);
+		WriteFloatSettingValue(config, 'MODtab1', 'sliderFloat', tab1.sliderFloat);
+		WriteIntSettingValue(config, 'MODtab1', 'sliderInt', tab1.sliderInt);
+		WriteBoolSettingValue(config, 'MODtab1', 'toggle', tab1.toggle);
+		WriteFloatSettingValue(config, 'MODtab1', 'version', tab1.version);
 
 		WriteFloatSettingValue(config, 'MODtab2subtab1', 'anotherSlider', tab2subtab1.anotherSlider);
 
@@ -81,13 +81,13 @@ class MyModSettings extends ISettingsMaster
 		var config : CInGameConfigWrapper;
 		config = theGame.GetInGameConfigWrapper();
 
-		return config.GetVarValue('MODtab1','MODoption') == "";
+		return config.GetVarValue('MODtab1','option') == "";
 	}
 }
 
 class MyModSettings_tab1 extends ISettingsGroup
 {
-	public var option : MyModSettings_opt;
+	public var option : MyModSettings_mod_opt;
 	public var sliderFloat : float;
 	public var sliderInt : int;
 	public var toggle : bool;
@@ -113,11 +113,11 @@ class MyModSettings_tab2subtab2 extends ISettingsGroup
 	default defaultPresetIndex = 0;
 }
 
-enum MyModSettings_opt
+enum MyModSettings_mod_opt
 {
-	MyModSettings_opt1 = 0,
-	MyModSettings_opt2 = 1,
-	MyModSettings_opt2 = 2,
+	MyModSettings_mod_opt1 = 0,
+	MyModSettings_mod_opt2 = 1,
+	MyModSettings_mod_opt2 = 2,
 }
 
 
