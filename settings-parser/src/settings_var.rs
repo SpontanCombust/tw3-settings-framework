@@ -1,7 +1,6 @@
 use crate::{
     settings_var_type::SettingsVarType, 
-    traits::WitcherScriptType, 
-    utils::strip_prefixes, 
+    traits::WitcherScriptType,
     xml::var::Var
 };
 
@@ -12,14 +11,14 @@ pub struct SettingsVar {
 }
 
 impl SettingsVar {
-    pub fn try_from(xml_var: &Var, master_class_name: &str, prefixes: &Vec<String>) -> Result<Option<Self>, String> {
+    pub fn try_from(xml_var: &Var, master_class_name: &str) -> Result<Option<Self>, String> {
         let var_name = if let Some(variable_name) = &xml_var.variable_name {
             variable_name.clone()
         } else {
-            strip_prefixes(&xml_var.id, prefixes).trim_start_matches('_').into()
+            xml_var.id.clone()
         };
 
-        let svt = SettingsVarType::from(xml_var, master_class_name, prefixes)?;
+        let svt = SettingsVarType::try_from(xml_var, master_class_name)?;
 
         Ok(svt.and_then(|var_type| Some(SettingsVar {
             id: xml_var.id.clone(),

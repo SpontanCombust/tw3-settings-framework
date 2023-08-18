@@ -1,6 +1,6 @@
 use crate::{
     xml::options_array::OptionsArray, 
-    utils::{common_str_prefix, strip_prefixes}, 
+    utils::common_str_prefix, 
     traits::{WitcherScriptType, WitcherScriptTypeDef}
 };
 
@@ -11,7 +11,7 @@ pub struct SettingsEnum {
 }
 
 impl SettingsEnum {
-    pub fn try_from(options_array: &OptionsArray, var_id: &str, master_class_name: &str, prefixes: &Vec<String>) -> Result<Self, String> {
+    pub fn try_from(options_array: &OptionsArray, var_id: &str, master_class_name: &str) -> Result<Self, String> {
         if let Some(enum_name) = &options_array.enum_type {
             let mut values = Vec::<String>::new();
             for i in 0..options_array.options.len() {
@@ -30,7 +30,7 @@ impl SettingsEnum {
         } else {
             // with stripped mod prefix
             let options_array = options_array.options.iter()
-                                .map(|o| strip_prefixes(&o.display_name, prefixes).trim_start_matches('_').to_string())
+                                .map(|o| o.display_name.to_string())
                                 .collect::<Vec<_>>();
     
             let common_prefix = common_str_prefix(&options_array).to_string();
