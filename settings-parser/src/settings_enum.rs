@@ -11,8 +11,7 @@ pub struct SettingsEnum {
 }
 
 impl SettingsEnum {
-    //TODO rename to try_from, to the same with other types
-    pub fn from(options_array: &OptionsArray, var_id: &str, master_class_name: &str, prefixes: &Vec<String>) -> Result<Self, String> {
+    pub fn try_from(options_array: &OptionsArray, var_id: &str, master_class_name: &str, prefixes: &Vec<String>) -> Result<Self, String> {
         if let Some(enum_name) = &options_array.enum_type {
             let mut values = Vec::<String>::new();
             for i in 0..options_array.options.len() {
@@ -20,7 +19,6 @@ impl SettingsEnum {
                 if let Some(val) = &opt.enum_value_suffix {
                     values.push(format!("{}{}", enum_name, val));
                 } else {
-                    //TODO would be good to have a full on validation layer for xml types
                     return Err(format!("Option {} in Var {} does not have msfEnumValue specified, which is needed in this context", i, var_id));
                 }
             }

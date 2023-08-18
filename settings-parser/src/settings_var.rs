@@ -12,7 +12,7 @@ pub struct SettingsVar {
 }
 
 impl SettingsVar {
-    pub fn from(xml_var: &Var, master_class_name: &str, prefixes: &Vec<String>) -> Result<Option<Self>, String> {
+    pub fn try_from(xml_var: &Var, master_class_name: &str, prefixes: &Vec<String>) -> Result<Option<Self>, String> {
         let var_name = if let Some(variable_name) = &xml_var.variable_name {
             variable_name.clone()
         } else {

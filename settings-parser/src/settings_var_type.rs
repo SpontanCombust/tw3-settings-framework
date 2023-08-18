@@ -41,7 +41,7 @@ impl SettingsVarType {
             },
             DisplayType::Options(options_array) => {
                 if options_array.is_enum.unwrap_or(true) {
-                    let settings_enum = SettingsEnum::from(options_array, &var.id, master_class_name, prefixes)?;
+                    let settings_enum = SettingsEnum::try_from(options_array, &var.id, master_class_name, prefixes)?;
                     Ok(Some(SettingsVarType::Enum {
                         val: settings_enum,
                         val_mapping: None

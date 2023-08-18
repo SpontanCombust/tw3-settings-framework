@@ -70,7 +70,7 @@ fn main() -> Result<(), String>{
 
     match UserConfig::try_from(&doc) {
         Ok(user_config) => {
-            let settings_master = SettingsMaster::from(user_config, &cli)?;
+            let settings_master = SettingsMaster::try_from(user_config, &cli)?;
 
             let mut buffer = WitcherScript::new();
 

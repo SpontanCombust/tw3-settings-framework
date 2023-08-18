@@ -18,7 +18,7 @@ pub struct SettingsMaster {
 }
 
 impl SettingsMaster {
-    pub fn from(xml_user_config: UserConfig, cli: &CLI) -> Result<Self, String> {  
+    pub fn try_from(xml_user_config: UserConfig, cli: &CLI) -> Result<Self, String> {  
         let class_name = xml_user_config.class_name;
         let mod_version = xml_user_config.mod_version.unwrap_or("1.0".into());
         let validate_values = !cli.no_var_validation;
@@ -26,7 +26,7 @@ impl SettingsMaster {
         
         let mut settings_groups = Vec::new();
         for group in xml_user_config.groups.iter() {
-            settings_groups.push(SettingsGroup::from(&group, &class_name, &xml_user_config.mod_prefixes)?);
+            settings_groups.push(SettingsGroup::try_from(&group, &class_name, &xml_user_config.mod_prefixes)?);
         }
 
         let mut settings_master = SettingsMaster {
