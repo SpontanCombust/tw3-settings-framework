@@ -1,7 +1,6 @@
 use crate::{
     settings_var::SettingsVar, 
     traits::{WitcherScriptType, WitcherScript, WitcherScriptTypeDef}, 
-    cli::CLI, 
     xml::group::Group, 
     utils::strip_prefixes, settings_var_type::SettingsVarType
 };
@@ -15,7 +14,7 @@ pub struct SettingsGroup {
 }
 
 impl SettingsGroup {
-    pub fn from(xml_group: &Group, master_class_name: &str, prefixes: &Vec<String>, cli: &CLI) -> Result<Self, String> {    
+    pub fn from(xml_group: &Group, master_class_name: &str, prefixes: &Vec<String>) -> Result<Self, String> {    
         let default_preset_index = xml_group.default_preset_index.unwrap_or(0);
         if xml_group.presets_array.len() > 0 && default_preset_index as usize >= xml_group.presets_array.len() {
             return Err(format!("Invalid default preset index in Group {}", xml_group.id));
@@ -31,7 +30,7 @@ impl SettingsGroup {
         let mut setting_vars = Vec::<SettingsVar>::new();
 
         for xml_var in &xml_group.visible_vars {
-            if let Some(setting_var) = SettingsVar::from(xml_var, master_class_name, prefixes, cli)? {
+            if let Some(setting_var) = SettingsVar::from(xml_var, master_class_name, prefixes)? {
                 setting_vars.push(setting_var);
             }
         }

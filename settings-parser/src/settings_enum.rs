@@ -1,6 +1,5 @@
 use crate::{
     xml::options_array::OptionsArray, 
-    cli::CLI, 
     utils::{common_str_prefix, strip_prefixes}, 
     traits::{WitcherScriptType, WitcherScriptTypeDef}
 };
@@ -13,7 +12,7 @@ pub struct SettingsEnum {
 
 impl SettingsEnum {
     //TODO rename to try_from, to the same with other types
-    pub fn from(options_array: &OptionsArray, var_id: &str, master_class_name: &str, prefixes: &Vec<String>, cli: &CLI) -> Result<Self, String> {
+    pub fn from(options_array: &OptionsArray, var_id: &str, master_class_name: &str, prefixes: &Vec<String>) -> Result<Self, String> {
         if let Some(enum_name) = &options_array.enum_type {
             let mut values = Vec::<String>::new();
             for i in 0..options_array.options.len() {
