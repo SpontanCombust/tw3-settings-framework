@@ -446,6 +446,9 @@ fn reset_settings_to_default_function(master: &SettingsMaster, buffer: &mut Witc
         buffer.push_line(&format!("{}.{}();", group.var_name, GROUP_RESET_SETTINGS_TO_DEFAULT_FUNC_NAME));
     }
 
+    buffer.new_line()
+          .push_line(&format!("super.{}();", MASTER_RESET_SETTINGS_TO_DEFAULT_FUNC_NAME));
+
     buffer.pop_indent().push_line("}");
 }
 
