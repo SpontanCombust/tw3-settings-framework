@@ -1,6 +1,6 @@
 use crate::{
     xml::{display_type::DisplayType, var::Var}, 
-    cli::{CLI, OptionParsingMode}, 
+    cli::CLI, 
     utils::is_integral_range, 
     settings_enum::{SettingsEnum, SettingsEnumValueMapping}
 };
@@ -22,42 +22,40 @@ pub enum SettingsVarType {
 }
 
 impl SettingsVarType {
-    pub fn from(var: &Var, master_class_name: &str, prefixes: &Vec<String>, cli: &CLI) -> Option<Self> {
+    pub fn from(var: &Var, master_class_name: &str, prefixes: &Vec<String>, cli: &CLI) -> Result<Option<Self>, String> {
         match &var.display_type {
             DisplayType::Toggle => {
-                Some(SettingsVarType::Bool)
+                Ok(Some(SettingsVarType::Bool))
             },
             DisplayType::Slider { min, max, div } => {
                 if is_integral_range(*min, *max, *div) {
-                    Some(SettingsVarType::Int {
+                    Ok(Some(SettingsVarType::Int {
                         min: *min, 
                         max: *max
-                    })
+                    }))
                 } else {
-                    Some(SettingsVarType::Float { 
+                    Ok(Some(SettingsVarType::Float { 
                         min: *min as f32,
                         max: *max as f32 
-                    })
+                    }))
                 }
             },
             DisplayType::Options(options_array) => {
-                match cli.option_parsing_mode {
-                    OptionParsingMode::Ints => {
-                        Some(SettingsVarType::Int { 
-                            min: 0, 
-                            max: (options_array.len() - 1) as i32
-                        })
-                    },
-                    OptionParsingMode::Enums | OptionParsingMode::EnumsStrict => {
-                        Some(SettingsVarType::Enum {
-                            val: SettingsEnum::from(options_array, &var.id, master_class_name, prefixes, cli),
-                            val_mapping: None
-                        })
-                    }
+                if options_array.is_enum.unwrap_or(true) {
+                    let settings_enum = SettingsEnum::from(options_array, &var.id, master_class_name, prefixes, cli)?;
+                    Ok(Some(SettingsVarType::Enum {
+                        val: settings_enum,
+                        val_mapping: None
+                    }))
+                } else {
+                    Ok(Some(SettingsVarType::Int { 
+                        min: 0, 
+                        max: (options_array.options.len() - 1) as i32
+                    }))
                 }
             },
             DisplayType::SubtleSeparator => {
-                None
+                Ok(None)
             },
         }
     }

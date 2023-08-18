@@ -4,7 +4,7 @@ use crate::{
     settings_group::SettingsGroup, 
     traits::{WitcherScriptType, WitcherScript, WitcherScriptTypeDef}, 
     settings_var_type::SettingsVarType, 
-    cli::{CLI, OptionParsingMode}, xml::user_config::UserConfig, 
+    cli::CLI, xml::user_config::UserConfig, 
     settings_enum::{SettingsEnum, SettingsEnumValueMapping}
 };
 
@@ -38,12 +38,10 @@ impl SettingsMaster {
             generate_getter
         };
 
-        if cli.option_parsing_mode != OptionParsingMode::Ints {
-            let needs_enum_value_mappings = settings_master.fetch_enums(cli)?;
+        let needs_enum_value_mappings = settings_master.fetch_enums(cli)?;
 
-            if needs_enum_value_mappings {
-                settings_master.create_enum_value_mappings();
-            }
+        if needs_enum_value_mappings {
+            settings_master.create_enum_value_mappings();
         }
   
         Ok(settings_master)
@@ -63,33 +61,32 @@ impl SettingsMaster {
             val: &'a SettingsEnum
         }
 
-        // map where the key is common enum prefix i.e. its type 
-        let mut enum_prefix_map: HashMap<&str, Vec<EnumData>> = HashMap::new();
+        let mut enum_type_map: HashMap<&str, Vec<EnumData>> = HashMap::new();
         for sg in self.groups.iter() {
             for sv in sg.vars.iter() {
                 if let SettingsVarType::Enum { val, .. } = &sv.var_type {
-                    let prefix = val.common_prefix.as_str();
+                    let prefix = val.type_name.as_str();
                     let data = EnumData {
                         group_id: sg.id.as_str(),
                         var_id: sv.id.as_str(),
                         val
                     };
 
-                    if let Some(data_vec) = enum_prefix_map.get_mut(prefix) {
+                    if let Some(data_vec) = enum_type_map.get_mut(prefix) {
                         data_vec.push(data);
                     } else {
-                        enum_prefix_map.insert(prefix, vec![data]);
+                        enum_type_map.insert(prefix, vec![data]);
                     }
                 }
             }
         }
 
-        if enum_prefix_map.is_empty() {
+        if enum_type_map.is_empty() {
             return Ok(false);
         }
 
         let mut enum_value_mapping_needed = false;
-        for (_, data_vec) in enum_prefix_map.iter() {
+        for (_, data_vec) in enum_type_map.iter() {
             if data_vec.is_empty() {
                 continue;
             } else if data_vec.len() == 1 {
@@ -102,7 +99,7 @@ impl SettingsMaster {
             for data in data_vec.iter().skip(1) {
                 // comparison concerns not only the values inside, but how they are ordered
                 if unified_enum.values != data.val.values {
-                    if cli.option_parsing_mode == OptionParsingMode::EnumsStrict {
+                    if cli.strict_enums {
                         return Err(format!("Some OptionArrays have the same common prefix, but different sets of values. See {}::{} and {}::{}",
                                             data_vec[0].group_id, data_vec[0].var_id, data.group_id, data.var_id));
                     }
@@ -143,7 +140,7 @@ impl SettingsMaster {
             mapping.resize(val.values.len(), 0);
 
             let unified_enum = self.enums.iter()
-                               .find(|e| e.common_prefix == val.common_prefix)
+                               .find(|e| e.type_name == val.type_name)
                                .expect(&format!("Unified enum type not found for enum {}", val.type_name));
 
             // no need for any specialized mapping if those types are exactly the same

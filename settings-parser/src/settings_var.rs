@@ -13,19 +13,20 @@ pub struct SettingsVar {
 }
 
 impl SettingsVar {
-    pub fn from(xml_var: &Var, master_class_name: &str, prefixes: &Vec<String>, cli: &CLI) -> Option<Self> {
+    pub fn from(xml_var: &Var, master_class_name: &str, prefixes: &Vec<String>, cli: &CLI) -> Result<Option<Self>, String> {
         let var_name = if let Some(variable_name) = &xml_var.variable_name {
             variable_name.clone()
         } else {
             strip_prefixes(&xml_var.id, prefixes).trim_start_matches('_').into()
         };
 
-        SettingsVarType::from(xml_var, master_class_name, prefixes, cli)
-        .and_then(|var_type| Some(SettingsVar {
+        let svt = SettingsVarType::from(xml_var, master_class_name, prefixes, cli)?;
+
+        Ok(svt.and_then(|var_type| Some(SettingsVar {
             id: xml_var.id.clone(),
             var_name,
             var_type
-        }))
+        })))
     }
 }
 

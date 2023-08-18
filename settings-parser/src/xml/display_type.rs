@@ -1,9 +1,9 @@
 use roxmltree::Node;
 
-use crate::utils::{node_pos, validate_name};
+use crate::utils::node_pos;
 
+use super::options_array::OptionsArray;
 
-pub type OptionsArray = Vec<String>;
 
 pub enum DisplayType {
     Toggle,
@@ -37,50 +37,8 @@ impl TryFrom<&Node<'_, '_>> for DisplayType {
             Ok(DisplayType::Toggle)
         } else if display_type == "OPTIONS" {
             if let Some(options_array_node) = node.children().find(|ch| ch.has_tag_name("OptionsArray")) {
-                let option_nodes = options_array_node.children()
-                                   .filter(|n| n.has_tag_name("Option"))
-                                   .collect::<Vec<_>>();
-
-                if option_nodes.is_empty() {
-                    return Err(format!("OptionsArray node at {} is missing Option nodes", node_pos(&options_array_node)));
-                }
-
-
-                let mut option_elements = Vec::<(usize, &str)>::new();
-                for option_node in option_nodes {
-                    let id = option_node.attribute("id");
-                    if id.is_none() {
-                        return Err(format!("Option node at {} is missing id attribute", node_pos(&option_node)));
-                    }
-
-                    let id = str::parse::<usize>(id.unwrap());
-                    if let Err(_) = id {
-                        return Err(format!("Invalid id attribute at {}: expected a number", node_pos(&option_node)));
-                    }
-
-                    let id = id.unwrap();
-
-                    
-                    let display_name = option_node.attribute("displayName");
-                    if display_name.is_none() {
-                        return Err(format!("Option node at {} is missing displayName attribute", node_pos(&option_node)));
-                    } else if let Err(err) = validate_name(display_name.unwrap()) {
-                        return Err(format!("Invalid displayName attribute at {}: {}", node_pos(&option_node), err));
-                    }
-
-                    let display_name = display_name.unwrap();
-
-
-                    option_elements.push((id, display_name));
-                }
-
-                option_elements.sort_by(|(i1, _), (i2, _)| i1.cmp(i2));
-                
-                let display_names = option_elements.iter()
-                                    .map(|&(_, dn)| dn.to_owned())
-                                    .collect();
-
-                Ok(DisplayType::Options(display_names))
+                let options_array = OptionsArray::try_from(&options_array_node)?;
+                Ok(DisplayType::Options(options_array))
             } else {
                 Err(format!("No OptionsArray node found in var with OPTIONS displayType at {}", node_pos(node)))
             }

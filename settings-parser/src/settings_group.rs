@@ -31,7 +31,7 @@ impl SettingsGroup {
         let mut setting_vars = Vec::<SettingsVar>::new();
 
         for xml_var in &xml_group.visible_vars {
-            if let Some(setting_var) = SettingsVar::from(xml_var, master_class_name, prefixes, cli) {
+            if let Some(setting_var) = SettingsVar::from(xml_var, master_class_name, prefixes, cli)? {
                 setting_vars.push(setting_var);
             }
         }

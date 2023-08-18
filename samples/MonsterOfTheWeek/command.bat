@@ -1,1 +1,1 @@
-settings_parser.exe "bin/config/r4game/user_config_matrix/pc/SampleMonsterOfTheWeek.xml" -o="Mods/modSampleMonsterOfTheWeek/content/scripts/local/monster_of_the_week_settings.ws" --option-parsing-mode=enums
+settings_parser.exe "bin/config/r4game/user_config_matrix/pc/SampleMonsterOfTheWeek.xml" -o="Mods/modSampleMonsterOfTheWeek/content/scripts/local/monster_of_the_week_settings.ws"
