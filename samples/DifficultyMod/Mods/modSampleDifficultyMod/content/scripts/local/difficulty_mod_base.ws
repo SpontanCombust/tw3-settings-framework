@@ -52,6 +52,8 @@ class ModDifficultySettingsBase extends ISettingsMaster
 	public /* override */ function ResetSettingsToDefault() : void
 	{
 		general.ResetToDefault();
+
+		super.ResetSettingsToDefault();
 	}
 
 	public /* override */ function ShouldResetSettingsToDefaultOnInit() : bool

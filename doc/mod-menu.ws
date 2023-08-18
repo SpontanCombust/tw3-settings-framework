@@ -74,6 +74,8 @@ class MyModSettings extends ISettingsMaster
 		tab1.ResetToDefault();
 		tab2subtab1.ResetToDefault();
 		tab2subtab2.ResetToDefault();
+
+		super.ResetSettingsToDefault();
 	}
 
 	public /* override */ function ShouldResetSettingsToDefaultOnInit() : bool

@@ -74,6 +74,8 @@ class MonsterOfTheWeekSettings extends ISettingsMaster
 	{
 		difficulties.ResetToDefault();
 		monsters.ResetToDefault();
+
+		super.ResetSettingsToDefault();
 	}
 
 	public /* override */ function ShouldResetSettingsToDefaultOnInit() : bool
