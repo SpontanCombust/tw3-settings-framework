@@ -26,9 +26,9 @@ class ModDifficultySettingsBase extends ISettingsMaster
 		var config : CInGameConfigWrapper;
 		config = theGame.GetInGameConfigWrapper();
 
-		general.enabled = ReadBoolSettingValue(config, 'DMgeneral', 'enabled');
-		general.healthMultip = ReadFloatSettingValue(config, 'DMgeneral', 'healthMultip');
-		general.dmgMultip = ReadFloatSettingValue(config, 'DMgeneral', 'dmgMultip');
+		general.enabled = ReadBoolSettingValue(config, 'DMgeneral', 'DMenabled');
+		general.healthMultip = ReadFloatSettingValue(config, 'DMgeneral', 'DMhealthMultip');
+		general.dmgMultip = ReadFloatSettingValue(config, 'DMgeneral', 'DMdmgMultip');
 
 		ValidateSettings();
 
@@ -42,9 +42,9 @@ class ModDifficultySettingsBase extends ISettingsMaster
 
 		ValidateSettings();
 
-		WriteBoolSettingValue(config, 'DMgeneral', 'enabled', general.enabled);
-		WriteFloatSettingValue(config, 'DMgeneral', 'healthMultip', general.healthMultip);
-		WriteFloatSettingValue(config, 'DMgeneral', 'dmgMultip', general.dmgMultip);
+		WriteBoolSettingValue(config, 'DMgeneral', 'DMenabled', general.enabled);
+		WriteFloatSettingValue(config, 'DMgeneral', 'DMhealthMultip', general.healthMultip);
+		WriteFloatSettingValue(config, 'DMgeneral', 'DMdmgMultip', general.dmgMultip);
 
 		super.WriteSettings();
 	}
@@ -61,7 +61,7 @@ class ModDifficultySettingsBase extends ISettingsMaster
 		var config : CInGameConfigWrapper;
 		config = theGame.GetInGameConfigWrapper();
 
-		return config.GetVarValue('DMgeneral','enabled') == "";
+		return config.GetVarValue('DMgeneral','DMenabled') == "";
 	}
 }
 

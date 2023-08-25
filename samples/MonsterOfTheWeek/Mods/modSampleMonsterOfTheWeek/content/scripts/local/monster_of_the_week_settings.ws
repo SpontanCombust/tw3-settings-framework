@@ -17,15 +17,15 @@ class MonsterOfTheWeekSettings extends ISettingsMaster
 
 	public /* override */ function ValidateSettings() : void
 	{
-		difficulties.noMansLand = (MonsterOfTheWeekSettings_motw_difficulty)Clamp((int)difficulties.noMansLand, 0, 2);
-		difficulties.skellige = (MonsterOfTheWeekSettings_motw_difficulty)Clamp((int)difficulties.skellige, 0, 2);
-		difficulties.kaerMorhen = (MonsterOfTheWeekSettings_motw_difficulty)Clamp((int)difficulties.kaerMorhen, 0, 2);
-		difficulties.toussaint = (MonsterOfTheWeekSettings_motw_difficulty)Clamp((int)difficulties.toussaint, 0, 2);
+		difficulties.noMansLand = (MonsterOfTheWeekSettings_difficulty)Clamp((int)difficulties.noMansLand, 0, 2);
+		difficulties.skellige = (MonsterOfTheWeekSettings_difficulty)Clamp((int)difficulties.skellige, 0, 2);
+		difficulties.kaerMorhen = (MonsterOfTheWeekSettings_difficulty)Clamp((int)difficulties.kaerMorhen, 0, 2);
+		difficulties.toussaint = (MonsterOfTheWeekSettings_difficulty)Clamp((int)difficulties.toussaint, 0, 2);
 
-		monsters.noMansLand = (MonsterOfTheWeekSettings_motw_monster)EnumValueMappingValidateUnified('MOTWmonsters', 'MOTWnoMansLand', (int)monsters.noMansLand);
-		monsters.skellige = (MonsterOfTheWeekSettings_motw_monster)EnumValueMappingValidateUnified('MOTWmonsters', 'MOTWskellige', (int)monsters.skellige);
-		monsters.kaerMorhen = (MonsterOfTheWeekSettings_motw_monster)EnumValueMappingValidateUnified('MOTWmonsters', 'MOTWkaerMorhen', (int)monsters.kaerMorhen);
-		monsters.toussaint = (MonsterOfTheWeekSettings_motw_monster)EnumValueMappingValidateUnified('MOTWmonsters', 'MOTWtoussaint', (int)monsters.toussaint);
+		monsters.noMansLand = (MonsterOfTheWeekSettings_monster)EnumValueMappingValidateUnified('MOTWmonsters', 'MOTWnoMansLand', (int)monsters.noMansLand);
+		monsters.skellige = (MonsterOfTheWeekSettings_monster)EnumValueMappingValidateUnified('MOTWmonsters', 'MOTWskellige', (int)monsters.skellige);
+		monsters.kaerMorhen = (MonsterOfTheWeekSettings_monster)EnumValueMappingValidateUnified('MOTWmonsters', 'MOTWkaerMorhen', (int)monsters.kaerMorhen);
+		monsters.toussaint = (MonsterOfTheWeekSettings_monster)EnumValueMappingValidateUnified('MOTWmonsters', 'MOTWtoussaint', (int)monsters.toussaint);
 
 		super.ValidateSettings();
 	}
@@ -35,15 +35,15 @@ class MonsterOfTheWeekSettings extends ISettingsMaster
 		var config : CInGameConfigWrapper;
 		config = theGame.GetInGameConfigWrapper();
 
-		difficulties.noMansLand = (MonsterOfTheWeekSettings_motw_difficulty)ReadIntSettingValue(config, 'MOTWdifficulties', 'noMansLand');
-		difficulties.skellige = (MonsterOfTheWeekSettings_motw_difficulty)ReadIntSettingValue(config, 'MOTWdifficulties', 'skellige');
-		difficulties.kaerMorhen = (MonsterOfTheWeekSettings_motw_difficulty)ReadIntSettingValue(config, 'MOTWdifficulties', 'kaerMorhen');
-		difficulties.toussaint = (MonsterOfTheWeekSettings_motw_difficulty)ReadIntSettingValue(config, 'MOTWdifficulties', 'toussaint');
+		difficulties.noMansLand = (MonsterOfTheWeekSettings_difficulty)ReadIntSettingValue(config, 'MOTWdifficulties', 'MOTWnoMansLand');
+		difficulties.skellige = (MonsterOfTheWeekSettings_difficulty)ReadIntSettingValue(config, 'MOTWdifficulties', 'MOTWskellige');
+		difficulties.kaerMorhen = (MonsterOfTheWeekSettings_difficulty)ReadIntSettingValue(config, 'MOTWdifficulties', 'MOTWkaerMorhen');
+		difficulties.toussaint = (MonsterOfTheWeekSettings_difficulty)ReadIntSettingValue(config, 'MOTWdifficulties', 'MOTWtoussaint');
 
-		monsters.noMansLand = (MonsterOfTheWeekSettings_motw_monster)ReadUnifiedEnumSettingValue(config, 'MOTWmonsters', 'MOTWnoMansLand');
-		monsters.skellige = (MonsterOfTheWeekSettings_motw_monster)ReadUnifiedEnumSettingValue(config, 'MOTWmonsters', 'MOTWskellige');
-		monsters.kaerMorhen = (MonsterOfTheWeekSettings_motw_monster)ReadUnifiedEnumSettingValue(config, 'MOTWmonsters', 'MOTWkaerMorhen');
-		monsters.toussaint = (MonsterOfTheWeekSettings_motw_monster)ReadUnifiedEnumSettingValue(config, 'MOTWmonsters', 'MOTWtoussaint');
+		monsters.noMansLand = (MonsterOfTheWeekSettings_monster)ReadUnifiedEnumSettingValue(config, 'MOTWmonsters', 'MOTWnoMansLand');
+		monsters.skellige = (MonsterOfTheWeekSettings_monster)ReadUnifiedEnumSettingValue(config, 'MOTWmonsters', 'MOTWskellige');
+		monsters.kaerMorhen = (MonsterOfTheWeekSettings_monster)ReadUnifiedEnumSettingValue(config, 'MOTWmonsters', 'MOTWkaerMorhen');
+		monsters.toussaint = (MonsterOfTheWeekSettings_monster)ReadUnifiedEnumSettingValue(config, 'MOTWmonsters', 'MOTWtoussaint');
 
 		ValidateSettings();
 
@@ -57,10 +57,10 @@ class MonsterOfTheWeekSettings extends ISettingsMaster
 
 		ValidateSettings();
 
-		WriteIntSettingValue(config, 'MOTWdifficulties', 'noMansLand', (int)difficulties.noMansLand);
-		WriteIntSettingValue(config, 'MOTWdifficulties', 'skellige', (int)difficulties.skellige);
-		WriteIntSettingValue(config, 'MOTWdifficulties', 'kaerMorhen', (int)difficulties.kaerMorhen);
-		WriteIntSettingValue(config, 'MOTWdifficulties', 'toussaint', (int)difficulties.toussaint);
+		WriteIntSettingValue(config, 'MOTWdifficulties', 'MOTWnoMansLand', (int)difficulties.noMansLand);
+		WriteIntSettingValue(config, 'MOTWdifficulties', 'MOTWskellige', (int)difficulties.skellige);
+		WriteIntSettingValue(config, 'MOTWdifficulties', 'MOTWkaerMorhen', (int)difficulties.kaerMorhen);
+		WriteIntSettingValue(config, 'MOTWdifficulties', 'MOTWtoussaint', (int)difficulties.toussaint);
 
 		WriteUnifiedEnumSettingValue(config, 'MOTWmonsters', 'MOTWnoMansLand', (int)monsters.noMansLand);
 		WriteUnifiedEnumSettingValue(config, 'MOTWmonsters', 'MOTWskellige', (int)monsters.skellige);
@@ -83,7 +83,7 @@ class MonsterOfTheWeekSettings extends ISettingsMaster
 		var config : CInGameConfigWrapper;
 		config = theGame.GetInGameConfigWrapper();
 
-		return config.GetVarValue('MOTWdifficulties','noMansLand') == "";
+		return config.GetVarValue('MOTWdifficulties','MOTWnoMansLand') == "";
 	}
 
 	public /* override */ function EnumValueMappingConfigToUnified(gId: name, vId: name, val: int) : int
@@ -269,10 +269,10 @@ class MonsterOfTheWeekSettings extends ISettingsMaster
 
 class MonsterOfTheWeekSettings_difficulties extends ISettingsGroup
 {
-	public var noMansLand : MonsterOfTheWeekSettings_motw_difficulty;
-	public var skellige : MonsterOfTheWeekSettings_motw_difficulty;
-	public var kaerMorhen : MonsterOfTheWeekSettings_motw_difficulty;
-	public var toussaint : MonsterOfTheWeekSettings_motw_difficulty;
+	public var noMansLand : MonsterOfTheWeekSettings_difficulty;
+	public var skellige : MonsterOfTheWeekSettings_difficulty;
+	public var kaerMorhen : MonsterOfTheWeekSettings_difficulty;
+	public var toussaint : MonsterOfTheWeekSettings_difficulty;
 
 	default id = 'MOTWdifficulties';
 	default defaultPresetIndex = 0;
@@ -280,43 +280,43 @@ class MonsterOfTheWeekSettings_difficulties extends ISettingsGroup
 
 class MonsterOfTheWeekSettings_monsters extends ISettingsGroup
 {
-	public var noMansLand : MonsterOfTheWeekSettings_motw_monster;
-	public var skellige : MonsterOfTheWeekSettings_motw_monster;
-	public var kaerMorhen : MonsterOfTheWeekSettings_motw_monster;
-	public var toussaint : MonsterOfTheWeekSettings_motw_monster;
+	public var noMansLand : MonsterOfTheWeekSettings_monster;
+	public var skellige : MonsterOfTheWeekSettings_monster;
+	public var kaerMorhen : MonsterOfTheWeekSettings_monster;
+	public var toussaint : MonsterOfTheWeekSettings_monster;
 
 	default id = 'MOTWmonsters';
 	default defaultPresetIndex = 0;
 }
 
-enum MonsterOfTheWeekSettings_motw_difficulty
+enum MonsterOfTheWeekSettings_difficulty
 {
-	MonsterOfTheWeekSettings_motw_difficulty_easy = 0,
-	MonsterOfTheWeekSettings_motw_difficulty_medium = 1,
-	MonsterOfTheWeekSettings_motw_difficulty_hard = 2,
+	MonsterOfTheWeekSettings_difficulty_easy = 0,
+	MonsterOfTheWeekSettings_difficulty_medium = 1,
+	MonsterOfTheWeekSettings_difficulty_hard = 2,
 }
 
-enum MonsterOfTheWeekSettings_motw_monster
+enum MonsterOfTheWeekSettings_monster
 {
-	MonsterOfTheWeekSettings_motw_monster_ghoul = 0,
-	MonsterOfTheWeekSettings_motw_monster_griffin = 1,
-	MonsterOfTheWeekSettings_motw_monster_wolf = 2,
-	MonsterOfTheWeekSettings_motw_monster_nekker = 3,
-	MonsterOfTheWeekSettings_motw_monster_leshen = 4,
-	MonsterOfTheWeekSettings_motw_monster_golem = 5,
-	MonsterOfTheWeekSettings_motw_monster_wraith = 6,
-	MonsterOfTheWeekSettings_motw_monster_siren = 7,
-	MonsterOfTheWeekSettings_motw_monster_bear = 8,
-	MonsterOfTheWeekSettings_motw_monster_cyclops = 9,
-	MonsterOfTheWeekSettings_motw_monster_werewolf = 10,
-	MonsterOfTheWeekSettings_motw_monster_harpy = 11,
-	MonsterOfTheWeekSettings_motw_monster_archespore = 12,
-	MonsterOfTheWeekSettings_motw_monster_panther = 13,
-	MonsterOfTheWeekSettings_motw_monster_slyzard = 14,
-	MonsterOfTheWeekSettings_motw_monster_centipede = 15,
-	MonsterOfTheWeekSettings_motw_monster_shaelmaar = 16,
-	MonsterOfTheWeekSettings_motw_monster_bruxa = 17,
-	MonsterOfTheWeekSettings_motw_monster_fleder = 18,
+	MonsterOfTheWeekSettings_monster_ghoul = 0,
+	MonsterOfTheWeekSettings_monster_griffin = 1,
+	MonsterOfTheWeekSettings_monster_wolf = 2,
+	MonsterOfTheWeekSettings_monster_nekker = 3,
+	MonsterOfTheWeekSettings_monster_leshen = 4,
+	MonsterOfTheWeekSettings_monster_golem = 5,
+	MonsterOfTheWeekSettings_monster_wraith = 6,
+	MonsterOfTheWeekSettings_monster_siren = 7,
+	MonsterOfTheWeekSettings_monster_bear = 8,
+	MonsterOfTheWeekSettings_monster_cyclops = 9,
+	MonsterOfTheWeekSettings_monster_werewolf = 10,
+	MonsterOfTheWeekSettings_monster_harpy = 11,
+	MonsterOfTheWeekSettings_monster_archespore = 12,
+	MonsterOfTheWeekSettings_monster_panther = 13,
+	MonsterOfTheWeekSettings_monster_slyzard = 14,
+	MonsterOfTheWeekSettings_monster_centipede = 15,
+	MonsterOfTheWeekSettings_monster_shaelmaar = 16,
+	MonsterOfTheWeekSettings_monster_bruxa = 17,
+	MonsterOfTheWeekSettings_monster_fleder = 18,
 }
 
 
