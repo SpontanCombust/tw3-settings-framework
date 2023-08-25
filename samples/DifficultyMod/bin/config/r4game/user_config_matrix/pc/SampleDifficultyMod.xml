@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-16"?>
-<UserConfig msfClass="ModDifficultySettingsBase" msfVersion="1.1">
-	<Group id="DMgeneral" msfVariable="general" displayName="Mods.difficulty_mod">	
+<UserConfig msfClass="ModDifficultySettingsBase" msfVersion="1.1" msfPrefix="DM">
+	<Group id="DMgeneral" displayName="Mods.difficulty_mod">	
         <PresetsArray msfDefault="1">
         	<Preset id="0" displayName="dm_preset_easy">
 				<Entry varId="DMenabled" value="true"/>
@@ -19,9 +19,9 @@
 			</Preset>
 		</PresetsArray>
 		<VisibleVars>
-            <Var id="enabled" displayName="dm_enabled" displayType="TOGGLE"/>
-            <Var id="healthMultip" displayName="dm_health_multip" displayType="SLIDER;0;2;200"/>
-            <Var id="dmgMultip" displayName="dm_dmg_multip" displayType="SLIDER;0;2;200"/>
+            <Var id="DMenabled" displayName="dm_enabled" displayType="TOGGLE"/>
+            <Var id="DMhealthMultip" displayName="dm_health_multip" displayType="SLIDER;0;2;200"/>
+            <Var id="DMdmgMultip" displayName="dm_dmg_multip" displayType="SLIDER;0;2;200"/>
         </VisibleVars>
     </Group>
 </UserConfig>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-16"?>
-<UserConfig msfClass="MyModSettings" msfVersion="1.23">
-	<Group id="MODtab1" msfVariable="tab1" displayName="Mods.my_mod.my_mod_tab1">
+<UserConfig msfClass="MyModSettings" msfVersion="1.23" msfPrefix="MOD;mod_">
+	<Group id="MODtab1" displayName="Mods.my_mod.my_mod_tab1">
 		<PresetsArray msfDefault="1">
 			<Preset id="0" displayName="MOD_preset_hard">
 				<Entry varId="MODoption" value="2"/>
@@ -16,7 +16,7 @@
 			</Preset>
 		</PresetsArray>
    		<VisibleVars>
-			<Var id="option" displayName="mod_tab1_option" displayType="OPTIONS">
+			<Var id="MODoption" displayName="mod_tab1_option" displayType="OPTIONS">
 				<OptionsArray>
 					<Option id="0" displayName="mod_opt1">
 						<Entry varId="MODoption" value="0"/>
@@ -29,10 +29,10 @@
 					</Option>
 				</OptionsArray>
 			</Var>
-            <Var id="sliderFloat" displayName="mod_slider_float" displayType="SLIDER;0;1;100"/>
-            <Var id="sliderInt" displayName="mod_slider_int" displayType="SLIDER;0;100;100"/>
-            <Var id="toggle" displayName="mod_toggle" displayType="TOGGLE"/>
-			<Var id="version" displayName="mod_version" displayType="SLIDER;0;100;100000" visibilityCondition="hideAlways"/>
+            <Var id="MODsliderFloat" displayName="mod_slider_float" displayType="SLIDER;0;1;100"/>
+            <Var id="MODsliderInt" displayName="mod_slider_int" displayType="SLIDER;0;100;100"/>
+            <Var id="MODtoggle" displayName="mod_toggle" displayType="TOGGLE"/>
+			<Var id="MODversion" displayName="mod_version" displayType="SLIDER;0;100;100000" visibilityCondition="hideAlways"/>
         </VisibleVars>
     </Group>
 	
@@ -40,12 +40,12 @@
 	<Group id="MODtab2" displayName="Mods.my_mod.my_mod_tab2">
 	</Group>
     	
-   	<Group id="MODtab2subtab1" msfVariable="tab2subtab1" displayName="Mods.my_mod.my_mod_tab2.subtap1">
+   	<Group id="MODtab2subtab1" displayName="Mods.my_mod.my_mod_tab2.subtap1">
 		<VisibleVars>
 				<Var id="anotherSlider" displayName="mod_another_slider" displayType="SLIDER;-100;100;1000"/>
 		</VisibleVars>
     </Group>
-	<Group id="MODtab2subtab2" msfVariable="tab2subtab2" displayName="Mods.my_mod.my_mod_tab2.subtap2">
+	<Group id="MODtab2subtab2" displayName="Mods.my_mod.my_mod_tab2.subtap2">
 		<VisibleVars>
 				<Var id="anotherToggle" displayName="mod_another_toggle" displayType="TOGGLE" />
 		</VisibleVars>

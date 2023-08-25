@@ -26,7 +26,7 @@ impl SettingsMaster {
         
         let mut settings_groups = Vec::new();
         for group in xml_user_config.groups.iter() {
-            settings_groups.push(SettingsGroup::try_from(&group, &class_name)?);
+            settings_groups.push(SettingsGroup::try_from(&group, &class_name, &xml_user_config.mod_prefixes)?);
         }
 
         let mut settings_master = SettingsMaster {

@@ -21,7 +21,7 @@ pub enum SettingsVarType {
 }
 
 impl SettingsVarType {
-    pub fn try_from(var: &Var, master_class_name: &str) -> Result<Option<Self>, String> {
+    pub fn from(var: &Var, master_class_name: &str, prefixes: &Vec<String>) -> Result<Option<Self>, String> {
         match &var.display_type {
             DisplayType::Toggle => {
                 Ok(Some(SettingsVarType::Bool))
@@ -41,7 +41,7 @@ impl SettingsVarType {
             },
             DisplayType::Options(options_array) => {
                 if options_array.is_enum.unwrap_or(true) {
-                    let settings_enum = SettingsEnum::try_from(options_array, &var.id, master_class_name)?;
+                    let settings_enum = SettingsEnum::try_from(options_array, &var.id, master_class_name, prefixes)?;
                     Ok(Some(SettingsVarType::Enum {
                         val: settings_enum,
                         val_mapping: None

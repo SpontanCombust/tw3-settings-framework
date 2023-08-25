@@ -1,7 +1,8 @@
 use crate::{
     settings_var::SettingsVar, 
     traits::{WitcherScriptType, WitcherScript, WitcherScriptTypeDef}, 
-    xml::group::Group, settings_var_type::SettingsVarType
+    xml::group::Group, 
+    utils::strip_prefixes, settings_var_type::SettingsVarType
 };
 
 pub struct SettingsGroup {
@@ -13,7 +14,7 @@ pub struct SettingsGroup {
 }
 
 impl SettingsGroup {
-    pub fn try_from(xml_group: &Group, master_class_name: &str) -> Result<Self, String> {    
+    pub fn try_from(xml_group: &Group, master_class_name: &str, prefixes: &Vec<String>) -> Result<Self, String> {    
         let default_preset_index = xml_group.default_preset_index.unwrap_or(0);
         if xml_group.presets_array.len() > 0 && default_preset_index as usize >= xml_group.presets_array.len() {
             return Err(format!("Invalid default preset index in Group {}", xml_group.id));
@@ -23,13 +24,13 @@ impl SettingsGroup {
         let var_name = if let Some(variable_name) = &xml_group.variable_name {
             variable_name.clone()
         } else {
-            id.clone()
+            strip_prefixes(&id, prefixes).trim_start_matches('_').into()
         };
         let class_name = format!("{}_{}", master_class_name, var_name); //xml_group.class_name.as_ref().unwrap_or(&format!("{}_{}", master_class_name, var_name)).to_string();
         let mut setting_vars = Vec::<SettingsVar>::new();
 
         for xml_var in &xml_group.visible_vars {
-            if let Some(setting_var) = SettingsVar::try_from(xml_var, master_class_name)? {
+            if let Some(setting_var) = SettingsVar::try_from(xml_var, master_class_name, prefixes)? {
                 setting_vars.push(setting_var);
             }
         }

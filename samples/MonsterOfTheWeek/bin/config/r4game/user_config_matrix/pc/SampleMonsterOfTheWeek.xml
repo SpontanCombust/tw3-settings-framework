@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-16"?>
-<UserConfig msfClass="MonsterOfTheWeekSettings">
+<UserConfig msfClass="MonsterOfTheWeekSettings" msfPrefix="MOTW;motw_">
 	<!-- Options with the same set of value -->
-	<Group id="MOTWdifficulties" msfVariable="difficulties" displayName="Mods.monster_of_the_week.motw_difficulty">
+	<Group id="MOTWdifficulties" displayName="Mods.monster_of_the_week.motw_difficulty">
 		<VisibleVars>
-            <Var id="noMansLand" displayName="motw_no_mans_land" displayType="OPTIONS">
+            <Var id="MOTWnoMansLand" displayName="motw_no_mans_land" displayType="OPTIONS">
                 <OptionsArray>
                     <Option id="0" displayName="motw_difficulty_easy">
                         <Entry varId="MOTWNoMansLand" value="0"/>
@@ -16,7 +16,7 @@
                     </Option>
                 </OptionsArray>
             </Var>
-			<Var id="skellige" displayName="motw_skellige" displayType="OPTIONS">
+			<Var id="MOTWskellige" displayName="motw_skellige" displayType="OPTIONS">
                 <OptionsArray>
                     <Option id="0" displayName="motw_difficulty_easy">
                         <Entry varId="MOTWSkellige" value="0"/>
@@ -29,7 +29,7 @@
                     </Option>
                 </OptionsArray>
             </Var>
-			<Var id="kaerMorhen" displayName="motw_kaer_morhen" displayType="OPTIONS">
+			<Var id="MOTWkaerMorhen" displayName="motw_kaer_morhen" displayType="OPTIONS">
                 <OptionsArray>
                     <Option id="0" displayName="motw_difficulty_easy">
                         <Entry varId="MOTWKaerMorhen" value="0"/>
@@ -42,7 +42,7 @@
                     </Option>
                 </OptionsArray>
             </Var>
-			<Var id="toussaint" displayName="motw_toussaint" displayType="OPTIONS">
+			<Var id="MOTWtoussaint" displayName="motw_toussaint" displayType="OPTIONS">
                 <OptionsArray>
                     <Option id="0" displayName="motw_difficulty_easy">
                         <Entry varId="MOTWtoussaint" value="0"/>
@@ -58,9 +58,9 @@
         </VisibleVars>
     </Group>
     <!-- Options with different sets of values -->
-	<Group id="MOTWmonsters" msfVariable="monsters" displayName="Mods.monster_of_the_week.motw_monsters">
+	<Group id="MOTWmonsters" displayName="Mods.monster_of_the_week.motw_monsters">
 		<VisibleVars>
-            <Var id="MOTWnoMansLand" msfVariable="noMansLand" displayName="motw_no_mans_land" displayType="OPTIONS">
+            <Var id="MOTWnoMansLand" displayName="motw_no_mans_land" displayType="OPTIONS">
                 <OptionsArray>
                     <Option id="0" displayName="motw_monster_ghoul">
                         <Entry varId="MOTWNoMansLand" value="0"/>
@@ -85,7 +85,7 @@
                     </Option>
                 </OptionsArray>
             </Var>
-			<Var id="MOTWskellige" msfVariable="skellige" displayName="motw_skellige" displayType="OPTIONS">
+			<Var id="MOTWskellige" displayName="motw_skellige" displayType="OPTIONS">
                 <OptionsArray>
                     <Option id="0" displayName="motw_monster_siren">
                         <Entry varId="MOTWskellige" value="0"/>
@@ -116,7 +116,7 @@
                     </Option>
                 </OptionsArray>
             </Var>
-			<Var id="MOTWkaerMorhen" msfVariable="kaerMorhen" displayName="motw_kaer_morhen" displayType="OPTIONS">
+			<Var id="MOTWkaerMorhen" displayName="motw_kaer_morhen" displayType="OPTIONS">
                 <OptionsArray>
                     <Option id="0" displayName="motw_monster_bear">
                         <Entry varId="MOTWkaerMorhen" value="0"/>
@@ -132,7 +132,7 @@
                     </Option>
                 </OptionsArray>
             </Var>
-            <Var id="MOTWtoussaint" msfVariable="toussaint" displayName="motw_toussaint" displayType="OPTIONS">
+            <Var id="MOTWtoussaint" displayName="motw_toussaint" displayType="OPTIONS">
                 <OptionsArray>
                     <Option id="0" displayName="motw_monster_archespore">
                         <Entry varId="MOTWtoussaint" value="0"/>
