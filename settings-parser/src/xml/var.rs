@@ -8,7 +8,8 @@ pub struct Var {
     pub id: String,
     pub variable_name: Option<String>,
     pub display_name: String,
-    pub display_type: DisplayType
+    pub display_type: DisplayType,
+    pub ignore: Option<bool>,
 }
 
 
@@ -43,12 +44,27 @@ impl TryFrom<&Node<'_, '_>> for Var {
 
         let variable_name = node.attribute("msfVariable").map(|s| s.to_string());
 
+
+        let ignore;
+        if let Some(val) = node.attribute("msfIgnore") {
+            match val {
+                "true" => ignore = Some(true),
+                "false" => ignore = Some(false),
+                _ => {
+                    return Err(format!("Invalid value for attribute msfIgnore at {}", node_pos(node)));
+                }
+            }
+        } else {
+            ignore = None;
+        }
+
         
         Ok(Var {
             id: id.to_owned(),
             variable_name,
             display_name: display_name.to_owned(),
             display_type: DisplayType::try_from(node)?,
+            ignore
         })
     }
 }

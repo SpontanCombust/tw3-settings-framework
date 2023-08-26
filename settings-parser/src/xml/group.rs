@@ -11,7 +11,8 @@ pub struct Group {
     pub variable_name: Option<String>,
     pub presets_array: Vec<String>,
     pub default_preset_index: Option<u8>,
-    pub visible_vars: Vec<Var>
+    pub visible_vars: Vec<Var>,
+    pub ignore: Option<bool>,
 }
 
 
@@ -45,6 +46,20 @@ impl TryFrom<&Node<'_, '_>> for Group {
         // let class_name = node.attribute("msfClass").map(|s| s.to_string());
 
         let variable_name = node.attribute("msfVariable").map(|s| s.to_string());
+
+        //TODO write utility functions (which include validation) for parsing data types
+        let ignore;
+        if let Some(val) = node.attribute("msfIgnore") {
+            match val {
+                "true" => ignore = Some(true),
+                "false" => ignore = Some(false),
+                _ => {
+                    return Err(format!("Invalid value for attribute msfIgnore at {}", node_pos(node)));
+                }
+            }
+        } else {
+            ignore = None;
+        }
 
         let mut preset_elements = Vec::<(usize, &str)>::new();
         if let Some(presets_array_node) = node.children().find(|n| n.has_tag_name("PresetsArray")) {
@@ -113,6 +128,7 @@ impl TryFrom<&Node<'_, '_>> for Group {
             display_name: group_display_name,
             // class_name,
             variable_name,
+            ignore,
             presets_array,
             default_preset_index,
             visible_vars,
