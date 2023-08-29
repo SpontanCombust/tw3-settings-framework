@@ -105,7 +105,7 @@ The most common usage of this would be overriding `ReadSettings()` method to run
 - 0.1.0 - 0.2.0 for game version 1.32 (requires [Community Patch - Base](https://www.nexusmods.com/witcher3/mods/3652))
 
 ### Migrating from version v0.5 to v0.6 and beyond (for developers)
-Most of the data that previously had to be passed into the CLI now can be put directly in the XML. One major example being the settings master class name that now instead of being entred through CLI with `--master` option is now set with `msfClass` attribute in the `UserConfig` node in the xml.
+Most of the data that previously had to be passed into the CLI now can be put directly in the XML. Check [details](doc/details.md) and [xml specification](doc/xml_specification.md).
 
 ## Documentation
 [Further reading](doc/details.md)

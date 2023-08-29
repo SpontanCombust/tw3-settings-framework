@@ -4,12 +4,12 @@ This document lists all the custom attribute data that the parser expects to fin
 - **UserConfig**:
   - `msfClass` (string) * - name of the settings master class,
   - `msfVersion` (string) - version of the mod; format is arbitrary, but preferably a real number [default: 1.0],
-  - `msfPrefix` (string) - determines the mod prefix to be omitted from id and displayName attributes when parsing them into names used by generated class (e.g. if Var's 'id' is "MODslider" and the prefix is "MOD", variable in WitcherScript will be called "slider"); case sensitive, multiple values can be given by using semicolon (;) as delimiter,
+  - `msfPrefix` (string) - determines the mod prefix to be omitted from id and displayName attributes when parsing them into names used by generated class (e.g. if Var's 'id' is "MODslider" and the prefix is "MOD", variable in WitcherScript will be called "slider"); case sensitive, multiple values can be given by using semicolon (;) as delimiter; does not apply to any other custom framework attributes, such as `msfVariable`,
 - **Group**:
-  - `msfVariable` (string) - custom name of the instance of settings group in WS, by default this name is obtained from 'id' attribute; overrides `msfPrefix` behaviour,
+  - `msfVariable` (string) - custom name of the instance of settings group in WS, by default this name is obtained from 'id' attribute,
   - `msfIgnore` (bool) - determines whether the group should be ignored or not [default: "false"]
 - **Var**
-  - `msfVariable` (string) - custom name of the instance of settings variable in WS, by default this name is obtained from 'id' attribute; overrides `msfPrefix` behaviour,
+  - `msfVariable` (string) - custom name of the instance of settings variable in WS, by default this name is obtained from 'id' attribute,
   - `msfIgnore` (bool) - determines whether the var should be ignored or not [default: "false"]
 - **OptionsArray**
   - `msfIsEnum` (bool) - determines whether this OptionsArray should be parsed as enum or int type [default: "true"]
