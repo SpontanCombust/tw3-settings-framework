@@ -4,53 +4,53 @@
 	<Group id="MOTWdifficulties" displayName="Mods.monster_of_the_week.motw_difficulty">
 		<VisibleVars>
             <Var id="MOTWnoMansLand" displayName="motw_no_mans_land" displayType="OPTIONS">
-                <OptionsArray>
-                    <Option id="0" displayName="motw_difficulty_easy">
+                <OptionsArray msfEnum="MOTWDifficulty">
+                    <Option id="0" displayName="motw_difficulty_easy" msfEnumValue="Easy">
                         <Entry varId="MOTWNoMansLand" value="0"/>
                     </Option>
-                    <Option id="1" displayName="motw_difficulty_medium">
+                    <Option id="1" displayName="motw_difficulty_medium" msfEnumValue="Medium">
                         <Entry varId="MOTWNoMansLand" value="1"/>
                     </Option>
-                    <Option id="2" displayName="motw_difficulty_hard">
+                    <Option id="2" displayName="motw_difficulty_hard" msfEnumValue="Hard">
                         <Entry varId="MOTWNoMansLand" value="2"/>
                     </Option>
                 </OptionsArray>
             </Var>
 			<Var id="MOTWskellige" displayName="motw_skellige" displayType="OPTIONS">
-                <OptionsArray>
-                    <Option id="0" displayName="motw_difficulty_easy">
+                <OptionsArray msfEnum="MOTWDifficulty">
+                    <Option id="0" displayName="motw_difficulty_easy" msfEnumValue="Easy">
                         <Entry varId="MOTWSkellige" value="0"/>
                     </Option>
-                    <Option id="1" displayName="motw_difficulty_medium">
+                    <Option id="1" displayName="motw_difficulty_medium" msfEnumValue="Medium">
                         <Entry varId="MOTWSkellige" value="1"/>
                     </Option>
-                    <Option id="2" displayName="motw_difficulty_hard">
+                    <Option id="2" displayName="motw_difficulty_hard" msfEnumValue="Hard">
                         <Entry varId="MOTWSkellige" value="2"/>
                     </Option>
                 </OptionsArray>
             </Var>
 			<Var id="MOTWkaerMorhen" displayName="motw_kaer_morhen" displayType="OPTIONS">
-                <OptionsArray>
-                    <Option id="0" displayName="motw_difficulty_easy">
+                <OptionsArray msfEnum="MOTWDifficulty">
+                    <Option id="0" displayName="motw_difficulty_easy" msfEnumValue="Easy">
                         <Entry varId="MOTWKaerMorhen" value="0"/>
                     </Option>
-                    <Option id="1" displayName="motw_difficulty_medium">
+                    <Option id="1" displayName="motw_difficulty_medium" msfEnumValue="Medium">
                         <Entry varId="MOTWKaerMorhen" value="1"/>
                     </Option>
-                    <Option id="2" displayName="motw_difficulty_hard">
+                    <Option id="2" displayName="motw_difficulty_hard" msfEnumValue="Hard">
                         <Entry varId="MOTWKaerMorhen" value="2"/>
                     </Option>
                 </OptionsArray>
             </Var>
 			<Var id="MOTWtoussaint" displayName="motw_toussaint" displayType="OPTIONS">
-                <OptionsArray>
-                    <Option id="0" displayName="motw_difficulty_easy">
+                <OptionsArray msfEnum="MOTWDifficulty">
+                    <Option id="0" displayName="motw_difficulty_easy" msfEnumValue="Easy">
                         <Entry varId="MOTWtoussaint" value="0"/>
                     </Option>
-                    <Option id="1" displayName="motw_difficulty_medium">
+                    <Option id="1" displayName="motw_difficulty_medium" msfEnumValue="Medium">
                         <Entry varId="MOTWtoussaint" value="1"/>
                     </Option>
-                    <Option id="2" displayName="motw_difficulty_hard">
+                    <Option id="2" displayName="motw_difficulty_hard" msfEnumValue="Hard">
                         <Entry varId="MOTWtoussaint" value="2"/>
                     </Option>
                 </OptionsArray>
