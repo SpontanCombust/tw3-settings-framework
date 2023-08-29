@@ -1,3 +1,5 @@
+use std::str::FromStr;
+
 use roxmltree::Node;
 
 pub(crate) fn validate_name(name: &str) -> Result<(), String> {
@@ -61,4 +63,74 @@ fn common_str_prefix_len(s1: &str, s2: &str) -> usize {
     }
 
     min_len
+}
+
+
+pub fn parse_attribute_string(node: &Node, attr: &'static str, validate: bool) -> Result<Option<String>, String> {
+    let v = node.attribute(attr);
+
+    if let Some(v) = v {
+        if validate {
+            validate_name(v)?;
+        }
+
+        Ok(Some(v.to_string()))
+    } else {
+        Ok(None)
+    }
+}
+
+pub fn parse_attribute_number<N: FromStr>(node: &Node, attr: &'static str) -> Result<Option<N>, String> {
+    let v = node.attribute(attr);
+
+    if let Some(v) = v {
+        match str::parse::<N>(v) {
+            Ok(vn) => Ok(Some(vn)),
+            Err(_) => Err(format!("Invalid {} attribute at {}: expected a number", attr, node_pos(node)))
+        }
+    } else {
+        Ok(None)
+    }
+}
+
+pub fn parse_attribute_bool(node: &Node, attr: &'static str) -> Result<Option<bool>, String> {
+    let v = node.attribute(attr);
+
+    if let Some(v) = v {
+        match v {
+            "true" => Ok(Some(true)),
+            "false" => Ok(Some(false)),
+            _ => Err(format!("Invalid value for attribute {} at {}", attr, node_pos(node)))
+        }
+    } else {
+        Ok(None)
+    }
+}
+
+
+pub fn parse_attribute_string_required(node: &Node, attr: &'static str, validate: bool) -> Result<String, String> {
+    let val = parse_attribute_string(node, attr, validate)?;
+    if let Some(val) = val {
+        Ok(val)
+    } else {
+        Err(format!("{} node at {} is missing {} attribute", node.tag_name().name(), node_pos(node), attr))
+    }
+}
+
+pub fn parse_attribute_number_required<N: FromStr>(node: &Node, attr: &'static str) -> Result<N, String> {
+    let val = parse_attribute_number(node, attr)?;
+    if let Some(val) = val {
+        Ok(val)
+    } else {
+        Err(format!("{} node at {} is missing {} attribute", node.tag_name().name(), node_pos(node), attr))
+    }
+}
+
+pub fn parse_attribute_bool_required(node: &Node, attr: &'static str) -> Result<bool, String> {
+    let val = parse_attribute_bool(node, attr)?;
+    if let Some(val) = val {
+        Ok(val)
+    } else {
+        Err(format!("{} node at {} is missing {} attribute", node.tag_name().name(), node_pos(node), attr))
+    }
 }

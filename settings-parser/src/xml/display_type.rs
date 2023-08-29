@@ -1,6 +1,9 @@
 use roxmltree::Node;
 
-use crate::utils::node_pos;
+use crate::utils::{
+    parse_attribute_string_required, 
+    node_pos
+};
 
 use super::options_array::OptionsArray;
 
@@ -26,12 +29,7 @@ impl TryFrom<&Node<'_, '_>> for DisplayType {
             return Err(format!("Wrong XML node. Expected Var, received {}", tag_name))
         }
 
-        let display_type = match node.attribute("displayType") {
-            Some(dt) => dt,
-            None => {
-                return Err(format!("Var node without displayType attribute found at {}", node_pos(node)));
-            }
-        };
+        let display_type = parse_attribute_string_required(node, "displayType", false)?;
 
         if display_type == "TOGGLE" {
             Ok(DisplayType::Toggle)

@@ -1,6 +1,14 @@
 use roxmltree::Node;
 
-use crate::utils::{node_pos, validate_name};
+use crate::utils::{
+    parse_attribute_bool, 
+    parse_attribute_string, 
+    parse_attribute_number_required, 
+    parse_attribute_string_required,
+    node_pos
+};
+
+
 
 pub struct OptionsArray {
     pub is_enum: Option<bool>,
@@ -23,21 +31,8 @@ impl TryFrom<&Node<'_, '_>> for OptionsArray {
             return Err(format!("Wrong XML node. Expected OptionsArray, received {}", tag_name))
         }
 
-        let is_enum;
-        if let Some(val) = node.attribute("msfIsEnum") {
-            match val {
-                "true" => is_enum = Some(true),
-                "false" => is_enum = Some(false),
-                _ => {
-                    return Err(format!("Invalid value for attribute msfIsEnum at {}", node_pos(node)));
-                }
-            }
-        } else {
-            is_enum = None;
-        }
-
-        let enum_type = node.attribute("msfEnum").map(|s| s.to_string());
-
+        let is_enum = parse_attribute_bool(node, "msfIsEnum")?;
+        let enum_type = parse_attribute_string(node, "msfEnum", true)?;
 
         let option_nodes = node.children()
                                .filter(|n| n.has_tag_name("Option"))
@@ -49,27 +44,9 @@ impl TryFrom<&Node<'_, '_>> for OptionsArray {
 
         let mut options_indexed = Vec::<(usize, OptionsArrayOption)>::new(); 
         for option_node in option_nodes {
-            let id = option_node.attribute("id");
-            if id.is_none() {
-                return Err(format!("Option node at {} is missing id attribute", node_pos(&option_node)));
-            }
-
-            let id = str::parse::<usize>(id.unwrap());
-            if let Err(_) = id {
-                return Err(format!("Invalid id attribute at {}: expected a number", node_pos(&option_node)));
-            }
-            let id = id.unwrap();
-            
-            let display_name = option_node.attribute("displayName");
-            if display_name.is_none() {
-                return Err(format!("Option node at {} is missing displayName attribute", node_pos(&option_node)));
-            } else if let Err(err) = validate_name(display_name.unwrap()) {
-                return Err(format!("Invalid displayName attribute at {}: {}", node_pos(&option_node), err));
-            }
-            let display_name = display_name.unwrap().to_string();
-
-            let enum_value_suffix = option_node.attribute("msfEnumValue").map(|s| s.to_string());
-
+            let id = parse_attribute_number_required::<usize>(&option_node, "id")?;
+            let display_name = parse_attribute_string_required(&option_node, "displayName", true)?;
+            let enum_value_suffix = parse_attribute_string(&option_node, "msfEnumValue", true)?;
             options_indexed.push((id, OptionsArrayOption { display_name, enum_value_suffix }));
         }
 

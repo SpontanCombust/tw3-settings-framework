@@ -1,6 +1,13 @@
 use roxmltree::{Document, Node};
 
+use crate::utils::{
+    parse_attribute_string, 
+    parse_attribute_string_required
+};
+
 use super::group::Group;
+
+
 
 pub struct UserConfig {
     pub class_name: String,
@@ -15,13 +22,8 @@ impl TryFrom<&Document<'_>> for UserConfig {
 
     fn try_from(doc: &Document) -> Result<Self, Self::Error> {
         if let Some(root_node) = doc.descendants().find(|n| n.has_tag_name("UserConfig")) {
-            let class_name = root_node.attribute("msfClass");
-            if class_name.is_none() {
-                return Err("No msfClass attribute found in UserConfig".to_string());
-            }
-            let class_name = class_name.unwrap().to_string();
-
-            let mod_version = root_node.attribute("msfVersion").map(|s| s.to_string());
+            let class_name = parse_attribute_string_required(&root_node, "msfClass", true)?;
+            let mod_version = parse_attribute_string(&root_node, "msfVersion", false)?;
 
             let mod_prefixes = if let Some(prefixes) = root_node.attribute("msfPrefix") {
                 prefixes.split(';')
