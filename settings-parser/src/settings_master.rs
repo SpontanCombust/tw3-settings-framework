@@ -396,7 +396,7 @@ fn enum_mapping_unified_to_config_function(master: &SettingsMaster, buffer: &mut
 }
 
 fn enum_mapping_validate_function(master: &SettingsMaster, buffer: &mut WitcherScript) {
-    buffer.push_line(&format!("public /* override */ function {}(gId: name, vId: name, val: int) : int", MASTER_ENUM_MAPPING_VALIDATE_PARSER_FUNC_NAME))
+    buffer.push_line(&format!("protected /* override */ function {}(gId: name, vId: name, val: int) : int", MASTER_ENUM_MAPPING_VALIDATE_PARSER_FUNC_NAME))
           .push_line("{").push_indent();
     
     buffer.push_line("switch(gId)")

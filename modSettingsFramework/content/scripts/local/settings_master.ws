@@ -61,7 +61,10 @@ abstract class ISettingsMaster
     // Checks whether this mod's settings have been saved onto disk before
     public function ShouldResetSettingsToDefaultOnInit() : bool
     {
-        return Parser_ShouldResetSettingsToDefaultOnInit();
+        var config: CInGameConfigWrapper;
+        config = theGame.GetInGameConfigWrapper();
+
+        return Parser_ShouldResetSettingsToDefaultOnInit(config);
     }
 
     // Returns integer value of the unified enum type for options var index in user config

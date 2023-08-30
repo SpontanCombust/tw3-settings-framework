@@ -8,12 +8,12 @@ use crate::{
         GROUP_ID_VAR_NAME, 
         GROUP_DEFAULT_PRESET_VAR_NAME, 
         GROUP_VALIDATE_VALUES_PARSER_FUNC_NAME, 
-        MASTER_ENUM_MAPPING_VALIDATE_PARSER_FUNC_NAME, 
+        MASTER_ENUM_MAPPING_VALIDATE_FUNC_NAME, 
         GROUP_PARENT_MASTER_VAR_NAME, 
         GROUP_PARENT_CLASS, GROUP_READ_SETTINGS_PARSER_FUNC_NAME, 
         GROUP_WRITE_SETTINGS_PARSER_FUNC_NAME, 
         ReadSettingValueFnName, 
-        WriteSettingValueFnName
+        WriteSettingValueFnName,
     }
 };
 
@@ -135,7 +135,7 @@ fn group_validate_values_function(group: &SettingsGroup, buffer: &mut WitcherScr
                                    gid = group.id, vid = var.id,
                                    t = val.type_name,
                                    p = GROUP_PARENT_MASTER_VAR_NAME,
-                                   f = MASTER_ENUM_MAPPING_VALIDATE_PARSER_FUNC_NAME))
+                                   f = MASTER_ENUM_MAPPING_VALIDATE_FUNC_NAME))
                 } else {
                     Some(format!("{v} = ({t})Clamp((int){v}, {min}, {max});",
                                    v = var.var_name, 
@@ -156,7 +156,7 @@ fn group_validate_values_function(group: &SettingsGroup, buffer: &mut WitcherScr
 }
 
 fn group_read_settings_function(group: &SettingsGroup, buffer: &mut WitcherScript) {
-    buffer.push_line(&format!("public /* override */ function {}(config: CInGameConfigWrapper) : void", GROUP_READ_SETTINGS_PARSER_FUNC_NAME));
+    buffer.push_line(&format!("protected /* override */ function {}(config: CInGameConfigWrapper) : void", GROUP_READ_SETTINGS_PARSER_FUNC_NAME));
     buffer.push_line("{").push_indent();
 
     for var in &group.vars {

@@ -68,7 +68,7 @@ class CSettingsMasterRegistry
         size = m_settingsEntries.Size();
         for (i = 0; i < size; i += 1)
         {
-            m_settingsEntries[i].settingsMaster.ReadSettings();
+            m_settingsEntries[i].ReadSettings();
         }
     }
 }
