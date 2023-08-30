@@ -154,7 +154,7 @@ class MonsterOfTheWeekSettings extends ISettingsMaster
 		return -1;
 	}
 
-	public /* override */ function Parser_EnumValueMappingValidateUnified(gId: name, vId: name, val: int) : int
+	protected /* override */ function Parser_EnumValueMappingValidateUnified(gId: name, vId: name, val: int) : int
 	{
 		switch(gId)
 		{
@@ -241,7 +241,7 @@ class MonsterOfTheWeekSettings_difficulties extends ISettingsGroup
 		toussaint = (MOTWDifficulty)Clamp((int)toussaint, 0, 2);
 	}
 
-	public /* override */ function Parser_Read(config: CInGameConfigWrapper) : void
+	protected /* override */ function Parser_Read(config: CInGameConfigWrapper) : void
 	{
 		noMansLand = (MOTWDifficulty)m_parentMaster.ReadIntSettingValue(config, 'MOTWdifficulties', 'MOTWnoMansLand');
 		skellige = (MOTWDifficulty)m_parentMaster.ReadIntSettingValue(config, 'MOTWdifficulties', 'MOTWskellige');
@@ -270,13 +270,13 @@ class MonsterOfTheWeekSettings_monsters extends ISettingsGroup
 
 	protected /* override */ function Parser_Validate() : void
 	{
-		noMansLand = (MonsterOfTheWeekSettings_monster)m_parentMaster.Parser_EnumValueMappingValidateUnified('MOTWmonsters', 'MOTWnoMansLand', (int)noMansLand);
-		skellige = (MonsterOfTheWeekSettings_monster)m_parentMaster.Parser_EnumValueMappingValidateUnified('MOTWmonsters', 'MOTWskellige', (int)skellige);
-		kaerMorhen = (MonsterOfTheWeekSettings_monster)m_parentMaster.Parser_EnumValueMappingValidateUnified('MOTWmonsters', 'MOTWkaerMorhen', (int)kaerMorhen);
-		toussaint = (MonsterOfTheWeekSettings_monster)m_parentMaster.Parser_EnumValueMappingValidateUnified('MOTWmonsters', 'MOTWtoussaint', (int)toussaint);
+		noMansLand = (MonsterOfTheWeekSettings_monster)m_parentMaster.EnumValueMappingValidateUnified('MOTWmonsters', 'MOTWnoMansLand', (int)noMansLand);
+		skellige = (MonsterOfTheWeekSettings_monster)m_parentMaster.EnumValueMappingValidateUnified('MOTWmonsters', 'MOTWskellige', (int)skellige);
+		kaerMorhen = (MonsterOfTheWeekSettings_monster)m_parentMaster.EnumValueMappingValidateUnified('MOTWmonsters', 'MOTWkaerMorhen', (int)kaerMorhen);
+		toussaint = (MonsterOfTheWeekSettings_monster)m_parentMaster.EnumValueMappingValidateUnified('MOTWmonsters', 'MOTWtoussaint', (int)toussaint);
 	}
 
-	public /* override */ function Parser_Read(config: CInGameConfigWrapper) : void
+	protected /* override */ function Parser_Read(config: CInGameConfigWrapper) : void
 	{
 		noMansLand = (MonsterOfTheWeekSettings_monster)m_parentMaster.ReadUnifiedEnumSettingValue(config, 'MOTWmonsters', 'MOTWnoMansLand');
 		skellige = (MonsterOfTheWeekSettings_monster)m_parentMaster.ReadUnifiedEnumSettingValue(config, 'MOTWmonsters', 'MOTWskellige');

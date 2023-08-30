@@ -68,7 +68,7 @@ class MyModSettings_tab1 extends ISettingsGroup
 		version = ClampF(version, 0, 100);
 	}
 
-	public /* override */ function Parser_Read(config: CInGameConfigWrapper) : void
+	protected /* override */ function Parser_Read(config: CInGameConfigWrapper) : void
 	{
 		option = (MyModSettings_opt)m_parentMaster.ReadIntSettingValue(config, 'MODtab1', 'MODoption');
 		sliderFloat = m_parentMaster.ReadFloatSettingValue(config, 'MODtab1', 'MODslider1');
@@ -99,7 +99,7 @@ class MyModSettings_tab2 extends ISettingsGroup
 		anotherSlider = ClampF(anotherSlider, -100, 100);
 	}
 
-	public /* override */ function Parser_Read(config: CInGameConfigWrapper) : void
+	protected /* override */ function Parser_Read(config: CInGameConfigWrapper) : void
 	{
 		anotherSlider = m_parentMaster.ReadFloatSettingValue(config, 'MODtab2subtab1', 'anotherSlider');
 	}
@@ -121,7 +121,7 @@ class MyModSettings_tab3 extends ISettingsGroup
 	{
 	}
 
-	public /* override */ function Parser_Read(config: CInGameConfigWrapper) : void
+	protected /* override */ function Parser_Read(config: CInGameConfigWrapper) : void
 	{
 		anotherToggle = m_parentMaster.ReadBoolSettingValue(config, 'MODtab2subtab2', 'anotherToggle');
 	}

@@ -52,7 +52,7 @@ class ModDifficultySettingsBase_general extends ISettingsGroup
 		dmgMultip = ClampF(dmgMultip, 0, 2);
 	}
 
-	public /* override */ function Parser_Read(config: CInGameConfigWrapper) : void
+	protected /* override */ function Parser_Read(config: CInGameConfigWrapper) : void
 	{
 		enabled = m_parentMaster.ReadBoolSettingValue(config, 'DMgeneral', 'DMenabled');
 		healthMultip = m_parentMaster.ReadFloatSettingValue(config, 'DMgeneral', 'DMhealthMultip');
