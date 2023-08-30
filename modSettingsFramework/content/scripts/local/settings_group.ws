@@ -12,20 +12,23 @@ abstract class ISettingsGroup
         m_parentMaster = parent_;
     }
 
-    public function Reset(presetIndex: int) : void
+    public function Reset(presetIndex: int, shouldSave: bool) : void
     {
         var config: CInGameConfigWrapper;
 
         config = theGame.GetInGameConfigWrapper();
         
         m_parentMaster.ResetSettingValues(config, id, presetIndex);
-        //TODO add parameter that says whether this should be done (if all groups are reset it is needlessly done multiple times)
-        theGame.SaveUserSettings();
         m_parentMaster.ReadSettings(); // get preset values back from config
+        
+        if (shouldSave)
+        {
+            theGame.SaveUserSettings();
+        }
     }
 
-    public function ResetToDefault() : void
+    public function ResetToDefault(shouldSave: bool) : void
     {
-        Reset(defaultPresetIndex);
+        Reset(defaultPresetIndex, shouldSave);
     }
 }

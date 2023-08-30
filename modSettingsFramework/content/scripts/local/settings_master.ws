@@ -47,6 +47,7 @@ abstract class ISettingsMaster
     public function ResetSettingsToDefault() : void
     {
         // child class will call reset code on every group here
+        theGame.SaveUserSettings();
         LogChannel('ModSettingsFramework', "Settings reset to default for '" + id + "'");
     }
 
