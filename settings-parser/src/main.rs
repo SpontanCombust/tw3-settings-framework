@@ -8,6 +8,7 @@ mod traits;
 mod indented_document;
 mod xml;
 mod settings_enum;
+mod constants;
 
 use std::{fs::OpenOptions, io::{Read, Write}, path::{Path, PathBuf}};
 

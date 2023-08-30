@@ -2,7 +2,16 @@ use crate::{
     settings_var::SettingsVar, 
     traits::{WitcherScriptType, WitcherScript, WitcherScriptTypeDef}, 
     xml::group::Group, 
-    utils::strip_prefixes, settings_var_type::SettingsVarType
+    utils::strip_prefixes, 
+    settings_var_type::SettingsVarType, 
+    constants::{
+        GROUP_ID_VAR_NAME, 
+        GROUP_DEFAULT_PRESET_VAR_NAME, 
+        GROUP_VALIDATE_VALUES_FUNC_NAME, 
+        MASTER_ENUM_MAPPING_VALIDATE_FUNC_NAME, 
+        GROUP_PARENT_MASTER_VAR_NAME, 
+        GROUP_PARENT_CLASS
+    }
 };
 
 pub struct SettingsGroup {
@@ -59,13 +68,7 @@ impl SettingsGroup {
 }
 
 
-//TODO move these to some seperate 'constants' module
-const GROUP_PARENT_CLASS: &str = "ISettingsGroup";
-const GROUP_PARENT_MASTER_VAR_NAME: &str = "m_parentMaster";
-const GROUP_ID_VAR_NAME: &str = "id";
-const GROUP_DEFAULT_PRESET_VAR_NAME: &str = "defaultPresetIndex";
-const GROUP_VALIDATE_VALUES_FUNC_NAME: &str = "Validate";
-const MASTER_ENUM_MAPPING_VALIDATE_FUNC_NAME: &str = "EnumValueMappingValidateUnified";
+
 
 impl WitcherScriptType for SettingsGroup {
     fn ws_type_name(&self) -> String {

@@ -5,7 +5,27 @@ use crate::{
     traits::{WitcherScriptType, WitcherScript, WitcherScriptTypeDef}, 
     settings_var_type::SettingsVarType, 
     cli::CLI, xml::user_config::UserConfig, 
-    settings_enum::{SettingsEnum, SettingsEnumValueMapping}
+    settings_enum::{
+        SettingsEnum, 
+        SettingsEnumValueMapping
+    }, 
+    constants::{
+        MASTER_BASE_CLASS_NAME, 
+        MASTER_MOD_VERSION_VAR_NAME, 
+        MASTER_INIT_FUNC_NAME, 
+        MASTER_VALIDATE_VALUES_FUNC_NAME, 
+        GROUP_VALIDATE_VALUES_FUNC_NAME, 
+        MASTER_READ_SETTINGS_FUNC_NAME, 
+        ReadSettingValueFnName, 
+        MASTER_WRITE_SETTINGS_FUNC_NAME, 
+        WriteSettingValueFnName, 
+        MASTER_RESET_SETTINGS_TO_DEFAULT_FUNC_NAME, 
+        GROUP_RESET_SETTINGS_TO_DEFAULT_FUNC_NAME, 
+        MASTER_SHOULD_RESET_TO_DEFAULT_ON_INIT_FUNC_NAME, 
+        MASTER_ENUM_MAPPING_CONFIG_TO_UNIFIED_FUNC_NAME, 
+        MASTER_ENUM_MAPPING_UNIFIED_TO_CONFIG_FUNC_NAME, 
+        MASTER_ENUM_MAPPING_VALIDATE_FUNC_NAME
+    }
 };
 
 pub struct SettingsMaster {
@@ -165,66 +185,6 @@ impl SettingsMaster {
     }
 }
 
-
-
-
-const MASTER_BASE_CLASS_NAME: &str = "ISettingsMaster";
-const MASTER_MOD_VERSION_VAR_NAME: &str = "modVersion";
-const MASTER_INIT_FUNC_NAME: &str = "Init";
-const MASTER_VALIDATE_VALUES_FUNC_NAME: &str = "ValidateSettings";
-const MASTER_READ_SETTINGS_FUNC_NAME: &str = "ReadSettings";
-// const MASTER_READ_SETTING_VALUE_FUNC_NAME: &str = "ReadSettingValue";
-const MASTER_WRITE_SETTINGS_FUNC_NAME: &str = "WriteSettings";
-// const MASTER_WRITE_SETTING_VALUE_FUNC_NAME: &str = "WriteSettingValue";
-const MASTER_RESET_SETTINGS_TO_DEFAULT_FUNC_NAME: &str = "ResetSettingsToDefault";
-const MASTER_SHOULD_RESET_TO_DEFAULT_ON_INIT_FUNC_NAME: &str = "ShouldResetSettingsToDefaultOnInit";
-const MASTER_ENUM_MAPPING_CONFIG_TO_UNIFIED_FUNC_NAME: &str = "EnumValueMappingConfigToUnified";
-const MASTER_ENUM_MAPPING_UNIFIED_TO_CONFIG_FUNC_NAME: &str = "EnumValueMappingUnifiedToConfig";
-const MASTER_ENUM_MAPPING_VALIDATE_FUNC_NAME: &str = "EnumValueMappingValidateUnified";
-const GROUP_RESET_SETTINGS_TO_DEFAULT_FUNC_NAME: &str = "ResetToDefault";
-const GROUP_VALIDATE_VALUES_FUNC_NAME: &str = "Validate";
-
-trait ReadSettingValueFnName {
-    fn read_setting_value_fn(&self) -> &'static str;
-}
-
-impl ReadSettingValueFnName for SettingsVarType {
-    fn read_setting_value_fn(&self) -> &'static str {
-        match self {
-            SettingsVarType::Bool => "ReadBoolSettingValue",
-            SettingsVarType::Int {..} => "ReadIntSettingValue",
-            SettingsVarType::Float {..} => "ReadFloatSettingValue",
-            SettingsVarType::Enum { val_mapping, .. } => {
-                if val_mapping.is_some() {
-                    "ReadUnifiedEnumSettingValue"
-                } else {
-                    "ReadIntSettingValue"
-                }
-            }
-        }
-    }
-}
-
-trait WriteSettingValueFnName {
-    fn write_setting_value_fn(&self) -> &'static str;
-}
-
-impl WriteSettingValueFnName for SettingsVarType {
-    fn write_setting_value_fn(&self) -> &'static str {
-        match self {
-            SettingsVarType::Bool => "WriteBoolSettingValue",
-            SettingsVarType::Int {..} => "WriteIntSettingValue",
-            SettingsVarType::Float {..} => "WriteFloatSettingValue",
-            SettingsVarType::Enum { val_mapping, .. } => {
-                if val_mapping.is_some() {
-                    "WriteUnifiedEnumSettingValue"
-                } else {
-                    "WriteIntSettingValue"
-                }
-            }
-        }
-    }
-}
 
 
 
