@@ -17,14 +17,14 @@ use crate::{
         GROUP_VALIDATE_VALUES_FUNC_NAME, 
         MASTER_READ_SETTINGS_FUNC_NAME, 
         MASTER_WRITE_SETTINGS_FUNC_NAME, 
-        WriteSettingValueFnName, 
         MASTER_RESET_SETTINGS_TO_DEFAULT_FUNC_NAME, 
         GROUP_RESET_SETTINGS_TO_DEFAULT_FUNC_NAME, 
         MASTER_SHOULD_RESET_TO_DEFAULT_ON_INIT_FUNC_NAME, 
         MASTER_ENUM_MAPPING_CONFIG_TO_UNIFIED_FUNC_NAME, 
         MASTER_ENUM_MAPPING_UNIFIED_TO_CONFIG_FUNC_NAME, 
         MASTER_ENUM_MAPPING_VALIDATE_FUNC_NAME, 
-        GROUP_READ_SETTINGS_FUNC_NAME
+        GROUP_READ_SETTINGS_FUNC_NAME, 
+        GROUP_WRITE_SETTINGS_FUNC_NAME
     }
 };
 
@@ -320,31 +320,11 @@ fn write_settings_function(master: &SettingsMaster, buffer: &mut WitcherScript) 
           .push_line("config = theGame.GetInGameConfigWrapper();")
           .new_line();
 
-    if master.validate_values {
-        buffer.push_line(&format!("{}();", MASTER_VALIDATE_VALUES_FUNC_NAME))
-              .new_line();
-    }
-
     for group in &master.groups {
-        for var in &group.vars {
-            // add type cast if it's an enum
-            let type_cast = if let SettingsVarType::Enum {..} = &var.var_type {
-                "(int)"
-            } else {
-                ""
-            };
-
-            let write_setting_value = format!("{func}(config, '{gid}', '{vid}', {tc}{gn}.{vn});", 
-                                            func = var.var_type.write_setting_value_fn(),
-                                            gid = group.id, vid = var.id,
-                                            tc = type_cast,
-                                            gn = group.var_name, vn = var.var_name);
-
-            buffer.push_line(&write_setting_value);
-        }
-        buffer.new_line();
+        buffer.push_line(&format!("{}.{}(false, config);", group.var_name, GROUP_WRITE_SETTINGS_FUNC_NAME));
     }
 
+    buffer.new_line();
     buffer.push_line(&format!("super.{}();", MASTER_WRITE_SETTINGS_FUNC_NAME));
           
     buffer.pop_indent().push_line("}");

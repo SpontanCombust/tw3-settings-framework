@@ -10,7 +10,10 @@ use crate::{
         GROUP_VALIDATE_VALUES_FUNC_NAME, 
         MASTER_ENUM_MAPPING_VALIDATE_FUNC_NAME, 
         GROUP_PARENT_MASTER_VAR_NAME, 
-        GROUP_PARENT_CLASS, GROUP_READ_SETTINGS_FUNC_NAME, ReadSettingValueFnName
+        GROUP_PARENT_CLASS, GROUP_READ_SETTINGS_FUNC_NAME, 
+        GROUP_WRITE_SETTINGS_FUNC_NAME, 
+        ReadSettingValueFnName, 
+        WriteSettingValueFnName
     }
 };
 
@@ -89,11 +92,16 @@ impl WitcherScriptTypeDef for SettingsGroup {
         buffer.new_line();
         group_default_variable_values(self, buffer);
 
-        buffer.new_line();
-        group_validate_values_function(self, buffer);
+        if self.validate_values {
+            buffer.new_line();
+            group_validate_values_function(self, buffer);
+        }
 
         buffer.new_line();
         group_read_settings_function(self, buffer);
+
+        buffer.new_line();
+        group_write_settings_function(self, buffer);
     
         buffer.pop_indent().push_line("}");
     }
@@ -186,5 +194,44 @@ fn group_read_settings_function(group: &SettingsGroup, buffer: &mut WitcherScrip
 
     buffer.push_line(&format!("super.{}(config);", GROUP_READ_SETTINGS_FUNC_NAME));
 
+    buffer.pop_indent().push_line("}");
+}
+
+fn group_write_settings_function(group: &SettingsGroup, buffer: &mut WitcherScript) {
+    buffer.push_line(&format!("public /* override */ function {}(shouldSave: bool, optional config: CInGameConfigWrapper) : void", GROUP_WRITE_SETTINGS_FUNC_NAME))
+          .push_line("{").push_indent();
+
+    buffer.push_line("if (!config)")
+          .push_indent()
+          .push_line("config = theGame.GetInGameConfigWrapper();")
+          .pop_indent()
+          .new_line();
+
+    if group.validate_values {
+        buffer.push_line(&format!("{}();", GROUP_VALIDATE_VALUES_FUNC_NAME))
+              .new_line();
+    }
+
+    for var in &group.vars {
+        // add type cast if it's an enum
+        let type_cast = if let SettingsVarType::Enum {..} = &var.var_type {
+            "(int)"
+        } else {
+            ""
+        };
+
+        let write_setting_value = format!("{p}.{func}(config, '{gid}', '{vid}', {tc}{vn});",
+                                        p = GROUP_PARENT_MASTER_VAR_NAME,
+                                        func = var.var_type.write_setting_value_fn(),
+                                        gid = group.id, vid = var.id,
+                                        tc = type_cast,
+                                        vn = var.var_name);
+
+        buffer.push_line(&write_setting_value);
+    }
+    
+    buffer.new_line();
+    buffer.push_line(&format!("super.{}(shouldSave, config);", GROUP_WRITE_SETTINGS_FUNC_NAME));
+          
     buffer.pop_indent().push_line("}");
 }

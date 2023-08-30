@@ -7,6 +7,7 @@ pub const GROUP_ID_VAR_NAME: &str = "id";
 pub const GROUP_DEFAULT_PRESET_VAR_NAME: &str = "defaultPresetIndex";
 pub const GROUP_VALIDATE_VALUES_FUNC_NAME: &str = "Validate";
 pub const GROUP_READ_SETTINGS_FUNC_NAME: &str = "Read";
+pub const GROUP_WRITE_SETTINGS_FUNC_NAME: &str = "Write";
 pub const GROUP_RESET_SETTINGS_TO_DEFAULT_FUNC_NAME: &str = "ResetToDefault";
 
 pub const MASTER_BASE_CLASS_NAME: &str = "ISettingsMaster";
