@@ -1,5 +1,6 @@
 abstract class ISettingsGroup
 {
+    //TODO rename to just 'm_master'
     protected var m_parentMaster : ISettingsMaster;
 
     // these are set using 'default' in the child class
@@ -11,10 +12,15 @@ abstract class ISettingsGroup
     {
         m_parentMaster = parent_;
     }
-
+    //TODO update class specification
     public function Validate(): void
     {
         // generated child class will correct these values in this function
+    }
+
+    public function Read(optional config: CInGameConfigWrapper) : void 
+    {
+        // child class will fetch config var values here
     }
 
     public function Reset(presetIndex: int, shouldSave: bool) : void
@@ -24,7 +30,7 @@ abstract class ISettingsGroup
         config = theGame.GetInGameConfigWrapper();
         
         m_parentMaster.ResetSettingValues(config, id, presetIndex);
-        m_parentMaster.ReadSettings(); // get preset values back from config
+        Read(config); // get preset values back from config
         
         if (shouldSave)
         {
