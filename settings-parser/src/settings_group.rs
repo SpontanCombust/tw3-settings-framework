@@ -7,11 +7,11 @@ use crate::{
     constants::{
         GROUP_ID_VAR_NAME, 
         GROUP_DEFAULT_PRESET_VAR_NAME, 
-        GROUP_VALIDATE_VALUES_FUNC_NAME, 
-        MASTER_ENUM_MAPPING_VALIDATE_FUNC_NAME, 
+        GROUP_VALIDATE_VALUES_PARSER_FUNC_NAME, 
+        MASTER_ENUM_MAPPING_VALIDATE_PARSER_FUNC_NAME, 
         GROUP_PARENT_MASTER_VAR_NAME, 
-        GROUP_PARENT_CLASS, GROUP_READ_SETTINGS_FUNC_NAME, 
-        GROUP_WRITE_SETTINGS_FUNC_NAME, 
+        GROUP_PARENT_CLASS, GROUP_READ_SETTINGS_PARSER_FUNC_NAME, 
+        GROUP_WRITE_SETTINGS_PARSER_FUNC_NAME, 
         ReadSettingValueFnName, 
         WriteSettingValueFnName
     }
@@ -119,7 +119,7 @@ fn group_default_variable_values(group: &SettingsGroup, buffer: &mut WitcherScri
 }
 
 fn group_validate_values_function(group: &SettingsGroup, buffer: &mut WitcherScript) {
-    buffer.push_line(&format!("public /* override */ function {}() : void", GROUP_VALIDATE_VALUES_FUNC_NAME));
+    buffer.push_line(&format!("protected /* override */ function {}() : void", GROUP_VALIDATE_VALUES_PARSER_FUNC_NAME));
     buffer.push_line("{").push_indent();
 
     for var in &group.vars {
@@ -135,7 +135,7 @@ fn group_validate_values_function(group: &SettingsGroup, buffer: &mut WitcherScr
                                    gid = group.id, vid = var.id,
                                    t = val.type_name,
                                    p = GROUP_PARENT_MASTER_VAR_NAME,
-                                   f = MASTER_ENUM_MAPPING_VALIDATE_FUNC_NAME))
+                                   f = MASTER_ENUM_MAPPING_VALIDATE_PARSER_FUNC_NAME))
                 } else {
                     Some(format!("{v} = ({t})Clamp((int){v}, {min}, {max});",
                                    v = var.var_name, 
@@ -152,21 +152,12 @@ fn group_validate_values_function(group: &SettingsGroup, buffer: &mut WitcherScr
         }
     }
 
-    buffer.new_line();
-    buffer.push_line(&format!("super.{}();", GROUP_VALIDATE_VALUES_FUNC_NAME));
-
     buffer.pop_indent().push_line("}");
 }
 
 fn group_read_settings_function(group: &SettingsGroup, buffer: &mut WitcherScript) {
-    buffer.push_line(&format!("public /* override */ function {}(optional config: CInGameConfigWrapper) : void", GROUP_READ_SETTINGS_FUNC_NAME));
+    buffer.push_line(&format!("public /* override */ function {}(config: CInGameConfigWrapper) : void", GROUP_READ_SETTINGS_PARSER_FUNC_NAME));
     buffer.push_line("{").push_indent();
-
-    buffer.push_line("if (!config)")
-          .push_indent()
-          .push_line("config = theGame.GetInGameConfigWrapper();")
-          .pop_indent()
-          .new_line();
 
     for var in &group.vars {
         // add type cast if it's an enum
@@ -185,32 +176,13 @@ fn group_read_settings_function(group: &SettingsGroup, buffer: &mut WitcherScrip
 
         buffer.push_line(&read_setting_value);
     }
-    buffer.new_line();
-
-    if group.validate_values {
-        buffer.push_line(&format!("{}();", GROUP_VALIDATE_VALUES_FUNC_NAME))
-              .new_line();
-    }
-
-    buffer.push_line(&format!("super.{}(config);", GROUP_READ_SETTINGS_FUNC_NAME));
 
     buffer.pop_indent().push_line("}");
 }
 
 fn group_write_settings_function(group: &SettingsGroup, buffer: &mut WitcherScript) {
-    buffer.push_line(&format!("public /* override */ function {}(shouldSave: bool, optional config: CInGameConfigWrapper) : void", GROUP_WRITE_SETTINGS_FUNC_NAME))
+    buffer.push_line(&format!("protected /* override */ function {}(config: CInGameConfigWrapper) : void", GROUP_WRITE_SETTINGS_PARSER_FUNC_NAME))
           .push_line("{").push_indent();
-
-    buffer.push_line("if (!config)")
-          .push_indent()
-          .push_line("config = theGame.GetInGameConfigWrapper();")
-          .pop_indent()
-          .new_line();
-
-    if group.validate_values {
-        buffer.push_line(&format!("{}();", GROUP_VALIDATE_VALUES_FUNC_NAME))
-              .new_line();
-    }
 
     for var in &group.vars {
         // add type cast if it's an enum
@@ -230,8 +202,5 @@ fn group_write_settings_function(group: &SettingsGroup, buffer: &mut WitcherScri
         buffer.push_line(&write_setting_value);
     }
     
-    buffer.new_line();
-    buffer.push_line(&format!("super.{}(shouldSave, config);", GROUP_WRITE_SETTINGS_FUNC_NAME));
-          
     buffer.pop_indent().push_line("}");
 }

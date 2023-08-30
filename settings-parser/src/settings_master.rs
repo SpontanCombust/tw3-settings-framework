@@ -12,17 +12,17 @@ use crate::{
     constants::{
         MASTER_BASE_CLASS_NAME, 
         MASTER_MOD_VERSION_VAR_NAME, 
-        MASTER_INIT_FUNC_NAME, 
-        MASTER_VALIDATE_VALUES_FUNC_NAME, 
-        GROUP_VALIDATE_VALUES_FUNC_NAME, 
-        MASTER_READ_SETTINGS_FUNC_NAME, 
-        MASTER_WRITE_SETTINGS_FUNC_NAME, 
-        MASTER_RESET_SETTINGS_TO_DEFAULT_FUNC_NAME, 
+        MASTER_INIT_PARSER_FUNC_NAME, 
+        MASTER_VALIDATE_VALUES_PARSER_FUNC_NAME, 
+        MASTER_READ_SETTINGS_PARSER_FUNC_NAME, 
+        MASTER_WRITE_SETTINGS_PARSER_FUNC_NAME, 
+        MASTER_RESET_SETTINGS_TO_DEFAULT_PARSER_FUNC_NAME, 
         GROUP_RESET_SETTINGS_TO_DEFAULT_FUNC_NAME, 
-        MASTER_SHOULD_RESET_TO_DEFAULT_ON_INIT_FUNC_NAME, 
-        MASTER_ENUM_MAPPING_CONFIG_TO_UNIFIED_FUNC_NAME, 
-        MASTER_ENUM_MAPPING_UNIFIED_TO_CONFIG_FUNC_NAME, 
-        MASTER_ENUM_MAPPING_VALIDATE_FUNC_NAME, 
+        MASTER_SHOULD_RESET_TO_DEFAULT_ON_INIT_PARSER_FUNC_NAME, 
+        MASTER_ENUM_MAPPING_CONFIG_TO_UNIFIED_PARSER_FUNC_NAME, 
+        MASTER_ENUM_MAPPING_UNIFIED_TO_CONFIG_PARSER_FUNC_NAME, 
+        MASTER_ENUM_MAPPING_VALIDATE_PARSER_FUNC_NAME, 
+        GROUP_VALIDATE_VALUES_FUNC_NAME, 
         GROUP_READ_SETTINGS_FUNC_NAME, 
         GROUP_WRITE_SETTINGS_FUNC_NAME
     }
@@ -267,79 +267,56 @@ fn default_variable_values(master: &SettingsMaster, buffer: &mut WitcherScript) 
 }
 
 fn init_function(master: &SettingsMaster, buffer: &mut WitcherScript) {
-    buffer.push_line(&format!("public /* override */ function {}() : void", MASTER_INIT_FUNC_NAME));
+    buffer.push_line(&format!("protected /* override */ function {}() : void", MASTER_INIT_PARSER_FUNC_NAME));
     buffer.push_line("{").push_indent();
 
     for group in &master.groups {
         buffer.push_line(&format!("{n} = new {t} in this; {n}.Init(this);", n = group.var_name, t = group.ws_type_name()));
     }
 
-    buffer.new_line();
-    buffer.push_line(&format!("super.{}();", MASTER_INIT_FUNC_NAME));
-
     buffer.pop_indent().push_line("}");
 }
 
 fn validate_values_function(master: &SettingsMaster, buffer: &mut WitcherScript) {
-    buffer.push_line(&format!("public /* override */ function {}() : void", MASTER_VALIDATE_VALUES_FUNC_NAME));
+    buffer.push_line(&format!("protected /* override */ function {}() : void", MASTER_VALIDATE_VALUES_PARSER_FUNC_NAME));
     buffer.push_line("{").push_indent();
 
     for group in &master.groups {
         buffer.push_line(&format!("{}.{}();", group.var_name, GROUP_VALIDATE_VALUES_FUNC_NAME));
     }
 
-    buffer.new_line();
-    buffer.push_line(&format!("super.{}();", MASTER_VALIDATE_VALUES_FUNC_NAME));
-
     buffer.pop_indent().push_line("}");
 }
 
 fn read_settings_function(master: &SettingsMaster, buffer: &mut WitcherScript) {
-    buffer.push_line(&format!("public /* override */ function {}() : void", MASTER_READ_SETTINGS_FUNC_NAME));
+    buffer.push_line(&format!("protected /* override */ function {}(config : CInGameConfigWrapper) : void", MASTER_READ_SETTINGS_PARSER_FUNC_NAME));
     buffer.push_line("{").push_indent();
-
-    buffer.push_line("var config : CInGameConfigWrapper;");
-    buffer.push_line("config = theGame.GetInGameConfigWrapper();");
-    buffer.new_line();
 
     for group in &master.groups {
         buffer.push_line(&format!("{}.{}(config);", group.var_name, GROUP_READ_SETTINGS_FUNC_NAME));
     }
 
-    buffer.new_line();
-    buffer.push_line(&format!("super.{}();", MASTER_READ_SETTINGS_FUNC_NAME));
-
     buffer.pop_indent().push_line("}");
 }
 
 fn write_settings_function(master: &SettingsMaster, buffer: &mut WitcherScript) {
-    buffer.push_line(&format!("public /* override */ function {}() : void", MASTER_WRITE_SETTINGS_FUNC_NAME))
+    buffer.push_line(&format!("protected /* override */ function {}(config : CInGameConfigWrapper) : void", MASTER_WRITE_SETTINGS_PARSER_FUNC_NAME))
           .push_line("{").push_indent();
-
-    buffer.push_line("var config : CInGameConfigWrapper;")
-          .push_line("config = theGame.GetInGameConfigWrapper();")
-          .new_line();
 
     for group in &master.groups {
         buffer.push_line(&format!("{}.{}(false, config);", group.var_name, GROUP_WRITE_SETTINGS_FUNC_NAME));
     }
-
-    buffer.new_line();
-    buffer.push_line(&format!("super.{}();", MASTER_WRITE_SETTINGS_FUNC_NAME));
           
     buffer.pop_indent().push_line("}");
 }
 
 fn reset_settings_to_default_function(master: &SettingsMaster, buffer: &mut WitcherScript) {
-    buffer.push_line(&format!("public /* override */ function {}() : void", MASTER_RESET_SETTINGS_TO_DEFAULT_FUNC_NAME))
+    buffer.push_line(&format!("protected /* override */ function {}(config : CInGameConfigWrapper) : void", MASTER_RESET_SETTINGS_TO_DEFAULT_PARSER_FUNC_NAME))
           .push_line("{").push_indent();
 
     for group in &master.groups {
-        buffer.push_line(&format!("{}.{}(false);", group.var_name, GROUP_RESET_SETTINGS_TO_DEFAULT_FUNC_NAME));
+        buffer.push_line(&format!("{}.{}(false, config);", group.var_name, GROUP_RESET_SETTINGS_TO_DEFAULT_FUNC_NAME));
     }
-
-    buffer.new_line()
-          .push_line(&format!("super.{}();", MASTER_RESET_SETTINGS_TO_DEFAULT_FUNC_NAME));
 
     buffer.pop_indent().push_line("}");
 }
@@ -348,23 +325,20 @@ fn should_reset_to_default_on_init_function(master: &SettingsMaster, buffer: &mu
     let group_id = &master.groups[0].id;
     let var_id = &master.groups[0].vars[0].id;
 
-    buffer.push_line(&format!("public /* override */ function {}() : bool", MASTER_SHOULD_RESET_TO_DEFAULT_ON_INIT_FUNC_NAME))
+    buffer.push_line(&format!("protected /* override */ function {}(config : CInGameConfigWrapper) : bool", MASTER_SHOULD_RESET_TO_DEFAULT_ON_INIT_PARSER_FUNC_NAME))
           .push_line("{").push_indent();
     
-    buffer.push_line("var config : CInGameConfigWrapper;")
-          .push_line("config = theGame.GetInGameConfigWrapper();")
-          .new_line()
-          .push_line(&format!("return config.GetVarValue('{}','{}') == \"\";", group_id, var_id));
+    buffer.push_line(&format!("return config.GetVarValue('{}','{}') == \"\";", group_id, var_id));         
     
     buffer.pop_indent().push_line("}");
 }
 
 fn enum_mapping_function(master: &SettingsMaster, buffer: &mut WitcherScript, config_to_unified: bool) {
-    buffer.push_line(&format!("public /* override */ function {}(gId: name, vId: name, val: int) : int", 
+    buffer.push_line(&format!("protected /* override */ function {}(gId: name, vId: name, val: int) : int", 
                                 if config_to_unified {
-                                    MASTER_ENUM_MAPPING_CONFIG_TO_UNIFIED_FUNC_NAME
+                                    MASTER_ENUM_MAPPING_CONFIG_TO_UNIFIED_PARSER_FUNC_NAME
                                 } else {
-                                    MASTER_ENUM_MAPPING_UNIFIED_TO_CONFIG_FUNC_NAME
+                                    MASTER_ENUM_MAPPING_UNIFIED_TO_CONFIG_PARSER_FUNC_NAME
                                 }))
           .push_line("{").push_indent();
 
@@ -422,7 +396,7 @@ fn enum_mapping_unified_to_config_function(master: &SettingsMaster, buffer: &mut
 }
 
 fn enum_mapping_validate_function(master: &SettingsMaster, buffer: &mut WitcherScript) {
-    buffer.push_line(&format!("public /* override */ function {}(gId: name, vId: name, val: int) : int", MASTER_ENUM_MAPPING_VALIDATE_FUNC_NAME))
+    buffer.push_line(&format!("public /* override */ function {}(gId: name, vId: name, val: int) : int", MASTER_ENUM_MAPPING_VALIDATE_PARSER_FUNC_NAME))
           .push_line("{").push_indent();
     
     buffer.push_line("switch(gId)")
