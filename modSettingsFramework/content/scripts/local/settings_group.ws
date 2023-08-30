@@ -12,6 +12,11 @@ abstract class ISettingsGroup
         m_parentMaster = parent_;
     }
 
+    public function Validate(): void
+    {
+        // generated child class will correct these values in this function
+    }
+
     public function Reset(presetIndex: int, shouldSave: bool) : void
     {
         var config: CInGameConfigWrapper;

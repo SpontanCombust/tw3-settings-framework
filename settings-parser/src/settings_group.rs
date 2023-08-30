@@ -59,10 +59,13 @@ impl SettingsGroup {
 }
 
 
-
-const SETTINGS_GROUP_PARENT_CLASS: &str = "ISettingsGroup";
-const SETTINGS_GROUP_ID_VAR_NAME: &str = "id";
-const SETTINGS_GROUP_DEFAULT_PRESET_VAR_NAME: &str = "defaultPresetIndex";
+//TODO move these to some seperate 'constants' module
+const GROUP_PARENT_CLASS: &str = "ISettingsGroup";
+const GROUP_PARENT_MASTER_VAR_NAME: &str = "m_parentMaster";
+const GROUP_ID_VAR_NAME: &str = "id";
+const GROUP_DEFAULT_PRESET_VAR_NAME: &str = "defaultPresetIndex";
+const GROUP_VALIDATE_VALUES_FUNC_NAME: &str = "Validate";
+const MASTER_ENUM_MAPPING_VALIDATE_FUNC_NAME: &str = "EnumValueMappingValidateUnified";
 
 impl WitcherScriptType for SettingsGroup {
     fn ws_type_name(&self) -> String {
@@ -73,13 +76,16 @@ impl WitcherScriptType for SettingsGroup {
 
 impl WitcherScriptTypeDef for SettingsGroup {
     fn ws_type_definition(&self, buffer: &mut WitcherScript) {
-        buffer.push_line(&format!("class {} extends {}", self.ws_type_name(), SETTINGS_GROUP_PARENT_CLASS));
+        buffer.push_line(&format!("class {} extends {}", self.ws_type_name(), GROUP_PARENT_CLASS));
         buffer.push_line("{").push_indent();
     
         group_class_variables(self, buffer);
         
         buffer.new_line();
         group_default_variable_values(self, buffer);
+
+        buffer.new_line();
+        group_validate_values_function(self, buffer);
     
         buffer.pop_indent().push_line("}");
     }
@@ -92,6 +98,46 @@ fn group_class_variables(group: &SettingsGroup, buffer: &mut WitcherScript) {
 }
 
 fn group_default_variable_values(group: &SettingsGroup, buffer: &mut WitcherScript) {
-    buffer.push_line(&format!("default {} = '{}';", SETTINGS_GROUP_ID_VAR_NAME, group.id))
-          .push_line(&format!("default {} = {};", SETTINGS_GROUP_DEFAULT_PRESET_VAR_NAME, group.default_preset_index));
+    buffer.push_line(&format!("default {} = '{}';", GROUP_ID_VAR_NAME, group.id))
+          .push_line(&format!("default {} = {};", GROUP_DEFAULT_PRESET_VAR_NAME, group.default_preset_index));
+}
+
+fn group_validate_values_function(group: &SettingsGroup, buffer: &mut WitcherScript) {
+    buffer.push_line(&format!("public /* override */ function {}() : void", GROUP_VALIDATE_VALUES_FUNC_NAME));
+    buffer.push_line("{").push_indent();
+
+    for var in &group.vars {
+        let validator = match &var.var_type {
+            SettingsVarType::Int { min, max } => Some(format!("{v} = Clamp({v}, {min}, {max});", 
+                                                                v = var.var_name)),
+            SettingsVarType::Float { min, max } => Some(format!("{v} = ClampF({v}, {min}, {max});", 
+                                                                  v = var.var_name)),
+            SettingsVarType::Enum { val, val_mapping } => {
+                if let Some(_) = val_mapping {
+                    Some(format!("{v} = ({t}){p}.{f}('{gid}', '{vid}', (int){v});",
+                                   v = var.var_name, 
+                                   gid = group.id, vid = var.id,
+                                   t = val.type_name,
+                                   p = GROUP_PARENT_MASTER_VAR_NAME,
+                                   f = MASTER_ENUM_MAPPING_VALIDATE_FUNC_NAME))
+                } else {
+                    Some(format!("{v} = ({t})Clamp((int){v}, {min}, {max});",
+                                   v = var.var_name, 
+                                   t = val.type_name,
+                                   min = 0, max = val.values.len() - 1))
+                }
+            } 
+            
+            _ => None,
+        };
+
+        if let Some(validator) = validator {
+            buffer.push_line(&validator);
+        }
+    }
+
+    buffer.new_line();
+    buffer.push_line(&format!("super.{}();", GROUP_VALIDATE_VALUES_FUNC_NAME));
+
+    buffer.pop_indent().push_line("}");
 }

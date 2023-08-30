@@ -182,6 +182,7 @@ const MASTER_ENUM_MAPPING_CONFIG_TO_UNIFIED_FUNC_NAME: &str = "EnumValueMappingC
 const MASTER_ENUM_MAPPING_UNIFIED_TO_CONFIG_FUNC_NAME: &str = "EnumValueMappingUnifiedToConfig";
 const MASTER_ENUM_MAPPING_VALIDATE_FUNC_NAME: &str = "EnumValueMappingValidateUnified";
 const GROUP_RESET_SETTINGS_TO_DEFAULT_FUNC_NAME: &str = "ResetToDefault";
+const GROUP_VALIDATE_VALUES_FUNC_NAME: &str = "Validate";
 
 trait ReadSettingValueFnName {
     fn read_setting_value_fn(&self) -> &'static str;
@@ -324,42 +325,10 @@ fn validate_values_function(master: &SettingsMaster, buffer: &mut WitcherScript)
     buffer.push_line("{").push_indent();
 
     for group in &master.groups {
-        let mut group_has_validation = false;
-        for var in &group.vars {
-            let validator = match &var.var_type {
-                SettingsVarType::Int { min, max } => Some(format!("{g}.{v} = Clamp({g}.{v}, {min}, {max});", 
-                                                                    g = group.var_name, v = var.var_name)),
-                SettingsVarType::Float { min, max } => Some(format!("{g}.{v} = ClampF({g}.{v}, {min}, {max});", 
-                                                                      g = group.var_name, v = var.var_name)),
-                SettingsVarType::Enum { val, val_mapping } => {
-                    if let Some(_) = val_mapping {
-                        Some(format!("{g}.{v} = ({t}){f}('{gid}', '{vid}', (int){g}.{v});",
-                                       g = group.var_name, v = var.var_name, 
-                                       gid = group.id, vid = var.id,
-                                       t = val.type_name,
-                                       f = MASTER_ENUM_MAPPING_VALIDATE_FUNC_NAME))
-                    } else {
-                        Some(format!("{g}.{v} = ({t})Clamp((int){g}.{v}, {min}, {max});",
-                                       g = group.var_name, v = var.var_name, 
-                                       t = val.type_name,
-                                       min = 0, max = val.values.len() - 1))
-                    }
-                } 
-                
-                _ => None,
-            };
-
-            if let Some(validator) = validator {
-                buffer.push_line(&validator);
-                group_has_validation = true;
-            }
-        }
-
-        if group_has_validation {
-            buffer.new_line();
-        }
+        buffer.push_line(&format!("{}.{}();", group.var_name, GROUP_VALIDATE_VALUES_FUNC_NAME));
     }
 
+    buffer.new_line();
     buffer.push_line(&format!("super.{}();", MASTER_VALIDATE_VALUES_FUNC_NAME));
 
     buffer.pop_indent().push_line("}");
