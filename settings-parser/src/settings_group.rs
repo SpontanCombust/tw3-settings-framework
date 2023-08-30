@@ -2,7 +2,19 @@ use crate::{
     settings_var::SettingsVar, 
     traits::{WitcherScriptType, WitcherScript, WitcherScriptTypeDef}, 
     xml::group::Group, 
-    utils::strip_prefixes, settings_var_type::SettingsVarType
+    utils::strip_prefixes, 
+    settings_var_type::SettingsVarType, 
+    constants::{
+        GROUP_ID_VAR_NAME, 
+        GROUP_DEFAULT_PRESET_VAR_NAME, 
+        GROUP_VALIDATE_VALUES_FUNC_NAME, 
+        MASTER_ENUM_MAPPING_VALIDATE_FUNC_NAME, 
+        GROUP_PARENT_MASTER_VAR_NAME, 
+        GROUP_PARENT_CLASS, GROUP_READ_SETTINGS_FUNC_NAME, 
+        GROUP_WRITE_SETTINGS_FUNC_NAME, 
+        ReadSettingValueFnName, 
+        WriteSettingValueFnName
+    }
 };
 
 pub struct SettingsGroup {
@@ -10,11 +22,12 @@ pub struct SettingsGroup {
     pub class_name: String, // name of the class for this group in WitcherScript
     pub var_name: String, // name of an instance of the class for this group in WitcherScript
     pub default_preset_index: u8,
-    pub vars: Vec<SettingsVar>
+    pub vars: Vec<SettingsVar>,
+    pub validate_values: bool
 }
 
 impl SettingsGroup {
-    pub fn try_from(xml_group: &Group, master_class_name: &str, prefixes: &Vec<String>) -> Result<Self, String> {    
+    pub fn try_from(xml_group: &Group, master_class_name: &str, prefixes: &Vec<String>, validate_values: bool) -> Result<Self, String> {    
         let default_preset_index = xml_group.default_preset_index.unwrap_or(0);
         if xml_group.presets_array.len() > 0 && default_preset_index as usize >= xml_group.presets_array.len() {
             return Err(format!("Invalid default preset index in Group {}", xml_group.id));
@@ -43,6 +56,7 @@ impl SettingsGroup {
             var_name,
             default_preset_index,
             vars: setting_vars,
+            validate_values
         })
     }
 
@@ -60,9 +74,6 @@ impl SettingsGroup {
 
 
 
-const SETTINGS_GROUP_PARENT_CLASS: &str = "ISettingsGroup";
-const SETTINGS_GROUP_ID_VAR_NAME: &str = "id";
-const SETTINGS_GROUP_DEFAULT_PRESET_VAR_NAME: &str = "defaultPresetIndex";
 
 impl WitcherScriptType for SettingsGroup {
     fn ws_type_name(&self) -> String {
@@ -73,13 +84,24 @@ impl WitcherScriptType for SettingsGroup {
 
 impl WitcherScriptTypeDef for SettingsGroup {
     fn ws_type_definition(&self, buffer: &mut WitcherScript) {
-        buffer.push_line(&format!("class {} extends {}", self.ws_type_name(), SETTINGS_GROUP_PARENT_CLASS));
+        buffer.push_line(&format!("class {} extends {}", self.ws_type_name(), GROUP_PARENT_CLASS));
         buffer.push_line("{").push_indent();
     
         group_class_variables(self, buffer);
         
         buffer.new_line();
         group_default_variable_values(self, buffer);
+
+        if self.validate_values {
+            buffer.new_line();
+            group_validate_values_function(self, buffer);
+        }
+
+        buffer.new_line();
+        group_read_settings_function(self, buffer);
+
+        buffer.new_line();
+        group_write_settings_function(self, buffer);
     
         buffer.pop_indent().push_line("}");
     }
@@ -92,6 +114,124 @@ fn group_class_variables(group: &SettingsGroup, buffer: &mut WitcherScript) {
 }
 
 fn group_default_variable_values(group: &SettingsGroup, buffer: &mut WitcherScript) {
-    buffer.push_line(&format!("default {} = '{}';", SETTINGS_GROUP_ID_VAR_NAME, group.id))
-          .push_line(&format!("default {} = {};", SETTINGS_GROUP_DEFAULT_PRESET_VAR_NAME, group.default_preset_index));
+    buffer.push_line(&format!("default {} = '{}';", GROUP_ID_VAR_NAME, group.id))
+          .push_line(&format!("default {} = {};", GROUP_DEFAULT_PRESET_VAR_NAME, group.default_preset_index));
+}
+
+fn group_validate_values_function(group: &SettingsGroup, buffer: &mut WitcherScript) {
+    buffer.push_line(&format!("public /* override */ function {}() : void", GROUP_VALIDATE_VALUES_FUNC_NAME));
+    buffer.push_line("{").push_indent();
+
+    for var in &group.vars {
+        let validator = match &var.var_type {
+            SettingsVarType::Int { min, max } => Some(format!("{v} = Clamp({v}, {min}, {max});", 
+                                                                v = var.var_name)),
+            SettingsVarType::Float { min, max } => Some(format!("{v} = ClampF({v}, {min}, {max});", 
+                                                                  v = var.var_name)),
+            SettingsVarType::Enum { val, val_mapping } => {
+                if let Some(_) = val_mapping {
+                    Some(format!("{v} = ({t}){p}.{f}('{gid}', '{vid}', (int){v});",
+                                   v = var.var_name, 
+                                   gid = group.id, vid = var.id,
+                                   t = val.type_name,
+                                   p = GROUP_PARENT_MASTER_VAR_NAME,
+                                   f = MASTER_ENUM_MAPPING_VALIDATE_FUNC_NAME))
+                } else {
+                    Some(format!("{v} = ({t})Clamp((int){v}, {min}, {max});",
+                                   v = var.var_name, 
+                                   t = val.type_name,
+                                   min = 0, max = val.values.len() - 1))
+                }
+            } 
+            
+            _ => None,
+        };
+
+        if let Some(validator) = validator {
+            buffer.push_line(&validator);
+        }
+    }
+
+    buffer.new_line();
+    buffer.push_line(&format!("super.{}();", GROUP_VALIDATE_VALUES_FUNC_NAME));
+
+    buffer.pop_indent().push_line("}");
+}
+
+fn group_read_settings_function(group: &SettingsGroup, buffer: &mut WitcherScript) {
+    buffer.push_line(&format!("public /* override */ function {}(optional config: CInGameConfigWrapper) : void", GROUP_READ_SETTINGS_FUNC_NAME));
+    buffer.push_line("{").push_indent();
+
+    buffer.push_line("if (!config)")
+          .push_indent()
+          .push_line("config = theGame.GetInGameConfigWrapper();")
+          .pop_indent()
+          .new_line();
+
+    for var in &group.vars {
+        // add type cast if it's an enum
+        let type_cast = if let SettingsVarType::Enum { val, .. } = &var.var_type {
+            format!("({})", val.type_name)
+        } else {
+            "".into()
+        };
+
+        let read_setting_value = format!("{vn} = {tc}{p}.{func}(config, '{gid}', '{vid}');",
+                                        vn = var.var_name,
+                                        tc = type_cast,
+                                        p = GROUP_PARENT_MASTER_VAR_NAME,
+                                        func = var.var_type.read_setting_value_fn(),
+                                        gid = group.id, vid = var.id);
+
+        buffer.push_line(&read_setting_value);
+    }
+    buffer.new_line();
+
+    if group.validate_values {
+        buffer.push_line(&format!("{}();", GROUP_VALIDATE_VALUES_FUNC_NAME))
+              .new_line();
+    }
+
+    buffer.push_line(&format!("super.{}(config);", GROUP_READ_SETTINGS_FUNC_NAME));
+
+    buffer.pop_indent().push_line("}");
+}
+
+fn group_write_settings_function(group: &SettingsGroup, buffer: &mut WitcherScript) {
+    buffer.push_line(&format!("public /* override */ function {}(shouldSave: bool, optional config: CInGameConfigWrapper) : void", GROUP_WRITE_SETTINGS_FUNC_NAME))
+          .push_line("{").push_indent();
+
+    buffer.push_line("if (!config)")
+          .push_indent()
+          .push_line("config = theGame.GetInGameConfigWrapper();")
+          .pop_indent()
+          .new_line();
+
+    if group.validate_values {
+        buffer.push_line(&format!("{}();", GROUP_VALIDATE_VALUES_FUNC_NAME))
+              .new_line();
+    }
+
+    for var in &group.vars {
+        // add type cast if it's an enum
+        let type_cast = if let SettingsVarType::Enum {..} = &var.var_type {
+            "(int)"
+        } else {
+            ""
+        };
+
+        let write_setting_value = format!("{p}.{func}(config, '{gid}', '{vid}', {tc}{vn});",
+                                        p = GROUP_PARENT_MASTER_VAR_NAME,
+                                        func = var.var_type.write_setting_value_fn(),
+                                        gid = group.id, vid = var.id,
+                                        tc = type_cast,
+                                        vn = var.var_name);
+
+        buffer.push_line(&write_setting_value);
+    }
+    
+    buffer.new_line();
+    buffer.push_line(&format!("super.{}(shouldSave, config);", GROUP_WRITE_SETTINGS_FUNC_NAME));
+          
+    buffer.pop_indent().push_line("}");
 }

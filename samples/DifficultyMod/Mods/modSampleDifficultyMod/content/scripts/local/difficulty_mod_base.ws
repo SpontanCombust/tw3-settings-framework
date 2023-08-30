@@ -15,8 +15,7 @@ class ModDifficultySettingsBase extends ISettingsMaster
 
 	public /* override */ function ValidateSettings() : void
 	{
-		general.healthMultip = ClampF(general.healthMultip, 0, 2);
-		general.dmgMultip = ClampF(general.dmgMultip, 0, 2);
+		general.Validate();
 
 		super.ValidateSettings();
 	}
@@ -26,11 +25,7 @@ class ModDifficultySettingsBase extends ISettingsMaster
 		var config : CInGameConfigWrapper;
 		config = theGame.GetInGameConfigWrapper();
 
-		general.enabled = ReadBoolSettingValue(config, 'DMgeneral', 'DMenabled');
-		general.healthMultip = ReadFloatSettingValue(config, 'DMgeneral', 'DMhealthMultip');
-		general.dmgMultip = ReadFloatSettingValue(config, 'DMgeneral', 'DMdmgMultip');
-
-		ValidateSettings();
+		general.Read(config);
 
 		super.ReadSettings();
 	}
@@ -40,18 +35,14 @@ class ModDifficultySettingsBase extends ISettingsMaster
 		var config : CInGameConfigWrapper;
 		config = theGame.GetInGameConfigWrapper();
 
-		ValidateSettings();
-
-		WriteBoolSettingValue(config, 'DMgeneral', 'DMenabled', general.enabled);
-		WriteFloatSettingValue(config, 'DMgeneral', 'DMhealthMultip', general.healthMultip);
-		WriteFloatSettingValue(config, 'DMgeneral', 'DMdmgMultip', general.dmgMultip);
+		general.Write(false, config);
 
 		super.WriteSettings();
 	}
 
 	public /* override */ function ResetSettingsToDefault() : void
 	{
-		general.ResetToDefault();
+		general.ResetToDefault(false);
 
 		super.ResetSettingsToDefault();
 	}
@@ -73,5 +64,41 @@ class ModDifficultySettingsBase_general extends ISettingsGroup
 
 	default id = 'DMgeneral';
 	default defaultPresetIndex = 1;
+
+	public /* override */ function Validate() : void
+	{
+		healthMultip = ClampF(healthMultip, 0, 2);
+		dmgMultip = ClampF(dmgMultip, 0, 2);
+
+		super.Validate();
+	}
+
+	public /* override */ function Read(optional config: CInGameConfigWrapper) : void
+	{
+		if (!config)
+			config = theGame.GetInGameConfigWrapper();
+
+		enabled = m_parentMaster.ReadBoolSettingValue(config, 'DMgeneral', 'DMenabled');
+		healthMultip = m_parentMaster.ReadFloatSettingValue(config, 'DMgeneral', 'DMhealthMultip');
+		dmgMultip = m_parentMaster.ReadFloatSettingValue(config, 'DMgeneral', 'DMdmgMultip');
+
+		Validate();
+
+		super.Read(config);
+	}
+
+	public /* override */ function Write(shouldSave: bool, optional config: CInGameConfigWrapper) : void
+	{
+		if (!config)
+			config = theGame.GetInGameConfigWrapper();
+
+		Validate();
+
+		m_parentMaster.WriteBoolSettingValue(config, 'DMgeneral', 'DMenabled', enabled);
+		m_parentMaster.WriteFloatSettingValue(config, 'DMgeneral', 'DMhealthMultip', healthMultip);
+		m_parentMaster.WriteFloatSettingValue(config, 'DMgeneral', 'DMdmgMultip', dmgMultip);
+
+		super.Write(shouldSave, config);
+	}
 }
 

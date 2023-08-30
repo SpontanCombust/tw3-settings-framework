@@ -17,15 +17,8 @@ class MonsterOfTheWeekSettings extends ISettingsMaster
 
 	public /* override */ function ValidateSettings() : void
 	{
-		difficulties.noMansLand = (MOTWDifficulty)Clamp((int)difficulties.noMansLand, 0, 2);
-		difficulties.skellige = (MOTWDifficulty)Clamp((int)difficulties.skellige, 0, 2);
-		difficulties.kaerMorhen = (MOTWDifficulty)Clamp((int)difficulties.kaerMorhen, 0, 2);
-		difficulties.toussaint = (MOTWDifficulty)Clamp((int)difficulties.toussaint, 0, 2);
-
-		monsters.noMansLand = (MonsterOfTheWeekSettings_monster)EnumValueMappingValidateUnified('MOTWmonsters', 'MOTWnoMansLand', (int)monsters.noMansLand);
-		monsters.skellige = (MonsterOfTheWeekSettings_monster)EnumValueMappingValidateUnified('MOTWmonsters', 'MOTWskellige', (int)monsters.skellige);
-		monsters.kaerMorhen = (MonsterOfTheWeekSettings_monster)EnumValueMappingValidateUnified('MOTWmonsters', 'MOTWkaerMorhen', (int)monsters.kaerMorhen);
-		monsters.toussaint = (MonsterOfTheWeekSettings_monster)EnumValueMappingValidateUnified('MOTWmonsters', 'MOTWtoussaint', (int)monsters.toussaint);
+		difficulties.Validate();
+		monsters.Validate();
 
 		super.ValidateSettings();
 	}
@@ -35,17 +28,8 @@ class MonsterOfTheWeekSettings extends ISettingsMaster
 		var config : CInGameConfigWrapper;
 		config = theGame.GetInGameConfigWrapper();
 
-		difficulties.noMansLand = (MOTWDifficulty)ReadIntSettingValue(config, 'MOTWdifficulties', 'MOTWnoMansLand');
-		difficulties.skellige = (MOTWDifficulty)ReadIntSettingValue(config, 'MOTWdifficulties', 'MOTWskellige');
-		difficulties.kaerMorhen = (MOTWDifficulty)ReadIntSettingValue(config, 'MOTWdifficulties', 'MOTWkaerMorhen');
-		difficulties.toussaint = (MOTWDifficulty)ReadIntSettingValue(config, 'MOTWdifficulties', 'MOTWtoussaint');
-
-		monsters.noMansLand = (MonsterOfTheWeekSettings_monster)ReadUnifiedEnumSettingValue(config, 'MOTWmonsters', 'MOTWnoMansLand');
-		monsters.skellige = (MonsterOfTheWeekSettings_monster)ReadUnifiedEnumSettingValue(config, 'MOTWmonsters', 'MOTWskellige');
-		monsters.kaerMorhen = (MonsterOfTheWeekSettings_monster)ReadUnifiedEnumSettingValue(config, 'MOTWmonsters', 'MOTWkaerMorhen');
-		monsters.toussaint = (MonsterOfTheWeekSettings_monster)ReadUnifiedEnumSettingValue(config, 'MOTWmonsters', 'MOTWtoussaint');
-
-		ValidateSettings();
+		difficulties.Read(config);
+		monsters.Read(config);
 
 		super.ReadSettings();
 	}
@@ -55,25 +39,16 @@ class MonsterOfTheWeekSettings extends ISettingsMaster
 		var config : CInGameConfigWrapper;
 		config = theGame.GetInGameConfigWrapper();
 
-		ValidateSettings();
-
-		WriteIntSettingValue(config, 'MOTWdifficulties', 'MOTWnoMansLand', (int)difficulties.noMansLand);
-		WriteIntSettingValue(config, 'MOTWdifficulties', 'MOTWskellige', (int)difficulties.skellige);
-		WriteIntSettingValue(config, 'MOTWdifficulties', 'MOTWkaerMorhen', (int)difficulties.kaerMorhen);
-		WriteIntSettingValue(config, 'MOTWdifficulties', 'MOTWtoussaint', (int)difficulties.toussaint);
-
-		WriteUnifiedEnumSettingValue(config, 'MOTWmonsters', 'MOTWnoMansLand', (int)monsters.noMansLand);
-		WriteUnifiedEnumSettingValue(config, 'MOTWmonsters', 'MOTWskellige', (int)monsters.skellige);
-		WriteUnifiedEnumSettingValue(config, 'MOTWmonsters', 'MOTWkaerMorhen', (int)monsters.kaerMorhen);
-		WriteUnifiedEnumSettingValue(config, 'MOTWmonsters', 'MOTWtoussaint', (int)monsters.toussaint);
+		difficulties.Write(false, config);
+		monsters.Write(false, config);
 
 		super.WriteSettings();
 	}
 
 	public /* override */ function ResetSettingsToDefault() : void
 	{
-		difficulties.ResetToDefault();
-		monsters.ResetToDefault();
+		difficulties.ResetToDefault(false);
+		monsters.ResetToDefault(false);
 
 		super.ResetSettingsToDefault();
 	}
@@ -276,6 +251,46 @@ class MonsterOfTheWeekSettings_difficulties extends ISettingsGroup
 
 	default id = 'MOTWdifficulties';
 	default defaultPresetIndex = 0;
+
+	public /* override */ function Validate() : void
+	{
+		noMansLand = (MOTWDifficulty)Clamp((int)noMansLand, 0, 2);
+		skellige = (MOTWDifficulty)Clamp((int)skellige, 0, 2);
+		kaerMorhen = (MOTWDifficulty)Clamp((int)kaerMorhen, 0, 2);
+		toussaint = (MOTWDifficulty)Clamp((int)toussaint, 0, 2);
+
+		super.Validate();
+	}
+
+	public /* override */ function Read(optional config: CInGameConfigWrapper) : void
+	{
+		if (!config)
+			config = theGame.GetInGameConfigWrapper();
+
+		noMansLand = (MOTWDifficulty)m_parentMaster.ReadIntSettingValue(config, 'MOTWdifficulties', 'MOTWnoMansLand');
+		skellige = (MOTWDifficulty)m_parentMaster.ReadIntSettingValue(config, 'MOTWdifficulties', 'MOTWskellige');
+		kaerMorhen = (MOTWDifficulty)m_parentMaster.ReadIntSettingValue(config, 'MOTWdifficulties', 'MOTWkaerMorhen');
+		toussaint = (MOTWDifficulty)m_parentMaster.ReadIntSettingValue(config, 'MOTWdifficulties', 'MOTWtoussaint');
+
+		Validate();
+
+		super.Read(config);
+	}
+
+	public /* override */ function Write(shouldSave: bool, optional config: CInGameConfigWrapper) : void
+	{
+		if (!config)
+			config = theGame.GetInGameConfigWrapper();
+
+		Validate();
+
+		m_parentMaster.WriteIntSettingValue(config, 'MOTWdifficulties', 'MOTWnoMansLand', (int)noMansLand);
+		m_parentMaster.WriteIntSettingValue(config, 'MOTWdifficulties', 'MOTWskellige', (int)skellige);
+		m_parentMaster.WriteIntSettingValue(config, 'MOTWdifficulties', 'MOTWkaerMorhen', (int)kaerMorhen);
+		m_parentMaster.WriteIntSettingValue(config, 'MOTWdifficulties', 'MOTWtoussaint', (int)toussaint);
+
+		super.Write(shouldSave, config);
+	}
 }
 
 class MonsterOfTheWeekSettings_monsters extends ISettingsGroup
@@ -287,6 +302,46 @@ class MonsterOfTheWeekSettings_monsters extends ISettingsGroup
 
 	default id = 'MOTWmonsters';
 	default defaultPresetIndex = 0;
+
+	public /* override */ function Validate() : void
+	{
+		noMansLand = (MonsterOfTheWeekSettings_monster)m_parentMaster.EnumValueMappingValidateUnified('MOTWmonsters', 'MOTWnoMansLand', (int)noMansLand);
+		skellige = (MonsterOfTheWeekSettings_monster)m_parentMaster.EnumValueMappingValidateUnified('MOTWmonsters', 'MOTWskellige', (int)skellige);
+		kaerMorhen = (MonsterOfTheWeekSettings_monster)m_parentMaster.EnumValueMappingValidateUnified('MOTWmonsters', 'MOTWkaerMorhen', (int)kaerMorhen);
+		toussaint = (MonsterOfTheWeekSettings_monster)m_parentMaster.EnumValueMappingValidateUnified('MOTWmonsters', 'MOTWtoussaint', (int)toussaint);
+
+		super.Validate();
+	}
+
+	public /* override */ function Read(optional config: CInGameConfigWrapper) : void
+	{
+		if (!config)
+			config = theGame.GetInGameConfigWrapper();
+
+		noMansLand = (MonsterOfTheWeekSettings_monster)m_parentMaster.ReadUnifiedEnumSettingValue(config, 'MOTWmonsters', 'MOTWnoMansLand');
+		skellige = (MonsterOfTheWeekSettings_monster)m_parentMaster.ReadUnifiedEnumSettingValue(config, 'MOTWmonsters', 'MOTWskellige');
+		kaerMorhen = (MonsterOfTheWeekSettings_monster)m_parentMaster.ReadUnifiedEnumSettingValue(config, 'MOTWmonsters', 'MOTWkaerMorhen');
+		toussaint = (MonsterOfTheWeekSettings_monster)m_parentMaster.ReadUnifiedEnumSettingValue(config, 'MOTWmonsters', 'MOTWtoussaint');
+
+		Validate();
+
+		super.Read(config);
+	}
+
+	public /* override */ function Write(shouldSave: bool, optional config: CInGameConfigWrapper) : void
+	{
+		if (!config)
+			config = theGame.GetInGameConfigWrapper();
+
+		Validate();
+
+		m_parentMaster.WriteUnifiedEnumSettingValue(config, 'MOTWmonsters', 'MOTWnoMansLand', (int)noMansLand);
+		m_parentMaster.WriteUnifiedEnumSettingValue(config, 'MOTWmonsters', 'MOTWskellige', (int)skellige);
+		m_parentMaster.WriteUnifiedEnumSettingValue(config, 'MOTWmonsters', 'MOTWkaerMorhen', (int)kaerMorhen);
+		m_parentMaster.WriteUnifiedEnumSettingValue(config, 'MOTWmonsters', 'MOTWtoussaint', (int)toussaint);
+
+		super.Write(shouldSave, config);
+	}
 }
 
 enum MOTWDifficulty

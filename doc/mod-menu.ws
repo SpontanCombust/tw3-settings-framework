@@ -19,12 +19,9 @@ class MyModSettings extends ISettingsMaster
 
 	public /* override */ function ValidateSettings() : void
 	{
-		tab1.option = (MyModSettings_opt)Clamp((int)tab1.option, 0, 2);
-		tab1.sliderFloat = ClampF(tab1.sliderFloat, 0, 1);
-		tab1.sliderInt = Clamp(tab1.sliderInt, 0, 100);
-		tab1.version = ClampF(tab1.version, 0, 100);
-
-		tab2.anotherSlider = ClampF(tab2.anotherSlider, -100, 100);
+		tab1.Validate();
+		tab2.Validate();
+		tab3.Validate();
 
 		super.ValidateSettings();
 	}
@@ -34,17 +31,9 @@ class MyModSettings extends ISettingsMaster
 		var config : CInGameConfigWrapper;
 		config = theGame.GetInGameConfigWrapper();
 
-		tab1.option = (MyModSettings_opt)ReadIntSettingValue(config, 'MODtab1', 'MODoption');
-		tab1.sliderFloat = ReadFloatSettingValue(config, 'MODtab1', 'MODslider1');
-		tab1.sliderInt = ReadIntSettingValue(config, 'MODtab1', 'MODslider2');
-		tab1.toggle = ReadBoolSettingValue(config, 'MODtab1', 'MODtoggle');
-		tab1.version = ReadFloatSettingValue(config, 'MODtab1', 'MODversion');
-
-		tab2.anotherSlider = ReadFloatSettingValue(config, 'MODtab2subtab1', 'anotherSlider');
-
-		tab3.anotherToggle = ReadBoolSettingValue(config, 'MODtab2subtab2', 'anotherToggle');
-
-		ValidateSettings();
+		tab1.Read(config);
+		tab2.Read(config);
+		tab3.Read(config);
 
 		super.ReadSettings();
 	}
@@ -54,26 +43,18 @@ class MyModSettings extends ISettingsMaster
 		var config : CInGameConfigWrapper;
 		config = theGame.GetInGameConfigWrapper();
 
-		ValidateSettings();
-
-		WriteIntSettingValue(config, 'MODtab1', 'MODoption', (int)tab1.option);
-		WriteFloatSettingValue(config, 'MODtab1', 'MODslider1', tab1.sliderFloat);
-		WriteIntSettingValue(config, 'MODtab1', 'MODslider2', tab1.sliderInt);
-		WriteBoolSettingValue(config, 'MODtab1', 'MODtoggle', tab1.toggle);
-		WriteFloatSettingValue(config, 'MODtab1', 'MODversion', tab1.version);
-
-		WriteFloatSettingValue(config, 'MODtab2subtab1', 'anotherSlider', tab2.anotherSlider);
-
-		WriteBoolSettingValue(config, 'MODtab2subtab2', 'anotherToggle', tab3.anotherToggle);
+		tab1.Write(false, config);
+		tab2.Write(false, config);
+		tab3.Write(false, config);
 
 		super.WriteSettings();
 	}
 
 	public /* override */ function ResetSettingsToDefault() : void
 	{
-		tab1.ResetToDefault();
-		tab2.ResetToDefault();
-		tab3.ResetToDefault();
+		tab1.ResetToDefault(false);
+		tab2.ResetToDefault(false);
+		tab3.ResetToDefault(false);
 
 		super.ResetSettingsToDefault();
 	}
@@ -97,6 +78,48 @@ class MyModSettings_tab1 extends ISettingsGroup
 
 	default id = 'MODtab1';
 	default defaultPresetIndex = 1;
+
+	public /* override */ function Validate() : void
+	{
+		option = (MyModSettings_opt)Clamp((int)option, 0, 2);
+		sliderFloat = ClampF(sliderFloat, 0, 1);
+		sliderInt = Clamp(sliderInt, 0, 100);
+		version = ClampF(version, 0, 100);
+
+		super.Validate();
+	}
+
+	public /* override */ function Read(optional config: CInGameConfigWrapper) : void
+	{
+		if (!config)
+			config = theGame.GetInGameConfigWrapper();
+
+		option = (MyModSettings_opt)m_parentMaster.ReadIntSettingValue(config, 'MODtab1', 'MODoption');
+		sliderFloat = m_parentMaster.ReadFloatSettingValue(config, 'MODtab1', 'MODslider1');
+		sliderInt = m_parentMaster.ReadIntSettingValue(config, 'MODtab1', 'MODslider2');
+		toggle = m_parentMaster.ReadBoolSettingValue(config, 'MODtab1', 'MODtoggle');
+		version = m_parentMaster.ReadFloatSettingValue(config, 'MODtab1', 'MODversion');
+
+		Validate();
+
+		super.Read(config);
+	}
+
+	public /* override */ function Write(shouldSave: bool, optional config: CInGameConfigWrapper) : void
+	{
+		if (!config)
+			config = theGame.GetInGameConfigWrapper();
+
+		Validate();
+
+		m_parentMaster.WriteIntSettingValue(config, 'MODtab1', 'MODoption', (int)option);
+		m_parentMaster.WriteFloatSettingValue(config, 'MODtab1', 'MODslider1', sliderFloat);
+		m_parentMaster.WriteIntSettingValue(config, 'MODtab1', 'MODslider2', sliderInt);
+		m_parentMaster.WriteBoolSettingValue(config, 'MODtab1', 'MODtoggle', toggle);
+		m_parentMaster.WriteFloatSettingValue(config, 'MODtab1', 'MODversion', version);
+
+		super.Write(shouldSave, config);
+	}
 }
 
 class MyModSettings_tab2 extends ISettingsGroup
@@ -105,6 +128,37 @@ class MyModSettings_tab2 extends ISettingsGroup
 
 	default id = 'MODtab2subtab1';
 	default defaultPresetIndex = 0;
+
+	public /* override */ function Validate() : void
+	{
+		anotherSlider = ClampF(anotherSlider, -100, 100);
+
+		super.Validate();
+	}
+
+	public /* override */ function Read(optional config: CInGameConfigWrapper) : void
+	{
+		if (!config)
+			config = theGame.GetInGameConfigWrapper();
+
+		anotherSlider = m_parentMaster.ReadFloatSettingValue(config, 'MODtab2subtab1', 'anotherSlider');
+
+		Validate();
+
+		super.Read(config);
+	}
+
+	public /* override */ function Write(shouldSave: bool, optional config: CInGameConfigWrapper) : void
+	{
+		if (!config)
+			config = theGame.GetInGameConfigWrapper();
+
+		Validate();
+
+		m_parentMaster.WriteFloatSettingValue(config, 'MODtab2subtab1', 'anotherSlider', anotherSlider);
+
+		super.Write(shouldSave, config);
+	}
 }
 
 class MyModSettings_tab3 extends ISettingsGroup
@@ -113,6 +167,36 @@ class MyModSettings_tab3 extends ISettingsGroup
 
 	default id = 'MODtab2subtab2';
 	default defaultPresetIndex = 0;
+
+	public /* override */ function Validate() : void
+	{
+
+		super.Validate();
+	}
+
+	public /* override */ function Read(optional config: CInGameConfigWrapper) : void
+	{
+		if (!config)
+			config = theGame.GetInGameConfigWrapper();
+
+		anotherToggle = m_parentMaster.ReadBoolSettingValue(config, 'MODtab2subtab2', 'anotherToggle');
+
+		Validate();
+
+		super.Read(config);
+	}
+
+	public /* override */ function Write(shouldSave: bool, optional config: CInGameConfigWrapper) : void
+	{
+		if (!config)
+			config = theGame.GetInGameConfigWrapper();
+
+		Validate();
+
+		m_parentMaster.WriteBoolSettingValue(config, 'MODtab2subtab2', 'anotherToggle', anotherToggle);
+
+		super.Write(shouldSave, config);
+	}
 }
 
 enum MyModSettings_opt
