@@ -15,8 +15,7 @@ class ModDifficultySettingsBase extends ISettingsMaster
 
 	public /* override */ function ValidateSettings() : void
 	{
-		general.healthMultip = ClampF(general.healthMultip, 0, 2);
-		general.dmgMultip = ClampF(general.dmgMultip, 0, 2);
+		general.Validate();
 
 		super.ValidateSettings();
 	}
@@ -73,5 +72,13 @@ class ModDifficultySettingsBase_general extends ISettingsGroup
 
 	default id = 'DMgeneral';
 	default defaultPresetIndex = 1;
+
+	public /* override */ function Validate() : void
+	{
+		healthMultip = ClampF(healthMultip, 0, 2);
+		dmgMultip = ClampF(dmgMultip, 0, 2);
+
+		super.Validate();
+	}
 }
 

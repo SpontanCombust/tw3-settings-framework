@@ -17,15 +17,8 @@ class MonsterOfTheWeekSettings extends ISettingsMaster
 
 	public /* override */ function ValidateSettings() : void
 	{
-		difficulties.noMansLand = (MOTWDifficulty)Clamp((int)difficulties.noMansLand, 0, 2);
-		difficulties.skellige = (MOTWDifficulty)Clamp((int)difficulties.skellige, 0, 2);
-		difficulties.kaerMorhen = (MOTWDifficulty)Clamp((int)difficulties.kaerMorhen, 0, 2);
-		difficulties.toussaint = (MOTWDifficulty)Clamp((int)difficulties.toussaint, 0, 2);
-
-		monsters.noMansLand = (MonsterOfTheWeekSettings_monster)EnumValueMappingValidateUnified('MOTWmonsters', 'MOTWnoMansLand', (int)monsters.noMansLand);
-		monsters.skellige = (MonsterOfTheWeekSettings_monster)EnumValueMappingValidateUnified('MOTWmonsters', 'MOTWskellige', (int)monsters.skellige);
-		monsters.kaerMorhen = (MonsterOfTheWeekSettings_monster)EnumValueMappingValidateUnified('MOTWmonsters', 'MOTWkaerMorhen', (int)monsters.kaerMorhen);
-		monsters.toussaint = (MonsterOfTheWeekSettings_monster)EnumValueMappingValidateUnified('MOTWmonsters', 'MOTWtoussaint', (int)monsters.toussaint);
+		difficulties.Validate();
+		monsters.Validate();
 
 		super.ValidateSettings();
 	}
@@ -276,6 +269,16 @@ class MonsterOfTheWeekSettings_difficulties extends ISettingsGroup
 
 	default id = 'MOTWdifficulties';
 	default defaultPresetIndex = 0;
+
+	public /* override */ function Validate() : void
+	{
+		noMansLand = (MOTWDifficulty)Clamp((int)noMansLand, 0, 2);
+		skellige = (MOTWDifficulty)Clamp((int)skellige, 0, 2);
+		kaerMorhen = (MOTWDifficulty)Clamp((int)kaerMorhen, 0, 2);
+		toussaint = (MOTWDifficulty)Clamp((int)toussaint, 0, 2);
+
+		super.Validate();
+	}
 }
 
 class MonsterOfTheWeekSettings_monsters extends ISettingsGroup
@@ -287,6 +290,16 @@ class MonsterOfTheWeekSettings_monsters extends ISettingsGroup
 
 	default id = 'MOTWmonsters';
 	default defaultPresetIndex = 0;
+
+	public /* override */ function Validate() : void
+	{
+		noMansLand = (MonsterOfTheWeekSettings_monster)m_parentMaster.EnumValueMappingValidateUnified('MOTWmonsters', 'MOTWnoMansLand', (int)noMansLand);
+		skellige = (MonsterOfTheWeekSettings_monster)m_parentMaster.EnumValueMappingValidateUnified('MOTWmonsters', 'MOTWskellige', (int)skellige);
+		kaerMorhen = (MonsterOfTheWeekSettings_monster)m_parentMaster.EnumValueMappingValidateUnified('MOTWmonsters', 'MOTWkaerMorhen', (int)kaerMorhen);
+		toussaint = (MonsterOfTheWeekSettings_monster)m_parentMaster.EnumValueMappingValidateUnified('MOTWmonsters', 'MOTWtoussaint', (int)toussaint);
+
+		super.Validate();
+	}
 }
 
 enum MOTWDifficulty

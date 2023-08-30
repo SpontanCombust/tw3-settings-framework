@@ -19,12 +19,9 @@ class MyModSettings extends ISettingsMaster
 
 	public /* override */ function ValidateSettings() : void
 	{
-		tab1.option = (MyModSettings_opt)Clamp((int)tab1.option, 0, 2);
-		tab1.sliderFloat = ClampF(tab1.sliderFloat, 0, 1);
-		tab1.sliderInt = Clamp(tab1.sliderInt, 0, 100);
-		tab1.version = ClampF(tab1.version, 0, 100);
-
-		tab2.anotherSlider = ClampF(tab2.anotherSlider, -100, 100);
+		tab1.Validate();
+		tab2.Validate();
+		tab3.Validate();
 
 		super.ValidateSettings();
 	}
@@ -97,6 +94,16 @@ class MyModSettings_tab1 extends ISettingsGroup
 
 	default id = 'MODtab1';
 	default defaultPresetIndex = 1;
+
+	public /* override */ function Validate() : void
+	{
+		option = (MyModSettings_opt)Clamp((int)option, 0, 2);
+		sliderFloat = ClampF(sliderFloat, 0, 1);
+		sliderInt = Clamp(sliderInt, 0, 100);
+		version = ClampF(version, 0, 100);
+
+		super.Validate();
+	}
 }
 
 class MyModSettings_tab2 extends ISettingsGroup
@@ -105,6 +112,13 @@ class MyModSettings_tab2 extends ISettingsGroup
 
 	default id = 'MODtab2subtab1';
 	default defaultPresetIndex = 0;
+
+	public /* override */ function Validate() : void
+	{
+		anotherSlider = ClampF(anotherSlider, -100, 100);
+
+		super.Validate();
+	}
 }
 
 class MyModSettings_tab3 extends ISettingsGroup
@@ -113,6 +127,12 @@ class MyModSettings_tab3 extends ISettingsGroup
 
 	default id = 'MODtab2subtab2';
 	default defaultPresetIndex = 0;
+
+	public /* override */ function Validate() : void
+	{
+
+		super.Validate();
+	}
 }
 
 enum MyModSettings_opt
