@@ -71,9 +71,9 @@ class MyModSettings extends ISettingsMaster
 
 	public /* override */ function ResetSettingsToDefault() : void
 	{
-		tab1.ResetToDefault();
-		tab2.ResetToDefault();
-		tab3.ResetToDefault();
+		tab1.ResetToDefault(false);
+		tab2.ResetToDefault(false);
+		tab3.ResetToDefault(false);
 
 		super.ResetSettingsToDefault();
 	}
