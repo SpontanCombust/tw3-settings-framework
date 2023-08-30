@@ -39,17 +39,8 @@ class MonsterOfTheWeekSettings extends ISettingsMaster
 		var config : CInGameConfigWrapper;
 		config = theGame.GetInGameConfigWrapper();
 
-		ValidateSettings();
-
-		WriteIntSettingValue(config, 'MOTWdifficulties', 'MOTWnoMansLand', (int)difficulties.noMansLand);
-		WriteIntSettingValue(config, 'MOTWdifficulties', 'MOTWskellige', (int)difficulties.skellige);
-		WriteIntSettingValue(config, 'MOTWdifficulties', 'MOTWkaerMorhen', (int)difficulties.kaerMorhen);
-		WriteIntSettingValue(config, 'MOTWdifficulties', 'MOTWtoussaint', (int)difficulties.toussaint);
-
-		WriteUnifiedEnumSettingValue(config, 'MOTWmonsters', 'MOTWnoMansLand', (int)monsters.noMansLand);
-		WriteUnifiedEnumSettingValue(config, 'MOTWmonsters', 'MOTWskellige', (int)monsters.skellige);
-		WriteUnifiedEnumSettingValue(config, 'MOTWmonsters', 'MOTWkaerMorhen', (int)monsters.kaerMorhen);
-		WriteUnifiedEnumSettingValue(config, 'MOTWmonsters', 'MOTWtoussaint', (int)monsters.toussaint);
+		difficulties.Write(false, config);
+		monsters.Write(false, config);
 
 		super.WriteSettings();
 	}
@@ -285,6 +276,21 @@ class MonsterOfTheWeekSettings_difficulties extends ISettingsGroup
 
 		super.Read(config);
 	}
+
+	public /* override */ function Write(shouldSave: bool, optional config: CInGameConfigWrapper) : void
+	{
+		if (!config)
+			config = theGame.GetInGameConfigWrapper();
+
+		Validate();
+
+		m_parentMaster.WriteIntSettingValue(config, 'MOTWdifficulties', 'MOTWnoMansLand', (int)noMansLand);
+		m_parentMaster.WriteIntSettingValue(config, 'MOTWdifficulties', 'MOTWskellige', (int)skellige);
+		m_parentMaster.WriteIntSettingValue(config, 'MOTWdifficulties', 'MOTWkaerMorhen', (int)kaerMorhen);
+		m_parentMaster.WriteIntSettingValue(config, 'MOTWdifficulties', 'MOTWtoussaint', (int)toussaint);
+
+		super.Write(shouldSave, config);
+	}
 }
 
 class MonsterOfTheWeekSettings_monsters extends ISettingsGroup
@@ -320,6 +326,21 @@ class MonsterOfTheWeekSettings_monsters extends ISettingsGroup
 		Validate();
 
 		super.Read(config);
+	}
+
+	public /* override */ function Write(shouldSave: bool, optional config: CInGameConfigWrapper) : void
+	{
+		if (!config)
+			config = theGame.GetInGameConfigWrapper();
+
+		Validate();
+
+		m_parentMaster.WriteUnifiedEnumSettingValue(config, 'MOTWmonsters', 'MOTWnoMansLand', (int)noMansLand);
+		m_parentMaster.WriteUnifiedEnumSettingValue(config, 'MOTWmonsters', 'MOTWskellige', (int)skellige);
+		m_parentMaster.WriteUnifiedEnumSettingValue(config, 'MOTWmonsters', 'MOTWkaerMorhen', (int)kaerMorhen);
+		m_parentMaster.WriteUnifiedEnumSettingValue(config, 'MOTWmonsters', 'MOTWtoussaint', (int)toussaint);
+
+		super.Write(shouldSave, config);
 	}
 }
 

@@ -43,17 +43,9 @@ class MyModSettings extends ISettingsMaster
 		var config : CInGameConfigWrapper;
 		config = theGame.GetInGameConfigWrapper();
 
-		ValidateSettings();
-
-		WriteIntSettingValue(config, 'MODtab1', 'MODoption', (int)tab1.option);
-		WriteFloatSettingValue(config, 'MODtab1', 'MODslider1', tab1.sliderFloat);
-		WriteIntSettingValue(config, 'MODtab1', 'MODslider2', tab1.sliderInt);
-		WriteBoolSettingValue(config, 'MODtab1', 'MODtoggle', tab1.toggle);
-		WriteFloatSettingValue(config, 'MODtab1', 'MODversion', tab1.version);
-
-		WriteFloatSettingValue(config, 'MODtab2subtab1', 'anotherSlider', tab2.anotherSlider);
-
-		WriteBoolSettingValue(config, 'MODtab2subtab2', 'anotherToggle', tab3.anotherToggle);
+		tab1.Write(false, config);
+		tab2.Write(false, config);
+		tab3.Write(false, config);
 
 		super.WriteSettings();
 	}
@@ -112,6 +104,22 @@ class MyModSettings_tab1 extends ISettingsGroup
 
 		super.Read(config);
 	}
+
+	public /* override */ function Write(shouldSave: bool, optional config: CInGameConfigWrapper) : void
+	{
+		if (!config)
+			config = theGame.GetInGameConfigWrapper();
+
+		Validate();
+
+		m_parentMaster.WriteIntSettingValue(config, 'MODtab1', 'MODoption', (int)option);
+		m_parentMaster.WriteFloatSettingValue(config, 'MODtab1', 'MODslider1', sliderFloat);
+		m_parentMaster.WriteIntSettingValue(config, 'MODtab1', 'MODslider2', sliderInt);
+		m_parentMaster.WriteBoolSettingValue(config, 'MODtab1', 'MODtoggle', toggle);
+		m_parentMaster.WriteFloatSettingValue(config, 'MODtab1', 'MODversion', version);
+
+		super.Write(shouldSave, config);
+	}
 }
 
 class MyModSettings_tab2 extends ISettingsGroup
@@ -139,6 +147,18 @@ class MyModSettings_tab2 extends ISettingsGroup
 
 		super.Read(config);
 	}
+
+	public /* override */ function Write(shouldSave: bool, optional config: CInGameConfigWrapper) : void
+	{
+		if (!config)
+			config = theGame.GetInGameConfigWrapper();
+
+		Validate();
+
+		m_parentMaster.WriteFloatSettingValue(config, 'MODtab2subtab1', 'anotherSlider', anotherSlider);
+
+		super.Write(shouldSave, config);
+	}
 }
 
 class MyModSettings_tab3 extends ISettingsGroup
@@ -164,6 +184,18 @@ class MyModSettings_tab3 extends ISettingsGroup
 		Validate();
 
 		super.Read(config);
+	}
+
+	public /* override */ function Write(shouldSave: bool, optional config: CInGameConfigWrapper) : void
+	{
+		if (!config)
+			config = theGame.GetInGameConfigWrapper();
+
+		Validate();
+
+		m_parentMaster.WriteBoolSettingValue(config, 'MODtab2subtab2', 'anotherToggle', anotherToggle);
+
+		super.Write(shouldSave, config);
 	}
 }
 
