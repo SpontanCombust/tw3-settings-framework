@@ -31,17 +31,9 @@ class MyModSettings extends ISettingsMaster
 		var config : CInGameConfigWrapper;
 		config = theGame.GetInGameConfigWrapper();
 
-		tab1.option = (MyModSettings_opt)ReadIntSettingValue(config, 'MODtab1', 'MODoption');
-		tab1.sliderFloat = ReadFloatSettingValue(config, 'MODtab1', 'MODslider1');
-		tab1.sliderInt = ReadIntSettingValue(config, 'MODtab1', 'MODslider2');
-		tab1.toggle = ReadBoolSettingValue(config, 'MODtab1', 'MODtoggle');
-		tab1.version = ReadFloatSettingValue(config, 'MODtab1', 'MODversion');
-
-		tab2.anotherSlider = ReadFloatSettingValue(config, 'MODtab2subtab1', 'anotherSlider');
-
-		tab3.anotherToggle = ReadBoolSettingValue(config, 'MODtab2subtab2', 'anotherToggle');
-
-		ValidateSettings();
+		tab1.Read(config);
+		tab2.Read(config);
+		tab3.Read(config);
 
 		super.ReadSettings();
 	}
@@ -104,6 +96,22 @@ class MyModSettings_tab1 extends ISettingsGroup
 
 		super.Validate();
 	}
+
+	public /* override */ function Read(optional config: CInGameConfigWrapper) : void
+	{
+		if (!config)
+			config = theGame.GetInGameConfigWrapper();
+
+		option = (MyModSettings_opt)m_parentMaster.ReadIntSettingValue(config, 'MODtab1', 'MODoption');
+		sliderFloat = m_parentMaster.ReadFloatSettingValue(config, 'MODtab1', 'MODslider1');
+		sliderInt = m_parentMaster.ReadIntSettingValue(config, 'MODtab1', 'MODslider2');
+		toggle = m_parentMaster.ReadBoolSettingValue(config, 'MODtab1', 'MODtoggle');
+		version = m_parentMaster.ReadFloatSettingValue(config, 'MODtab1', 'MODversion');
+
+		Validate();
+
+		super.Read(config);
+	}
 }
 
 class MyModSettings_tab2 extends ISettingsGroup
@@ -119,6 +127,18 @@ class MyModSettings_tab2 extends ISettingsGroup
 
 		super.Validate();
 	}
+
+	public /* override */ function Read(optional config: CInGameConfigWrapper) : void
+	{
+		if (!config)
+			config = theGame.GetInGameConfigWrapper();
+
+		anotherSlider = m_parentMaster.ReadFloatSettingValue(config, 'MODtab2subtab1', 'anotherSlider');
+
+		Validate();
+
+		super.Read(config);
+	}
 }
 
 class MyModSettings_tab3 extends ISettingsGroup
@@ -132,6 +152,18 @@ class MyModSettings_tab3 extends ISettingsGroup
 	{
 
 		super.Validate();
+	}
+
+	public /* override */ function Read(optional config: CInGameConfigWrapper) : void
+	{
+		if (!config)
+			config = theGame.GetInGameConfigWrapper();
+
+		anotherToggle = m_parentMaster.ReadBoolSettingValue(config, 'MODtab2subtab2', 'anotherToggle');
+
+		Validate();
+
+		super.Read(config);
 	}
 }
 

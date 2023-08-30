@@ -25,11 +25,7 @@ class ModDifficultySettingsBase extends ISettingsMaster
 		var config : CInGameConfigWrapper;
 		config = theGame.GetInGameConfigWrapper();
 
-		general.enabled = ReadBoolSettingValue(config, 'DMgeneral', 'DMenabled');
-		general.healthMultip = ReadFloatSettingValue(config, 'DMgeneral', 'DMhealthMultip');
-		general.dmgMultip = ReadFloatSettingValue(config, 'DMgeneral', 'DMdmgMultip');
-
-		ValidateSettings();
+		general.Read(config);
 
 		super.ReadSettings();
 	}
@@ -79,6 +75,20 @@ class ModDifficultySettingsBase_general extends ISettingsGroup
 		dmgMultip = ClampF(dmgMultip, 0, 2);
 
 		super.Validate();
+	}
+
+	public /* override */ function Read(optional config: CInGameConfigWrapper) : void
+	{
+		if (!config)
+			config = theGame.GetInGameConfigWrapper();
+
+		enabled = m_parentMaster.ReadBoolSettingValue(config, 'DMgeneral', 'DMenabled');
+		healthMultip = m_parentMaster.ReadFloatSettingValue(config, 'DMgeneral', 'DMhealthMultip');
+		dmgMultip = m_parentMaster.ReadFloatSettingValue(config, 'DMgeneral', 'DMdmgMultip');
+
+		Validate();
+
+		super.Read(config);
 	}
 }
 
