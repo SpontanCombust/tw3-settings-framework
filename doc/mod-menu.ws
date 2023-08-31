@@ -70,20 +70,20 @@ class MyModSettings_tab1 extends ISettingsGroup
 
 	protected /* override */ function Parser_Read(config: CInGameConfigWrapper) : void
 	{
-		option = (MyModSettings_opt)m_parentMaster.ReadIntSettingValue(config, 'MODtab1', 'MODoption');
-		sliderFloat = m_parentMaster.ReadFloatSettingValue(config, 'MODtab1', 'MODslider1');
-		sliderInt = m_parentMaster.ReadIntSettingValue(config, 'MODtab1', 'MODslider2');
-		toggle = m_parentMaster.ReadBoolSettingValue(config, 'MODtab1', 'MODtoggle');
-		version = m_parentMaster.ReadFloatSettingValue(config, 'MODtab1', 'MODversion');
+		option = (MyModSettings_opt)ReadIntSettingValue(config, 'MODoption');
+		sliderFloat = ReadFloatSettingValue(config, 'MODslider1');
+		sliderInt = ReadIntSettingValue(config, 'MODslider2');
+		toggle = ReadBoolSettingValue(config, 'MODtoggle');
+		version = ReadFloatSettingValue(config, 'MODversion');
 	}
 
 	protected /* override */ function Parser_Write(config: CInGameConfigWrapper) : void
 	{
-		m_parentMaster.WriteIntSettingValue(config, 'MODtab1', 'MODoption', (int)option);
-		m_parentMaster.WriteFloatSettingValue(config, 'MODtab1', 'MODslider1', sliderFloat);
-		m_parentMaster.WriteIntSettingValue(config, 'MODtab1', 'MODslider2', sliderInt);
-		m_parentMaster.WriteBoolSettingValue(config, 'MODtab1', 'MODtoggle', toggle);
-		m_parentMaster.WriteFloatSettingValue(config, 'MODtab1', 'MODversion', version);
+		WriteIntSettingValue(config, 'MODoption', (int)option);
+		WriteFloatSettingValue(config, 'MODslider1', sliderFloat);
+		WriteIntSettingValue(config, 'MODslider2', sliderInt);
+		WriteBoolSettingValue(config, 'MODtoggle', toggle);
+		WriteFloatSettingValue(config, 'MODversion', version);
 	}
 }
 
@@ -101,12 +101,12 @@ class MyModSettings_tab2 extends ISettingsGroup
 
 	protected /* override */ function Parser_Read(config: CInGameConfigWrapper) : void
 	{
-		anotherSlider = m_parentMaster.ReadFloatSettingValue(config, 'MODtab2subtab1', 'anotherSlider');
+		anotherSlider = ReadFloatSettingValue(config, 'anotherSlider');
 	}
 
 	protected /* override */ function Parser_Write(config: CInGameConfigWrapper) : void
 	{
-		m_parentMaster.WriteFloatSettingValue(config, 'MODtab2subtab1', 'anotherSlider', anotherSlider);
+		WriteFloatSettingValue(config, 'anotherSlider', anotherSlider);
 	}
 }
 
@@ -123,12 +123,12 @@ class MyModSettings_tab3 extends ISettingsGroup
 
 	protected /* override */ function Parser_Read(config: CInGameConfigWrapper) : void
 	{
-		anotherToggle = m_parentMaster.ReadBoolSettingValue(config, 'MODtab2subtab2', 'anotherToggle');
+		anotherToggle = ReadBoolSettingValue(config, 'anotherToggle');
 	}
 
 	protected /* override */ function Parser_Write(config: CInGameConfigWrapper) : void
 	{
-		m_parentMaster.WriteBoolSettingValue(config, 'MODtab2subtab2', 'anotherToggle', anotherToggle);
+		WriteBoolSettingValue(config, 'anotherToggle', anotherToggle);
 	}
 }
 

@@ -54,16 +54,16 @@ class ModDifficultySettingsBase_general extends ISettingsGroup
 
 	protected /* override */ function Parser_Read(config: CInGameConfigWrapper) : void
 	{
-		enabled = m_parentMaster.ReadBoolSettingValue(config, 'DMgeneral', 'DMenabled');
-		healthMultip = m_parentMaster.ReadFloatSettingValue(config, 'DMgeneral', 'DMhealthMultip');
-		dmgMultip = m_parentMaster.ReadFloatSettingValue(config, 'DMgeneral', 'DMdmgMultip');
+		enabled = ReadBoolSettingValue(config, 'DMenabled');
+		healthMultip = ReadFloatSettingValue(config, 'DMhealthMultip');
+		dmgMultip = ReadFloatSettingValue(config, 'DMdmgMultip');
 	}
 
 	protected /* override */ function Parser_Write(config: CInGameConfigWrapper) : void
 	{
-		m_parentMaster.WriteBoolSettingValue(config, 'DMgeneral', 'DMenabled', enabled);
-		m_parentMaster.WriteFloatSettingValue(config, 'DMgeneral', 'DMhealthMultip', healthMultip);
-		m_parentMaster.WriteFloatSettingValue(config, 'DMgeneral', 'DMdmgMultip', dmgMultip);
+		WriteBoolSettingValue(config, 'DMenabled', enabled);
+		WriteFloatSettingValue(config, 'DMhealthMultip', healthMultip);
+		WriteFloatSettingValue(config, 'DMdmgMultip', dmgMultip);
 	}
 }
 

@@ -41,186 +41,6 @@ class MonsterOfTheWeekSettings extends ISettingsMaster
 	{
 		return config.GetVarValue('MOTWdifficulties','MOTWnoMansLand') == "";
 	}
-
-	protected /* override */ function Parser_EnumValueMappingConfigToUnified(gId: name, vId: name, val: int) : int
-	{
-		switch(gId)
-		{
-		case 'MOTWmonsters':
-			switch(vId)
-			{
-			case 'MOTWnoMansLand':
-				switch(val)
-				{
-				case 0: return 0;
-				case 1: return 1;
-				case 2: return 2;
-				case 3: return 3;
-				case 4: return 4;
-				case 5: return 5;
-				case 6: return 6;
-				}
-			case 'MOTWskellige':
-				switch(val)
-				{
-				case 0: return 7;
-				case 1: return 8;
-				case 2: return 1;
-				case 3: return 2;
-				case 4: return 3;
-				case 5: return 4;
-				case 6: return 9;
-				case 7: return 10;
-				case 8: return 11;
-				}
-			case 'MOTWkaerMorhen':
-				switch(val)
-				{
-				case 0: return 8;
-				case 1: return 2;
-				case 2: return 1;
-				case 3: return 3;
-				}
-			case 'MOTWtoussaint':
-				switch(val)
-				{
-				case 0: return 12;
-				case 1: return 13;
-				case 2: return 14;
-				case 3: return 15;
-				case 4: return 16;
-				case 5: return 17;
-				case 6: return 18;
-				}
-			}
-		}
-
-		return -1;
-	}
-
-	protected /* override */ function Parser_EnumValueMappingUnifiedToConfig(gId: name, vId: name, val: int) : int
-	{
-		switch(gId)
-		{
-		case 'MOTWmonsters':
-			switch(vId)
-			{
-			case 'MOTWnoMansLand':
-				switch(val)
-				{
-				case 0: return 0;
-				case 1: return 1;
-				case 2: return 2;
-				case 3: return 3;
-				case 4: return 4;
-				case 5: return 5;
-				case 6: return 6;
-				}
-			case 'MOTWskellige':
-				switch(val)
-				{
-				case 7: return 0;
-				case 8: return 1;
-				case 1: return 2;
-				case 2: return 3;
-				case 3: return 4;
-				case 4: return 5;
-				case 9: return 6;
-				case 10: return 7;
-				case 11: return 8;
-				}
-			case 'MOTWkaerMorhen':
-				switch(val)
-				{
-				case 8: return 0;
-				case 2: return 1;
-				case 1: return 2;
-				case 3: return 3;
-				}
-			case 'MOTWtoussaint':
-				switch(val)
-				{
-				case 12: return 0;
-				case 13: return 1;
-				case 14: return 2;
-				case 15: return 3;
-				case 16: return 4;
-				case 17: return 5;
-				case 18: return 6;
-				}
-			}
-		}
-
-		return -1;
-	}
-
-	protected /* override */ function Parser_EnumValueMappingValidateUnified(gId: name, vId: name, val: int) : int
-	{
-		switch(gId)
-		{
-		case 'MOTWmonsters':
-			switch(vId)
-			{
-			case 'MOTWnoMansLand':
-				switch(val)
-				{
-				case 0: 
-				case 1: 
-				case 2: 
-				case 3: 
-				case 4: 
-				case 5: 
-				case 6: 
-					return val;
-				default:
-					return 0;
-				}
-			case 'MOTWskellige':
-				switch(val)
-				{
-				case 7: 
-				case 8: 
-				case 1: 
-				case 2: 
-				case 3: 
-				case 4: 
-				case 9: 
-				case 10: 
-				case 11: 
-					return val;
-				default:
-					return 7;
-				}
-			case 'MOTWkaerMorhen':
-				switch(val)
-				{
-				case 8: 
-				case 2: 
-				case 1: 
-				case 3: 
-					return val;
-				default:
-					return 8;
-				}
-			case 'MOTWtoussaint':
-				switch(val)
-				{
-				case 12: 
-				case 13: 
-				case 14: 
-				case 15: 
-				case 16: 
-				case 17: 
-				case 18: 
-					return val;
-				default:
-					return 12;
-				}
-			}
-		}
-
-		return 0;
-	}
 }
 
 class MonsterOfTheWeekSettings_difficulties extends ISettingsGroup
@@ -243,18 +63,18 @@ class MonsterOfTheWeekSettings_difficulties extends ISettingsGroup
 
 	protected /* override */ function Parser_Read(config: CInGameConfigWrapper) : void
 	{
-		noMansLand = (MOTWDifficulty)m_parentMaster.ReadIntSettingValue(config, 'MOTWdifficulties', 'MOTWnoMansLand');
-		skellige = (MOTWDifficulty)m_parentMaster.ReadIntSettingValue(config, 'MOTWdifficulties', 'MOTWskellige');
-		kaerMorhen = (MOTWDifficulty)m_parentMaster.ReadIntSettingValue(config, 'MOTWdifficulties', 'MOTWkaerMorhen');
-		toussaint = (MOTWDifficulty)m_parentMaster.ReadIntSettingValue(config, 'MOTWdifficulties', 'MOTWtoussaint');
+		noMansLand = (MOTWDifficulty)ReadIntSettingValue(config, 'MOTWnoMansLand');
+		skellige = (MOTWDifficulty)ReadIntSettingValue(config, 'MOTWskellige');
+		kaerMorhen = (MOTWDifficulty)ReadIntSettingValue(config, 'MOTWkaerMorhen');
+		toussaint = (MOTWDifficulty)ReadIntSettingValue(config, 'MOTWtoussaint');
 	}
 
 	protected /* override */ function Parser_Write(config: CInGameConfigWrapper) : void
 	{
-		m_parentMaster.WriteIntSettingValue(config, 'MOTWdifficulties', 'MOTWnoMansLand', (int)noMansLand);
-		m_parentMaster.WriteIntSettingValue(config, 'MOTWdifficulties', 'MOTWskellige', (int)skellige);
-		m_parentMaster.WriteIntSettingValue(config, 'MOTWdifficulties', 'MOTWkaerMorhen', (int)kaerMorhen);
-		m_parentMaster.WriteIntSettingValue(config, 'MOTWdifficulties', 'MOTWtoussaint', (int)toussaint);
+		WriteIntSettingValue(config, 'MOTWnoMansLand', (int)noMansLand);
+		WriteIntSettingValue(config, 'MOTWskellige', (int)skellige);
+		WriteIntSettingValue(config, 'MOTWkaerMorhen', (int)kaerMorhen);
+		WriteIntSettingValue(config, 'MOTWtoussaint', (int)toussaint);
 	}
 }
 
@@ -278,18 +98,18 @@ class MonsterOfTheWeekSettings_monsters extends ISettingsGroup
 
 	protected /* override */ function Parser_Read(config: CInGameConfigWrapper) : void
 	{
-		noMansLand = (MonsterOfTheWeekSettings_monster)m_parentMaster.ReadUnifiedEnumSettingValue(config, 'MOTWmonsters', 'MOTWnoMansLand');
-		skellige = (MonsterOfTheWeekSettings_monster)m_parentMaster.ReadUnifiedEnumSettingValue(config, 'MOTWmonsters', 'MOTWskellige');
-		kaerMorhen = (MonsterOfTheWeekSettings_monster)m_parentMaster.ReadUnifiedEnumSettingValue(config, 'MOTWmonsters', 'MOTWkaerMorhen');
-		toussaint = (MonsterOfTheWeekSettings_monster)m_parentMaster.ReadUnifiedEnumSettingValue(config, 'MOTWmonsters', 'MOTWtoussaint');
+		noMansLand = (MonsterOfTheWeekSettings_monster)ReadUnifiedEnumSettingValue(config, 'MOTWnoMansLand');
+		skellige = (MonsterOfTheWeekSettings_monster)ReadUnifiedEnumSettingValue(config, 'MOTWskellige');
+		kaerMorhen = (MonsterOfTheWeekSettings_monster)ReadUnifiedEnumSettingValue(config, 'MOTWkaerMorhen');
+		toussaint = (MonsterOfTheWeekSettings_monster)ReadUnifiedEnumSettingValue(config, 'MOTWtoussaint');
 	}
 
 	protected /* override */ function Parser_Write(config: CInGameConfigWrapper) : void
 	{
-		m_parentMaster.WriteUnifiedEnumSettingValue(config, 'MOTWmonsters', 'MOTWnoMansLand', (int)noMansLand);
-		m_parentMaster.WriteUnifiedEnumSettingValue(config, 'MOTWmonsters', 'MOTWskellige', (int)skellige);
-		m_parentMaster.WriteUnifiedEnumSettingValue(config, 'MOTWmonsters', 'MOTWkaerMorhen', (int)kaerMorhen);
-		m_parentMaster.WriteUnifiedEnumSettingValue(config, 'MOTWmonsters', 'MOTWtoussaint', (int)toussaint);
+		WriteUnifiedEnumSettingValue(config, 'MOTWnoMansLand', (int)noMansLand);
+		WriteUnifiedEnumSettingValue(config, 'MOTWskellige', (int)skellige);
+		WriteUnifiedEnumSettingValue(config, 'MOTWkaerMorhen', (int)kaerMorhen);
+		WriteUnifiedEnumSettingValue(config, 'MOTWtoussaint', (int)toussaint);
 	}
 
 	protected /* override */ function Parser_EnumValueMappingValidateUnified(vId: name, val: int) : int
