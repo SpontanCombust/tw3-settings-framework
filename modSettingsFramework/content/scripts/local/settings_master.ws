@@ -66,7 +66,7 @@ abstract class ISettingsMaster
 
         return Parser_ShouldResetSettingsToDefaultOnInit(config);
     }
-
+    //TODO move into ISettingsGroup individually
     // Returns integer value of the unified enum type for options var index in user config
     // If the config value is not valid for given option, should return -1
     public function EnumValueMappingConfigToUnified(gId: name, vId: name, val: int) : int

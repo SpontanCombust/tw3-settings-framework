@@ -9,9 +9,13 @@ pub const GROUP_VALIDATE_VALUES_FUNC_NAME: &str = "Validate";
 pub const GROUP_READ_SETTINGS_FUNC_NAME: &str = "Read";
 pub const GROUP_WRITE_SETTINGS_FUNC_NAME: &str = "Write";
 pub const GROUP_RESET_SETTINGS_TO_DEFAULT_FUNC_NAME: &str = "ResetToDefault";
+pub const GROUP_ENUM_MAPPING_VALIDATE_FUNC_NAME: &str = "EnumValueMappingValidateUnified";
 pub const GROUP_VALIDATE_VALUES_PARSER_FUNC_NAME: &str = "Parser_Validate";
 pub const GROUP_READ_SETTINGS_PARSER_FUNC_NAME: &str = "Parser_Read";
 pub const GROUP_WRITE_SETTINGS_PARSER_FUNC_NAME: &str = "Parser_Write";
+pub const GROUP_ENUM_MAPPING_CONFIG_TO_UNIFIED_PARSER_FUNC_NAME: &str = "Parser_EnumValueMappingConfigToUnified";
+pub const GROUP_ENUM_MAPPING_UNIFIED_TO_CONFIG_PARSER_FUNC_NAME: &str = "Parser_EnumValueMappingUnifiedToConfig";
+pub const GROUP_ENUM_MAPPING_VALIDATE_PARSER_FUNC_NAME: &str = "Parser_EnumValueMappingValidateUnified";
 
 pub const MASTER_BASE_CLASS_NAME: &str = "ISettingsMaster";
 pub const MASTER_MOD_VERSION_VAR_NAME: &str = "modVersion";
