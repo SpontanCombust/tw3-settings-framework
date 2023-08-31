@@ -18,10 +18,7 @@ use crate::{
         MASTER_WRITE_SETTINGS_PARSER_FUNC_NAME, 
         MASTER_RESET_SETTINGS_TO_DEFAULT_PARSER_FUNC_NAME, 
         GROUP_RESET_SETTINGS_TO_DEFAULT_FUNC_NAME, 
-        MASTER_SHOULD_RESET_TO_DEFAULT_ON_INIT_PARSER_FUNC_NAME, 
-        MASTER_ENUM_MAPPING_CONFIG_TO_UNIFIED_PARSER_FUNC_NAME, 
-        MASTER_ENUM_MAPPING_UNIFIED_TO_CONFIG_PARSER_FUNC_NAME, 
-        MASTER_ENUM_MAPPING_VALIDATE_PARSER_FUNC_NAME, 
+        MASTER_SHOULD_RESET_TO_DEFAULT_ON_INIT_PARSER_FUNC_NAME,
         GROUP_VALIDATE_VALUES_FUNC_NAME, 
         GROUP_READ_SETTINGS_FUNC_NAME, 
         GROUP_WRITE_SETTINGS_FUNC_NAME
@@ -67,11 +64,6 @@ impl SettingsMaster {
         }
   
         Ok(settings_master)
-    }
-
-    pub fn has_enum_value_mappings(&self) -> bool {
-        self.groups.iter()
-        .any(|g| g.has_enum_value_mappings())
     }
 
     // Returns whether enum value mapping is needed
@@ -223,17 +215,6 @@ impl WitcherScriptTypeDef for SettingsMaster {
     
         buffer.new_line();
         should_reset_to_default_on_init_function(self, buffer);
-
-        if self.has_enum_value_mappings() {
-            buffer.new_line();
-            enum_mapping_config_to_unified_function(self, buffer);
-
-            buffer.new_line();
-            enum_mapping_unified_to_config_function(self, buffer);
-
-            buffer.new_line();
-            enum_mapping_validate_function(self, buffer);
-        }
     
         buffer.pop_indent().push_line("}");
         buffer.new_line();
@@ -329,118 +310,6 @@ fn should_reset_to_default_on_init_function(master: &SettingsMaster, buffer: &mu
           .push_line("{").push_indent();
     
     buffer.push_line(&format!("return config.GetVarValue('{}','{}') == \"\";", group_id, var_id));         
-    
-    buffer.pop_indent().push_line("}");
-}
-
-fn enum_mapping_function(master: &SettingsMaster, buffer: &mut WitcherScript, config_to_unified: bool) {
-    buffer.push_line(&format!("protected /* override */ function {}(gId: name, vId: name, val: int) : int", 
-                                if config_to_unified {
-                                    MASTER_ENUM_MAPPING_CONFIG_TO_UNIFIED_PARSER_FUNC_NAME
-                                } else {
-                                    MASTER_ENUM_MAPPING_UNIFIED_TO_CONFIG_PARSER_FUNC_NAME
-                                }))
-          .push_line("{").push_indent();
-
-
-    buffer.push_line("switch(gId)")
-          .push_line("{");
-
-    for group in &master.groups {
-        if group.has_enum_value_mappings() {
-            buffer.push_line(&format!("case '{}':", group.id)).push_indent();
-    
-            buffer.push_line("switch(vId)")
-                  .push_line("{");
-            for var in &group.vars {
-                if let Some(mapping) = if let SettingsVarType::Enum { val_mapping, .. } = &var.var_type { val_mapping } else { &None } {
-                    buffer.push_line(&format!("case '{}':", var.id)).push_indent();
-        
-                    buffer.push_line("switch(val)")
-                          .push_line("{");
-
-                    for i in 0..mapping.len() {
-                        let (k, v) = if config_to_unified { 
-                            (i, mapping[i]) 
-                        } else { 
-                            (mapping[i], i) 
-                        };
-                        buffer.push_line(&format!("case {}: return {};", k, v));
-                    }
-
-                    buffer.push_line("}");
-
-                    buffer.pop_indent();
-                }
-            }
-            buffer.push_line("}");
-
-            buffer.pop_indent();
-        }
-    }
-
-    buffer.push_line("}");
-
-    buffer.new_line();
-    buffer.push_line("return -1;");
-
-    buffer.pop_indent().push_line("}");
-}
-
-fn enum_mapping_config_to_unified_function(master: &SettingsMaster, buffer: &mut WitcherScript) {
-    enum_mapping_function(master, buffer, true);
-}
-
-fn enum_mapping_unified_to_config_function(master: &SettingsMaster, buffer: &mut WitcherScript) {
-    enum_mapping_function(master, buffer, false);
-}
-
-fn enum_mapping_validate_function(master: &SettingsMaster, buffer: &mut WitcherScript) {
-    buffer.push_line(&format!("protected /* override */ function {}(gId: name, vId: name, val: int) : int", MASTER_ENUM_MAPPING_VALIDATE_PARSER_FUNC_NAME))
-          .push_line("{").push_indent();
-    
-    buffer.push_line("switch(gId)")
-          .push_line("{");
-
-    for group in &master.groups {
-        if group.has_enum_value_mappings() {
-            buffer.push_line(&format!("case '{}':", group.id)).push_indent();
-    
-            buffer.push_line("switch(vId)")
-                  .push_line("{");
-            for var in &group.vars {
-                if let Some(mapping) = if let SettingsVarType::Enum { val_mapping, .. } = &var.var_type { val_mapping } else { &None } {
-                    buffer.push_line(&format!("case '{}':", var.id)).push_indent();
-        
-                    buffer.push_line("switch(val)")
-                          .push_line("{");
-
-                    for i in 0..mapping.len() {
-                        buffer.push_line(&format!("case {}: ", mapping[i]));
-                    }
-
-                    buffer.push_indent()
-                          .push_line("return val;")
-                          .pop_indent()
-                          .push_line("default:")
-                          .push_indent()
-                          .push_line(&format!("return {};", mapping[0]))
-                          .pop_indent();
-
-                    buffer.push_line("}");
-
-                    buffer.pop_indent();
-                }
-            }
-            buffer.push_line("}");
-
-            buffer.pop_indent();
-        }
-    }
-    buffer.push_line("}");
-
-    buffer.new_line()
-          .push_line("return 0;");
     
     buffer.pop_indent().push_line("}");
 }

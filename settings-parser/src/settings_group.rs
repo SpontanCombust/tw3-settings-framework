@@ -8,7 +8,6 @@ use crate::{
         GROUP_ID_VAR_NAME, 
         GROUP_DEFAULT_PRESET_VAR_NAME, 
         GROUP_VALIDATE_VALUES_PARSER_FUNC_NAME,
-        GROUP_PARENT_MASTER_VAR_NAME, 
         GROUP_PARENT_CLASS, GROUP_READ_SETTINGS_PARSER_FUNC_NAME, 
         GROUP_WRITE_SETTINGS_PARSER_FUNC_NAME, 
         ReadSettingValueFnName, 
@@ -180,12 +179,11 @@ fn group_read_settings_function(group: &SettingsGroup, buffer: &mut WitcherScrip
             "".into()
         };
 
-        let read_setting_value = format!("{vn} = {tc}{p}.{func}(config, '{gid}', '{vid}');",
+        let read_setting_value = format!("{vn} = {tc}{func}(config, '{vid}');",
                                         vn = var.var_name,
                                         tc = type_cast,
-                                        p = GROUP_PARENT_MASTER_VAR_NAME,
                                         func = var.var_type.read_setting_value_fn(),
-                                        gid = group.id, vid = var.id);
+                                        vid = var.id);
 
         buffer.push_line(&read_setting_value);
     }
@@ -205,10 +203,9 @@ fn group_write_settings_function(group: &SettingsGroup, buffer: &mut WitcherScri
             ""
         };
 
-        let write_setting_value = format!("{p}.{func}(config, '{gid}', '{vid}', {tc}{vn});",
-                                        p = GROUP_PARENT_MASTER_VAR_NAME,
+        let write_setting_value = format!("{func}(config, '{vid}', {tc}{vn});",
                                         func = var.var_type.write_setting_value_fn(),
-                                        gid = group.id, vid = var.id,
+                                        vid = var.id,
                                         tc = type_cast,
                                         vn = var.var_name);
 

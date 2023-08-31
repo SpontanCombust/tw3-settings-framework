@@ -25,12 +25,8 @@ pub const MASTER_READ_SETTINGS_PARSER_FUNC_NAME: &str = "Parser_ReadSettings";
 pub const MASTER_WRITE_SETTINGS_PARSER_FUNC_NAME: &str = "Parser_WriteSettings";
 pub const MASTER_READ_SETTING_VALUE_FUNC_NAME: &str = "ReadSettingValue";
 pub const MASTER_WRITE_SETTING_VALUE_FUNC_NAME: &str = "WriteSettingValue";
-pub const MASTER_ENUM_MAPPING_VALIDATE_FUNC_NAME: &str = "EnumValueMappingValidateUnified";
 pub const MASTER_RESET_SETTINGS_TO_DEFAULT_PARSER_FUNC_NAME: &str = "Parser_ResetSettingsToDefault";
 pub const MASTER_SHOULD_RESET_TO_DEFAULT_ON_INIT_PARSER_FUNC_NAME: &str = "Parser_ShouldResetSettingsToDefaultOnInit";
-pub const MASTER_ENUM_MAPPING_CONFIG_TO_UNIFIED_PARSER_FUNC_NAME: &str = "Parser_EnumValueMappingConfigToUnified";
-pub const MASTER_ENUM_MAPPING_UNIFIED_TO_CONFIG_PARSER_FUNC_NAME: &str = "Parser_EnumValueMappingUnifiedToConfig";
-pub const MASTER_ENUM_MAPPING_VALIDATE_PARSER_FUNC_NAME: &str = "Parser_EnumValueMappingValidateUnified";
 
 pub trait ReadSettingValueFnName {
     fn read_setting_value_fn(&self) -> &'static str;

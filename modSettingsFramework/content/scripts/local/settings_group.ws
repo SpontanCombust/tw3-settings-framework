@@ -95,4 +95,69 @@ abstract class ISettingsGroup
     protected function Parser_EnumValueMappingConfigToUnified(vId: name, val: int) : int { return -1; }
     protected function Parser_EnumValueMappingUnifiedToConfig(vId: name, val: int) : int { return -1; }
     protected function Parser_EnumValueMappingValidateUnified(vId: name, val: int) : int { return 0; }
+
+
+
+    // ====================== Utility functions ======================
+
+    // these bool conversion functions are here for sanity sake, 
+    // because an implicit conversion from string to bool doesn't sit right with me
+    protected function StringToBool(s: string) : bool
+    {
+        if(s == "false" || s == "" || !s) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    protected function BoolToString(b: bool) : string
+    {
+        if(b) {
+            return "true";
+        } else {
+            return "false";
+        }
+    }
+
+    protected function ReadIntSettingValue(config: CInGameConfigWrapper, vId: name) : int
+    {
+        return StringToInt(m_parentMaster.ReadSettingValue(config, this.id, vId), 0);
+    }
+
+    protected function ReadFloatSettingValue(config: CInGameConfigWrapper, vId: name) : float
+    {
+        return StringToFloat(m_parentMaster.ReadSettingValue(config, this.id, vId), 0.0);
+    }
+
+    protected function ReadBoolSettingValue(config: CInGameConfigWrapper, vId: name) : bool
+    {
+        return StringToBool(m_parentMaster.ReadSettingValue(config, this.id, vId));
+    }
+
+    protected function ReadUnifiedEnumSettingValue(config: CInGameConfigWrapper, vId: name) : int
+    {
+        return EnumValueMappingConfigToUnified(vId, ReadIntSettingValue(config, vId));
+    }
+
+
+    protected function WriteIntSettingValue(config: CInGameConfigWrapper, vId: name, value: int) : void
+    {
+        m_parentMaster.WriteSettingValue(config, this.id, vId, IntToString(value));
+    }
+
+    protected function WriteFloatSettingValue(config: CInGameConfigWrapper, vId: name, value: float) : void
+    {
+        m_parentMaster.WriteSettingValue(config, this.id, vId, FloatToString(value));
+    }
+
+    protected function WriteBoolSettingValue(config: CInGameConfigWrapper, vId: name, value: bool) : void
+    {
+        m_parentMaster.WriteSettingValue(config, this.id, vId, BoolToString(value));
+    }
+
+    protected function WriteUnifiedEnumSettingValue(config: CInGameConfigWrapper, vId: name, value: int) : void
+    {
+        WriteIntSettingValue(config, vId, EnumValueMappingUnifiedToConfig(vId, value));
+    }
 }
