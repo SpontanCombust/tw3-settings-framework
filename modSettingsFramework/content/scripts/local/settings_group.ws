@@ -15,7 +15,6 @@ abstract class ISettingsGroup
         m_parentMaster = parent_;
     }
 
-    //TODO update class specification
     // Corrects values to ranges specified in the xml
     public function Validate(): void
     {
