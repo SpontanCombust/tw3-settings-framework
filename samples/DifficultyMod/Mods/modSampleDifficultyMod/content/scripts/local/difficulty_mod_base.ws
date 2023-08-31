@@ -8,27 +8,10 @@ class ModDifficultySettingsBase extends ISettingsMaster
 
 	protected /* override */ function Parser_Init() : void
 	{
-		general = new ModDifficultySettingsBase_general in this; general.Init(this);
-	}
+		general = new ModDifficultySettingsBase_general in this;
+		general.Init(this);
+		m_groups.PushBack(general);
 
-	protected /* override */ function Parser_ValidateSettings() : void
-	{
-		general.Validate();
-	}
-
-	protected /* override */ function Parser_ReadSettings(config : CInGameConfigWrapper) : void
-	{
-		general.Read(config);
-	}
-
-	protected /* override */ function Parser_WriteSettings(config : CInGameConfigWrapper) : void
-	{
-		general.Write(false, config);
-	}
-
-	protected /* override */ function Parser_ResetSettingsToDefault(config : CInGameConfigWrapper) : void
-	{
-		general.ResetToDefault(false, config);
 	}
 
 	protected /* override */ function Parser_ShouldResetSettingsToDefaultOnInit(config : CInGameConfigWrapper) : bool

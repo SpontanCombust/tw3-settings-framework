@@ -10,37 +10,18 @@ class MyModSettings extends ISettingsMaster
 
 	protected /* override */ function Parser_Init() : void
 	{
-		tab1 = new MyModSettings_tab1 in this; tab1.Init(this);
-		tab2 = new MyModSettings_tab2 in this; tab2.Init(this);
-		tab3 = new MyModSettings_tab3 in this; tab3.Init(this);
-	}
+		tab1 = new MyModSettings_tab1 in this;
+		tab1.Init(this);
+		m_groups.PushBack(tab1);
 
-	protected /* override */ function Parser_ValidateSettings() : void
-	{
-		tab1.Validate();
-		tab2.Validate();
-		tab3.Validate();
-	}
+		tab2 = new MyModSettings_tab2 in this;
+		tab2.Init(this);
+		m_groups.PushBack(tab2);
 
-	protected /* override */ function Parser_ReadSettings(config : CInGameConfigWrapper) : void
-	{
-		tab1.Read(config);
-		tab2.Read(config);
-		tab3.Read(config);
-	}
+		tab3 = new MyModSettings_tab3 in this;
+		tab3.Init(this);
+		m_groups.PushBack(tab3);
 
-	protected /* override */ function Parser_WriteSettings(config : CInGameConfigWrapper) : void
-	{
-		tab1.Write(false, config);
-		tab2.Write(false, config);
-		tab3.Write(false, config);
-	}
-
-	protected /* override */ function Parser_ResetSettingsToDefault(config : CInGameConfigWrapper) : void
-	{
-		tab1.ResetToDefault(false, config);
-		tab2.ResetToDefault(false, config);
-		tab3.ResetToDefault(false, config);
 	}
 
 	protected /* override */ function Parser_ShouldResetSettingsToDefaultOnInit(config : CInGameConfigWrapper) : bool

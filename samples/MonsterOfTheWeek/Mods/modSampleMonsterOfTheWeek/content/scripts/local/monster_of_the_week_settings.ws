@@ -9,32 +9,14 @@ class MonsterOfTheWeekSettings extends ISettingsMaster
 
 	protected /* override */ function Parser_Init() : void
 	{
-		difficulties = new MonsterOfTheWeekSettings_difficulties in this; difficulties.Init(this);
-		monsters = new MonsterOfTheWeekSettings_monsters in this; monsters.Init(this);
-	}
+		difficulties = new MonsterOfTheWeekSettings_difficulties in this;
+		difficulties.Init(this);
+		m_groups.PushBack(difficulties);
 
-	protected /* override */ function Parser_ValidateSettings() : void
-	{
-		difficulties.Validate();
-		monsters.Validate();
-	}
+		monsters = new MonsterOfTheWeekSettings_monsters in this;
+		monsters.Init(this);
+		m_groups.PushBack(monsters);
 
-	protected /* override */ function Parser_ReadSettings(config : CInGameConfigWrapper) : void
-	{
-		difficulties.Read(config);
-		monsters.Read(config);
-	}
-
-	protected /* override */ function Parser_WriteSettings(config : CInGameConfigWrapper) : void
-	{
-		difficulties.Write(false, config);
-		monsters.Write(false, config);
-	}
-
-	protected /* override */ function Parser_ResetSettingsToDefault(config : CInGameConfigWrapper) : void
-	{
-		difficulties.ResetToDefault(false, config);
-		monsters.ResetToDefault(false, config);
 	}
 
 	protected /* override */ function Parser_ShouldResetSettingsToDefaultOnInit(config : CInGameConfigWrapper) : bool
