@@ -19,13 +19,10 @@ pub const GROUP_ENUM_MAPPING_VALIDATE_PARSER_FUNC_NAME: &str = "Parser_EnumValue
 
 pub const MASTER_BASE_CLASS_NAME: &str = "ISettingsMaster";
 pub const MASTER_MOD_VERSION_VAR_NAME: &str = "modVersion";
-pub const MASTER_INIT_PARSER_FUNC_NAME: &str = "Parser_Init";
-pub const MASTER_VALIDATE_VALUES_PARSER_FUNC_NAME: &str = "Parser_ValidateSettings";
-pub const MASTER_READ_SETTINGS_PARSER_FUNC_NAME: &str = "Parser_ReadSettings";
-pub const MASTER_WRITE_SETTINGS_PARSER_FUNC_NAME: &str = "Parser_WriteSettings";
+pub const MASTER_GROUP_ARRAY_VAR_NAME: &str = "m_groups";
 pub const MASTER_READ_SETTING_VALUE_FUNC_NAME: &str = "ReadSettingValue";
 pub const MASTER_WRITE_SETTING_VALUE_FUNC_NAME: &str = "WriteSettingValue";
-pub const MASTER_RESET_SETTINGS_TO_DEFAULT_PARSER_FUNC_NAME: &str = "Parser_ResetSettingsToDefault";
+pub const MASTER_INIT_PARSER_FUNC_NAME: &str = "Parser_Init";
 pub const MASTER_SHOULD_RESET_TO_DEFAULT_ON_INIT_PARSER_FUNC_NAME: &str = "Parser_ShouldResetSettingsToDefaultOnInit";
 
 pub trait ReadSettingValueFnName {
