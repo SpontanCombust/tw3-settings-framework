@@ -16,6 +16,7 @@ pub struct Var {
     pub display_name: String,
     pub display_type: DisplayType,
     pub ignore: Option<bool>,
+    pub validate: Option<bool>
 }
 
 
@@ -32,13 +33,15 @@ impl TryFrom<&Node<'_, '_>> for Var {
         let display_name = parse_attribute_string_required(node, "displayName", false)?;
         let variable_name = parse_attribute_string(node, "msfVariable", true)?;
         let ignore = parse_attribute_bool(node, "msfIgnore")?;
+        let validate = parse_attribute_bool(node, "msfValidate")?;
         
         Ok(Var {
             id: id.to_owned(),
             variable_name,
             display_name: display_name.to_owned(),
             display_type: DisplayType::try_from(node)?,
-            ignore
+            ignore,
+            validate
         })
     }
 }

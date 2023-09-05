@@ -30,7 +30,7 @@ impl SettingsMaster {
     pub fn try_from(xml_user_config: UserConfig, cli: &CLI) -> Result<Self, String> {  
         let class_name = xml_user_config.class_name;
         let mod_version = xml_user_config.mod_version.unwrap_or("1.0".into());
-        let validate_values = !cli.no_var_validation;
+        let validate_values = xml_user_config.validate.unwrap_or(true);
         let generate_getter = !cli.no_getter;
         
         let mut settings_groups = Vec::new();

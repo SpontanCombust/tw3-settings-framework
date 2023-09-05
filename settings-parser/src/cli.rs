@@ -17,13 +17,7 @@ pub struct CLI {
     #[clap(long, display_order=1)]
     pub strict_enums: bool,
 
-    /// Disables the generation of code for value correction.
-    /// After reading from or before writing to user config values will no longer be checked if they adhere to the XML,
-    /// e.g. if slider value is in a specified range.
-    #[clap(long, display_order=2)]
-    pub no_var_validation: bool,
-
     /// Prevents the settings object getter convenience function from being generated
-    #[clap(long, display_order=3)]
+    #[clap(long, display_order=2)]
     pub no_getter: bool
 }

@@ -22,6 +22,7 @@ pub struct Group {
     pub default_preset_index: Option<u8>,
     pub visible_vars: Vec<Var>,
     pub ignore: Option<bool>,
+    pub validate: Option<bool>
 }
 
 
@@ -39,6 +40,7 @@ impl TryFrom<&Node<'_, '_>> for Group {
         // let class_name = parse_attribute_string(node, "msfClass", true)?;
         let variable_name = parse_attribute_string(node, "msfVariable", true)?;
         let ignore = parse_attribute_bool(node, "msfIgnore")?;
+        let validate = parse_attribute_bool(node, "msfValidate")?;
 
         let mut preset_elements = Vec::<(usize, String)>::new();
         let mut default_preset_index = None;
@@ -82,6 +84,7 @@ impl TryFrom<&Node<'_, '_>> for Group {
             presets_array,
             default_preset_index,
             visible_vars,
+            validate
         })
     }
 }

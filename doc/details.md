@@ -47,6 +47,11 @@ If a variable of a unified enum type in WitcherScript gets assigned a value it i
 If a unified enum type exists for the settings class, an extra set of functions are generated, which names start with `EnumValueMapping`. They essentially make all of this just work and allow the conversion from user config integer value to enum value in WitcherScript and vice versa.
 
 
+## Var validation
+After reading from and before writing to user configuration during the game values of the parsed class are corrected to adhere to their XML constraints, for example a variable corresponding to the slider var in XML will have its value clamped between minimal and maximal possible values.
+It is possible to disable this validation for the entire class or singular groups and vars. To do it use the `msfValidate` attribute.
+
+
 ## Breaking changes
 
 ### v0.6

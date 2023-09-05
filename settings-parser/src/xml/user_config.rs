@@ -2,7 +2,7 @@ use roxmltree::{Document, Node};
 
 use crate::utils::{
     parse_attribute_string, 
-    parse_attribute_string_required
+    parse_attribute_string_required, parse_attribute_bool
 };
 
 use super::group::Group;
@@ -13,7 +13,8 @@ pub struct UserConfig {
     pub class_name: String,
     pub mod_version: Option<String>,
     pub mod_prefixes: Vec<String>,
-    pub groups: Vec<Group>
+    pub groups: Vec<Group>,
+    pub validate: Option<bool>
 }
 
 
@@ -34,6 +35,9 @@ impl TryFrom<&Document<'_>> for UserConfig {
                 Vec::new()
             };
 
+            let validate = parse_attribute_bool(&root_node, "msfValidate")?;
+
+            
             let group_nodes: Vec<Node> = root_node.children()
                                         .filter(|n| n.has_tag_name("Group"))
                                         .collect();
@@ -56,7 +60,8 @@ impl TryFrom<&Document<'_>> for UserConfig {
                 class_name,
                 mod_version,
                 mod_prefixes,
-                groups 
+                groups,
+                validate
             })
         } else {
             Err("No UserConfig node found in the document".into())

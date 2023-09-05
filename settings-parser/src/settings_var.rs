@@ -8,11 +8,12 @@ use crate::{
 pub struct SettingsVar {
     pub id: String, // id attribute in the Var node
     pub var_name: String, // name of a variable inside a group class in WitcherScript
-    pub var_type: SettingsVarType
+    pub var_type: SettingsVarType,
+    pub validate_value: bool
 }
 
 impl SettingsVar {
-    pub fn try_from(xml_var: &Var, master_class_name: &str, prefixes: &Vec<String>) -> Result<Option<Self>, String> {
+    pub fn try_from(xml_var: &Var, master_class_name: &str, prefixes: &Vec<String>, group_validate_values: bool) -> Result<Option<Self>, String> {
         let var_name = if let Some(variable_name) = &xml_var.variable_name {
             variable_name.clone()
         } else {
@@ -20,11 +21,13 @@ impl SettingsVar {
         };
 
         let svt = SettingsVarType::from(xml_var, master_class_name, prefixes)?;
+        let validate_value = xml_var.validate.unwrap_or(group_validate_values);
 
         Ok(svt.and_then(|var_type| Some(SettingsVar {
             id: xml_var.id.clone(),
             var_name,
-            var_type
+            var_type,
+            validate_value
         })))
     }
 }
