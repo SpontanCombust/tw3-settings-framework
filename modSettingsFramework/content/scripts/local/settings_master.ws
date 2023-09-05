@@ -18,6 +18,8 @@ abstract class ISettingsMaster
         {
             ResetSettingsToDefault();
         }
+
+        ReadSettings();
     }
 
     // Corrects values to ranges specified in the xml
