@@ -34,7 +34,7 @@ class MonsterOfTheWeekSettings_difficulties extends ISettingsGroup
 	default id = 'MOTWdifficulties';
 	default defaultPresetIndex = 0;
 
-	protected /* override */ function Parser_Validate() : void
+	protected /* override */ function Parser_ValidateSettings() : void
 	{
 		noMansLand = (MOTWDifficulty)Clamp((int)noMansLand, 0, 2);
 		skellige = (MOTWDifficulty)Clamp((int)skellige, 0, 2);
@@ -42,7 +42,7 @@ class MonsterOfTheWeekSettings_difficulties extends ISettingsGroup
 		toussaint = (MOTWDifficulty)Clamp((int)toussaint, 0, 2);
 	}
 
-	protected /* override */ function Parser_Read(config: CInGameConfigWrapper) : void
+	protected /* override */ function Parser_ReadSettings(config: CInGameConfigWrapper) : void
 	{
 		noMansLand = (MOTWDifficulty)ReadIntSettingValue(config, 'MOTWnoMansLand');
 		skellige = (MOTWDifficulty)ReadIntSettingValue(config, 'MOTWskellige');
@@ -50,7 +50,7 @@ class MonsterOfTheWeekSettings_difficulties extends ISettingsGroup
 		toussaint = (MOTWDifficulty)ReadIntSettingValue(config, 'MOTWtoussaint');
 	}
 
-	protected /* override */ function Parser_Write(config: CInGameConfigWrapper) : void
+	protected /* override */ function Parser_WriteSettings(config: CInGameConfigWrapper) : void
 	{
 		WriteIntSettingValue(config, 'MOTWnoMansLand', (int)noMansLand);
 		WriteIntSettingValue(config, 'MOTWskellige', (int)skellige);
@@ -69,7 +69,7 @@ class MonsterOfTheWeekSettings_monsters extends ISettingsGroup
 	default id = 'MOTWmonsters';
 	default defaultPresetIndex = 0;
 
-	protected /* override */ function Parser_Validate() : void
+	protected /* override */ function Parser_ValidateSettings() : void
 	{
 		noMansLand = (MonsterOfTheWeekSettings_monster)EnumValueMappingValidateUnified('MOTWnoMansLand', (int)noMansLand);
 		skellige = (MonsterOfTheWeekSettings_monster)EnumValueMappingValidateUnified('MOTWskellige', (int)skellige);
@@ -77,7 +77,7 @@ class MonsterOfTheWeekSettings_monsters extends ISettingsGroup
 		toussaint = (MonsterOfTheWeekSettings_monster)EnumValueMappingValidateUnified('MOTWtoussaint', (int)toussaint);
 	}
 
-	protected /* override */ function Parser_Read(config: CInGameConfigWrapper) : void
+	protected /* override */ function Parser_ReadSettings(config: CInGameConfigWrapper) : void
 	{
 		noMansLand = (MonsterOfTheWeekSettings_monster)ReadUnifiedEnumSettingValue(config, 'MOTWnoMansLand');
 		skellige = (MonsterOfTheWeekSettings_monster)ReadUnifiedEnumSettingValue(config, 'MOTWskellige');
@@ -85,7 +85,7 @@ class MonsterOfTheWeekSettings_monsters extends ISettingsGroup
 		toussaint = (MonsterOfTheWeekSettings_monster)ReadUnifiedEnumSettingValue(config, 'MOTWtoussaint');
 	}
 
-	protected /* override */ function Parser_Write(config: CInGameConfigWrapper) : void
+	protected /* override */ function Parser_WriteSettings(config: CInGameConfigWrapper) : void
 	{
 		WriteUnifiedEnumSettingValue(config, 'MOTWnoMansLand', (int)noMansLand);
 		WriteUnifiedEnumSettingValue(config, 'MOTWskellige', (int)skellige);

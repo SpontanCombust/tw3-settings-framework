@@ -40,7 +40,7 @@ class MyModSettings_tab1 extends ISettingsGroup
 	default id = 'MODtab1';
 	default defaultPresetIndex = 1;
 
-	protected /* override */ function Parser_Validate() : void
+	protected /* override */ function Parser_ValidateSettings() : void
 	{
 		option = (MyModSettings_opt)Clamp((int)option, 0, 2);
 		sliderFloat = ClampF(sliderFloat, 0, 1);
@@ -48,7 +48,7 @@ class MyModSettings_tab1 extends ISettingsGroup
 		version = ClampF(version, 0, 100);
 	}
 
-	protected /* override */ function Parser_Read(config: CInGameConfigWrapper) : void
+	protected /* override */ function Parser_ReadSettings(config: CInGameConfigWrapper) : void
 	{
 		option = (MyModSettings_opt)ReadIntSettingValue(config, 'MODoption');
 		sliderFloat = ReadFloatSettingValue(config, 'MODslider1');
@@ -57,7 +57,7 @@ class MyModSettings_tab1 extends ISettingsGroup
 		version = ReadFloatSettingValue(config, 'MODversion');
 	}
 
-	protected /* override */ function Parser_Write(config: CInGameConfigWrapper) : void
+	protected /* override */ function Parser_WriteSettings(config: CInGameConfigWrapper) : void
 	{
 		WriteIntSettingValue(config, 'MODoption', (int)option);
 		WriteFloatSettingValue(config, 'MODslider1', sliderFloat);
@@ -74,17 +74,17 @@ class MyModSettings_tab2 extends ISettingsGroup
 	default id = 'MODtab2subtab1';
 	default defaultPresetIndex = 0;
 
-	protected /* override */ function Parser_Validate() : void
+	protected /* override */ function Parser_ValidateSettings() : void
 	{
 		anotherSlider = ClampF(anotherSlider, -100, 100);
 	}
 
-	protected /* override */ function Parser_Read(config: CInGameConfigWrapper) : void
+	protected /* override */ function Parser_ReadSettings(config: CInGameConfigWrapper) : void
 	{
 		anotherSlider = ReadFloatSettingValue(config, 'anotherSlider');
 	}
 
-	protected /* override */ function Parser_Write(config: CInGameConfigWrapper) : void
+	protected /* override */ function Parser_WriteSettings(config: CInGameConfigWrapper) : void
 	{
 		WriteFloatSettingValue(config, 'anotherSlider', anotherSlider);
 	}
@@ -97,16 +97,16 @@ class MyModSettings_tab3 extends ISettingsGroup
 	default id = 'MODtab2subtab2';
 	default defaultPresetIndex = 0;
 
-	protected /* override */ function Parser_Validate() : void
+	protected /* override */ function Parser_ValidateSettings() : void
 	{
 	}
 
-	protected /* override */ function Parser_Read(config: CInGameConfigWrapper) : void
+	protected /* override */ function Parser_ReadSettings(config: CInGameConfigWrapper) : void
 	{
 		anotherToggle = ReadBoolSettingValue(config, 'anotherToggle');
 	}
 
-	protected /* override */ function Parser_Write(config: CInGameConfigWrapper) : void
+	protected /* override */ function Parser_WriteSettings(config: CInGameConfigWrapper) : void
 	{
 		WriteBoolSettingValue(config, 'anotherToggle', anotherToggle);
 	}

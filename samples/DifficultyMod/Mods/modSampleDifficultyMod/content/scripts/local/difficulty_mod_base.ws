@@ -28,20 +28,20 @@ class ModDifficultySettingsBase_general extends ISettingsGroup
 	default id = 'DMgeneral';
 	default defaultPresetIndex = 1;
 
-	protected /* override */ function Parser_Validate() : void
+	protected /* override */ function Parser_ValidateSettings() : void
 	{
 		healthMultip = ClampF(healthMultip, 0, 2);
 		dmgMultip = ClampF(dmgMultip, 0, 2);
 	}
 
-	protected /* override */ function Parser_Read(config: CInGameConfigWrapper) : void
+	protected /* override */ function Parser_ReadSettings(config: CInGameConfigWrapper) : void
 	{
 		enabled = ReadBoolSettingValue(config, 'DMenabled');
 		healthMultip = ReadFloatSettingValue(config, 'DMhealthMultip');
 		dmgMultip = ReadFloatSettingValue(config, 'DMdmgMultip');
 	}
 
-	protected /* override */ function Parser_Write(config: CInGameConfigWrapper) : void
+	protected /* override */ function Parser_WriteSettings(config: CInGameConfigWrapper) : void
 	{
 		WriteBoolSettingValue(config, 'DMenabled', enabled);
 		WriteFloatSettingValue(config, 'DMhealthMultip', healthMultip);
