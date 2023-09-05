@@ -31,7 +31,7 @@ abstract class ISettingsMaster
         for(i = 0; i < size; i += 1)
         {
             group = m_groups[i];
-            group.Validate();
+            group.ValidateSettings();
         }
     }
 
@@ -49,7 +49,7 @@ abstract class ISettingsMaster
         for(i = 0; i < size; i += 1)
         {
             group = m_groups[i];
-            group.Read(config);
+            group.ReadSettings(config);
         }
     }
 
@@ -67,7 +67,7 @@ abstract class ISettingsMaster
         for(i = 0; i < size; i += 1)
         {
             group = m_groups[i];
-            group.Write(false, config);
+            group.WriteSettings(false, config);
         }
 
         theGame.SaveUserSettings();
@@ -87,7 +87,7 @@ abstract class ISettingsMaster
         for(i = 0; i < size; i += 1)
         {
             group = m_groups[i];
-            group.ResetToDefault(false, config);
+            group.ResetSettingsToDefault(false, config);
         }
 
         theGame.SaveUserSettings();

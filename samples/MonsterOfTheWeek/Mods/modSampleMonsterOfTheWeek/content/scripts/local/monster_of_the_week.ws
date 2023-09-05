@@ -62,7 +62,7 @@ exec function monster_of_the_week_next_monster()
     LogChannel('MOTW', "Toussaint: " + i + " -> " + (i + 1));
 
     // validation happens before writing
-    settings.monsters.Write(true);
+    settings.monsters.WriteSettings(true);
 
     LogChannel('MOTW', "After");
     LogChannel('MOTW', "NML: " + settings.monsters.noMansLand);
