@@ -24,6 +24,7 @@ abstract class ISettingsGroup
     // Reads all settings from CInGameConfigWrapper using ReadSettingValue and sets class variables
     public function Read(optional config: CInGameConfigWrapper) : void 
     {
+        //TODO logs for individual groups as well
         if (!config)
 			config = theGame.GetInGameConfigWrapper();
 

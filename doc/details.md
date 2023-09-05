@@ -45,3 +45,9 @@ Example of unified enums can be found in [Monster of the Week](../samples/Monste
 If a variable of a unified enum type in WitcherScript gets assigned a value it is not supposed to take (e.g. a setting that cannot have "Low" quality gets assigned such) before this value will be saved into user config it will be corrected in the `ValidateSettings` function. The current behaviour is to assign it the first valid value (in this case "Medium" quality).
 
 If a unified enum type exists for the settings class, an extra set of functions are generated, which names start with `EnumValueMapping`. They essentially make all of this just work and allow the conversion from user config integer value to enum value in WitcherScript and vice versa.
+
+
+## Breaking changes
+
+### v0.6
+<!--TODO Breaking changes -->
