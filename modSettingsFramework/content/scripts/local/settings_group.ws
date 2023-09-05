@@ -18,16 +18,17 @@ abstract class ISettingsGroup
     // Corrects values to ranges specified in the xml
     public function Validate(): void
     {
+        LogChannel('ModSettingsFramework', "Validating settings for group '" + id + "'");
         Parser_Validate();
     }
 
     // Reads all settings from CInGameConfigWrapper using ReadSettingValue and sets class variables
     public function Read(optional config: CInGameConfigWrapper) : void 
     {
-        //TODO logs for individual groups as well
         if (!config)
 			config = theGame.GetInGameConfigWrapper();
 
+        LogChannel('ModSettingsFramework', "Reading settings for group '" + id + "'");
         Parser_Read(config);
 		Validate();
     }
@@ -38,6 +39,7 @@ abstract class ISettingsGroup
         if (!config)
 			config = theGame.GetInGameConfigWrapper();
 
+        LogChannel('ModSettingsFramework', "Writing settings for group '" + id + "'");
         Validate();
         Parser_Write(config);
 
@@ -51,6 +53,7 @@ abstract class ISettingsGroup
         if (!config)
 			config = theGame.GetInGameConfigWrapper();
         
+        LogChannel('ModSettingsFramework', "Resetting settings for group '" + id + "'" + " to preset " + presetIndex);
         m_parentMaster.ResetSettingValues(config, id, presetIndex);
         Read(config); // get preset values back from config
         

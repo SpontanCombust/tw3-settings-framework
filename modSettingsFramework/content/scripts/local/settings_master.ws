@@ -26,7 +26,7 @@ abstract class ISettingsMaster
         var i, size: int;
         var group: ISettingsGroup;
 
-        LogChannel('ModSettingsFramework', "Validating settings for '" + id + "'");
+        LogChannel('ModSettingsFramework', "Validating settings for master '" + id + "'");
         size = m_groups.Size();
         for(i = 0; i < size; i += 1)
         {
@@ -44,7 +44,7 @@ abstract class ISettingsMaster
 
         config = theGame.GetInGameConfigWrapper();
 
-        LogChannel('ModSettingsFramework', "Reading settings for '" + id + "'");
+        LogChannel('ModSettingsFramework', "Reading settings for master '" + id + "'");
         size = m_groups.Size();
         for(i = 0; i < size; i += 1)
         {
@@ -62,7 +62,7 @@ abstract class ISettingsMaster
 
         config = theGame.GetInGameConfigWrapper();
 
-        LogChannel('ModSettingsFramework', "Writing settings for '" + id + "'");
+        LogChannel('ModSettingsFramework', "Writing settings for master '" + id + "'");
         size = m_groups.Size();
         for(i = 0; i < size; i += 1)
         {
@@ -82,7 +82,7 @@ abstract class ISettingsMaster
 
         config = theGame.GetInGameConfigWrapper();
 
-        LogChannel('ModSettingsFramework', "Resetting settings to default for '" + id + "'");
+        LogChannel('ModSettingsFramework', "Resetting settings to default for master '" + id + "'");
         size = m_groups.Size();
         for(i = 0; i < size; i += 1)
         {
