@@ -10,11 +10,11 @@ Abstract base class which is an analogue to settings groups in XML. Child classe
 
 ### Public member functions
 - `Init(parent_: ISettingsMaster) : void` - used internally.
-- `Validate() : void` - checks all fields and corrects their values so they adhere to the limits set in the XML, e.g. if the value of a variable corresponding to a slider config is within the correct range.
-- `Read(optional config: CInGameConfigWrapper) : void` - reads the data from game's configuration.
-- `Write(shouldSave: bool, optional config: CInGameConfigWrapper) : void` - writes the data into game's configuration. If 'shouldSave' is true saved the data to disk.  
-- `Reset(presetIndex: int, shouldSave: bool, optional config: CInGameConfigWrapper) : void` - applies a preset with given id. Automatically updates settings class to reflect this. If 'shouldSave' is true saved the data to disk.
-- `ResetToDefault() : void` - calls Reset() with defaultPresetIndex.
+- `ValidateSettings() : void` - checks all fields and corrects their values so they adhere to the limits set in the XML, e.g. if the value of a variable corresponding to a slider config is within the correct range.
+- `ReadSettings(optional config: CInGameConfigWrapper) : void` - reads the data from game's configuration.
+- `WriteSettings(shouldSave: bool, optional config: CInGameConfigWrapper) : void` - writes the data into game's configuration. If 'shouldSave' is true saved the data to disk.  
+- `ResetSettings(presetIndex: int, shouldSave: bool, optional config: CInGameConfigWrapper) : void` - applies a preset with given id. Automatically updates settings class to reflect this. If 'shouldSave' is true saved the data to disk.
+- `ResetSettingsToDefault() : void` - calls Reset() with defaultPresetIndex.
 - `EnumValueMappingConfigToUnified(vId: name, val: int) : int` - returns integer value of the unified enum type for options var index in user config. If the config value is not valid for given option, should return -1. More about unified enums in [details](./details.md).
 - `EnumValueMappingUnifiedToConfig(vId: name, val: int) : int` - returns the options var index in user config for integer value of unified enum. If the unified value is not valid for given option, should return -1. More about unified enums in [details](./details.md).
 - `EnumValueMappingValidateUnified(vId: name, val: int) : int` - If integer value for given enum variable is correct returns said value. Otherwise returns the smallest valid value. More about unified enums in [details](./details.md).
