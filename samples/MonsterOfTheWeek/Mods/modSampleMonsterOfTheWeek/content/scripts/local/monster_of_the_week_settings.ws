@@ -16,7 +16,6 @@ class MonsterOfTheWeekSettings extends ISettingsMaster
 		monsters = new MonsterOfTheWeekSettings_monsters in this;
 		monsters.Init(this);
 		m_groups.PushBack(monsters);
-
 	}
 
 	protected /* override */ function Parser_ShouldResetSettingsToDefaultOnInit(config : CInGameConfigWrapper) : bool

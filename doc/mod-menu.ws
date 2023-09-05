@@ -21,7 +21,6 @@ class MyModSettings extends ISettingsMaster
 		tab3 = new MyModSettings_tab3 in this;
 		tab3.Init(this);
 		m_groups.PushBack(tab3);
-
 	}
 
 	protected /* override */ function Parser_ShouldResetSettingsToDefaultOnInit(config : CInGameConfigWrapper) : bool

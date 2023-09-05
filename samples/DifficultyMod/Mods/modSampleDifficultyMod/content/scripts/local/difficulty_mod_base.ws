@@ -11,7 +11,6 @@ class ModDifficultySettingsBase extends ISettingsMaster
 		general = new ModDifficultySettingsBase_general in this;
 		general.Init(this);
 		m_groups.PushBack(general);
-
 	}
 
 	protected /* override */ function Parser_ShouldResetSettingsToDefaultOnInit(config : CInGameConfigWrapper) : bool
