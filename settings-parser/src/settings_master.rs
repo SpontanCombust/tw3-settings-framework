@@ -229,11 +229,15 @@ fn init_function(master: &SettingsMaster, buffer: &mut WitcherScript) {
     buffer.push_line(&format!("protected /* override */ function {}() : void", MASTER_INIT_PARSER_FUNC_NAME));
     buffer.push_line("{").push_indent();
 
-    for group in &master.groups {
+    for i in 0..master.groups.len() {
+        let group = &master.groups[i];
         buffer.push_line(&format!("{} = new {} in this;", group.var_name, group.ws_type_name()));
         buffer.push_line(&format!("{}.Init(this);", group.var_name));
         buffer.push_line(&format!("{}.PushBack({});", MASTER_GROUP_ARRAY_VAR_NAME, group.var_name));
-        buffer.new_line();
+
+        if i != master.groups.len() - 1 {
+            buffer.new_line();
+        }
     }
 
     buffer.pop_indent().push_line("}");
