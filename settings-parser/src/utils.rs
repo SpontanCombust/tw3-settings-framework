@@ -126,11 +126,11 @@ pub fn parse_attribute_number_required<N: FromStr>(node: &Node, attr: &'static s
     }
 }
 
-pub fn parse_attribute_bool_required(node: &Node, attr: &'static str) -> Result<bool, String> {
-    let val = parse_attribute_bool(node, attr)?;
-    if let Some(val) = val {
-        Ok(val)
-    } else {
-        Err(format!("{} node at {} is missing {} attribute", node.tag_name().name(), node_pos(node), attr))
-    }
-}
+// pub fn parse_attribute_bool_required(node: &Node, attr: &'static str) -> Result<bool, String> {
+//     let val = parse_attribute_bool(node, attr)?;
+//     if let Some(val) = val {
+//         Ok(val)
+//     } else {
+//         Err(format!("{} node at {} is missing {} attribute", node.tag_name().name(), node_pos(node), attr))
+//     }
+// }

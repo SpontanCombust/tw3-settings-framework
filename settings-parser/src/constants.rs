@@ -2,13 +2,13 @@ use crate::settings_var_type::SettingsVarType;
 
 
 pub const GROUP_PARENT_CLASS: &str = "ISettingsGroup";
-pub const GROUP_PARENT_MASTER_VAR_NAME: &str = "m_parentMaster";
+// pub const GROUP_PARENT_MASTER_VAR_NAME: &str = "m_parentMaster";
 pub const GROUP_ID_VAR_NAME: &str = "id";
 pub const GROUP_DEFAULT_PRESET_VAR_NAME: &str = "defaultPresetIndex";
-pub const GROUP_VALIDATE_VALUES_FUNC_NAME: &str = "ValidateSettings";
-pub const GROUP_READ_SETTINGS_FUNC_NAME: &str = "ReadSettings";
-pub const GROUP_WRITE_SETTINGS_FUNC_NAME: &str = "WriteSettings";
-pub const GROUP_RESET_SETTINGS_TO_DEFAULT_FUNC_NAME: &str = "ResetSettingsToDefault";
+// pub const GROUP_VALIDATE_VALUES_FUNC_NAME: &str = "ValidateSettings";
+// pub const GROUP_READ_SETTINGS_FUNC_NAME: &str = "ReadSettings";
+// pub const GROUP_WRITE_SETTINGS_FUNC_NAME: &str = "WriteSettings";
+// pub const GROUP_RESET_SETTINGS_TO_DEFAULT_FUNC_NAME: &str = "ResetSettingsToDefault";
 pub const GROUP_ENUM_MAPPING_VALIDATE_FUNC_NAME: &str = "EnumValueMappingValidateUnified";
 pub const GROUP_VALIDATE_VALUES_PARSER_FUNC_NAME: &str = "Parser_ValidateSettings";
 pub const GROUP_READ_SETTINGS_PARSER_FUNC_NAME: &str = "Parser_ReadSettings";
@@ -20,8 +20,8 @@ pub const GROUP_ENUM_MAPPING_VALIDATE_PARSER_FUNC_NAME: &str = "Parser_EnumValue
 pub const MASTER_BASE_CLASS_NAME: &str = "ISettingsMaster";
 pub const MASTER_MOD_VERSION_VAR_NAME: &str = "modVersion";
 pub const MASTER_GROUP_ARRAY_VAR_NAME: &str = "m_groups";
-pub const MASTER_READ_SETTING_VALUE_FUNC_NAME: &str = "ReadSettingValue";
-pub const MASTER_WRITE_SETTING_VALUE_FUNC_NAME: &str = "WriteSettingValue";
+// pub const MASTER_READ_SETTING_VALUE_FUNC_NAME: &str = "ReadSettingValue";
+// pub const MASTER_WRITE_SETTING_VALUE_FUNC_NAME: &str = "WriteSettingValue";
 pub const MASTER_INIT_PARSER_FUNC_NAME: &str = "Parser_Init";
 pub const MASTER_SHOULD_RESET_TO_DEFAULT_ON_INIT_PARSER_FUNC_NAME: &str = "Parser_ShouldResetSettingsToDefaultOnInit";
 
