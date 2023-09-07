@@ -55,4 +55,24 @@ It is possible to disable this validation for the entire class or singular group
 ## Breaking changes
 
 ### v0.6
-<!--TODO Breaking changes -->
+- XML
+  - some custom attributes are required to successfully parse the document (see [Custom XML data](#custom-xml-data))
+- CLI
+  - removed `--file` argument, replaced it with a positional (you only need to input the XML path itself)
+  - removed `--master` argument
+  - removed `--mod-version` argument
+  - removed `--omit-prefix` argument
+  - removed `--default-preset-keyword` argument
+  - removed `--option-parsing-mode` argument, added `--strict-enums` flag in its place
+  - removed ` --no-var-validation` argument
+- WitcherScript
+  - renamed `Reset` function in `ISettingsGroup` to `ResetSettings`
+  - renamed `ResetToDefault` function in `ISettingsGroup` to `ResetSettingsToDefault`
+  - moved `StringToBool` and `BoolToString` from `ISettingsMaster` to `ISettingsGroup`
+  - removed `SSettingsMasterRegistryEntry` struct type
+  - heavily modified how parsed classes look
+
+### v0.2
+- WitcherScript
+  - removed `ISettingsReadListener` class
+  - removed `AddReadListener` function from `CSettingsMasterRegistry`
