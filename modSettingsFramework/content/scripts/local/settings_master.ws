@@ -11,15 +11,29 @@ abstract class ISettingsMaster
     // Initializes the settings class members and more
     public function Init() : void 
     {
+        var resetToDefault : bool;
+
         LogChannel('ModSettingsFramework', "Initialising settings master '" + id + "'");
         Parser_Init();
 
-        if(ShouldResetSettingsToDefaultOnInit())
+        resetToDefault = ShouldResetSettingsToDefaultOnInit();
+        if (resetToDefault)
         {
-            ResetSettingsToDefault();
+            ResetSettingsToDefault();  
         }
 
         ReadSettings();
+
+        if (resetToDefault)
+        {
+            // Resetting settings implies that there are presets to begin with
+            // If for some reason there are none, nothing new will be written to user.config
+            // If a mod was initialised for the first time then it will still not exist in user.config after closing the game
+            // This can be midigated by forcing settings to be written for this mod
+            // After calling ReadSettings() everything should have valid values, so writing to config should be more than safe
+            // This is also done only once per session, so it shouldn't be an issue performance wise
+            WriteSettings();
+        }
     }
 
     // Corrects values to ranges specified in the xml

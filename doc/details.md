@@ -16,6 +16,10 @@ Most of the custom XML data is completely optional. The full specification descr
 The approach of passing data directly in the XML makes the parsing process a lot more flexible compared to pre v0.6 versions of the framework, where a lot had to be deduced solely from command line argument hints. One major example being the settings master class name that now instead of being entred through CLI with `--master` option is now set with `msfClass` attribute in the `UserConfig` node in the xml.
 
 
+## Default on first use
+When initialising the settings for your mod for the very first time in game the framework applies a default preset for each settings Group. Therefore if you want a specific set of values to be set you should create PresetsArrays for your Groups. By default the preset with index 0 is picked. If you want other one to be the default, use `msfDefault` attribute in PresetsArray node.
+
+
 ## Enums
 
 ### Basics
