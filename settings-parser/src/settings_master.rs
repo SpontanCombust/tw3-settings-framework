@@ -13,7 +13,9 @@ use crate::{
         MASTER_BASE_CLASS_NAME, 
         MASTER_MOD_VERSION_VAR_NAME, 
         MASTER_INIT_PARSER_FUNC_NAME,
-        MASTER_SHOULD_RESET_TO_DEFAULT_ON_INIT_PARSER_FUNC_NAME, MASTER_GROUP_ARRAY_VAR_NAME,
+        MASTER_SHOULD_RESET_TO_DEFAULT_ON_INIT_PARSER_FUNC_NAME, 
+        MASTER_GROUP_ARRAY_VAR_NAME, 
+        MASTER_READ_SETTING_VALUE_FUNC_NAME,
     }
 };
 
@@ -245,12 +247,14 @@ fn init_function(master: &SettingsMaster, buffer: &mut WitcherScript) {
 
 fn should_reset_to_default_on_init_function(master: &SettingsMaster, buffer: &mut WitcherScript) {
     let group_id = &master.groups[0].id;
-    let var_id = &master.groups[0].vars[0].id;
+    let var = &master.groups[0].vars[0];
+    let var_id = &var.id;
+    let var_not_found_value = &var.var_not_found_value;
 
     buffer.push_line(&format!("protected /* override */ function {}(config : CInGameConfigWrapper) : bool", MASTER_SHOULD_RESET_TO_DEFAULT_ON_INIT_PARSER_FUNC_NAME))
           .push_line("{").push_indent();
     
-    buffer.push_line(&format!("return config.GetVarValue('{}','{}') == \"\";", group_id, var_id));         
+    buffer.push_line(&format!("return {}(config, '{}','{}') == \"{}\";", MASTER_READ_SETTING_VALUE_FUNC_NAME, group_id, var_id, var_not_found_value));         
     
     buffer.pop_indent().push_line("}");
 }
