@@ -11,13 +11,16 @@ Var's displayType and some other factors determine what type does the correspond
 ## Custom XML data
 The game reads XML config files and takes only the data that it needs without applying strict schema rules onto them. What this means is that alongside the well known data that the game expects we can put extra data that only the framework's parser needs without risking the game to throw any errors.
 
-Most of the custom XML data is completely optional. The full specification describing it can be found in [xml specification](./xml_specification.md).
+Most of the data that has previously been passed into the parser through CLI now is done by using custom XML attributes.
+The full specification describing it together with which attributes are necessary can be found in [xml specification](./xml_specification.md).
 
-The approach of passing data directly in the XML makes the parsing process a lot more flexible compared to pre v0.6 versions of the framework, where a lot had to be deduced solely from command line argument hints. One major example being the settings master class name that now instead of being entred through CLI with `--master` option is now set with `msfClass` attribute in the `UserConfig` node in the xml.
 
-
-## Default on first use
+## Default values on first use
 When initialising the settings for your mod for the very first time in game the framework applies a default preset for each settings Group. Therefore if you want a specific set of values to be set you should create PresetsArrays for your Groups. By default the preset with index 0 is picked. If you want other one to be the default, use `msfDefault` attribute in PresetsArray node.
+
+## Var validation
+After reading from and before writing to user configuration during the game values of the parsed class are corrected to adhere to their XML constraints, for example a variable corresponding to the slider var in XML will have its value clamped between minimal and maximal possible values.
+It is possible to disable this validation for the entire class or singular groups and vars. To do it use the `msfValidate` attribute.
 
 
 ## Enums
@@ -49,11 +52,6 @@ Example of unified enums can be found in [Monster of the Week](../samples/Monste
 If a variable of a unified enum type in WitcherScript gets assigned a value it is not supposed to take (e.g. a setting that cannot have "Low" quality gets assigned such) before this value will be saved into user config it will be corrected in the `ValidateSettings` function. The current behaviour is to assign it the first valid value (in this case "Medium" quality).
 
 If a unified enum type exists for the settings class, an extra set of functions are generated, which names start with `EnumValueMapping`. They essentially make all of this just work and allow the conversion from user config integer value to enum value in WitcherScript and vice versa.
-
-
-## Var validation
-After reading from and before writing to user configuration during the game values of the parsed class are corrected to adhere to their XML constraints, for example a variable corresponding to the slider var in XML will have its value clamped between minimal and maximal possible values.
-It is possible to disable this validation for the entire class or singular groups and vars. To do it use the `msfValidate` attribute.
 
 
 ## Breaking changes
