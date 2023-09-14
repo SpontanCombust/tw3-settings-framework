@@ -20,7 +20,7 @@ class MonsterOfTheWeekSettings extends ISettingsMaster
 
 	protected /* override */ function Parser_ShouldResetSettingsToDefaultOnInit(config : CInGameConfigWrapper) : bool
 	{
-		return config.GetVarValue('MOTWdifficulties','MOTWnoMansLand') == "";
+		return ReadSettingValue(config, 'MOTWdifficulties','MOTWnoMansLand') == "-1";
 	}
 }
 

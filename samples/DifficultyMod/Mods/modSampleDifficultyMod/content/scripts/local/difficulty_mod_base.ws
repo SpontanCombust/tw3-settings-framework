@@ -15,7 +15,7 @@ class ModDifficultySettingsBase extends ISettingsMaster
 
 	protected /* override */ function Parser_ShouldResetSettingsToDefaultOnInit(config : CInGameConfigWrapper) : bool
 	{
-		return config.GetVarValue('DMgeneral','DMenabled') == "";
+		return ReadSettingValue(config, 'DMgeneral','DMenabled') == "";
 	}
 }
 

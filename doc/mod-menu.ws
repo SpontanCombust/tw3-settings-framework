@@ -25,7 +25,7 @@ class MyModSettings extends ISettingsMaster
 
 	protected /* override */ function Parser_ShouldResetSettingsToDefaultOnInit(config : CInGameConfigWrapper) : bool
 	{
-		return config.GetVarValue('MODtab1','MODoption') == "";
+		return ReadSettingValue(config, 'MODtab1','MODoption') == "-1";
 	}
 }
 
