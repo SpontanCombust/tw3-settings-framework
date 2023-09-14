@@ -1,13 +1,22 @@
 use roxmltree::Node;
 
-use crate::utils::{node_pos, validate_name};
+use crate::utils::{
+    parse_attribute_string_required, 
+    parse_attribute_string, 
+    parse_attribute_bool
+};
 
 use super::display_type::DisplayType;
 
+
+
 pub struct Var {
     pub id: String,
+    pub variable_name: Option<String>,
     pub display_name: String,
-    pub display_type: DisplayType
+    pub display_type: DisplayType,
+    pub ignore: Option<bool>,
+    pub validate: Option<bool>
 }
 
 
@@ -20,35 +29,19 @@ impl TryFrom<&Node<'_, '_>> for Var {
             return Err(format!("Wrong XML node. Expected Var, received {}", tag_name))
         }
 
-
-        let id = match node.attribute("id") {
-            Some(id) => id,
-            None => {
-                return Err(format!("Var node without id found at {}", node_pos(node)));
-            }
-        };
-    
-        if let Err(err) = validate_name(id) {
-            return Err(format!("Invalid Var id {} at {}: {}", id, node_pos(node), err));
-        }
-
-
-        let display_name = match node.attribute("displayName") {
-            Some(display_name) => display_name,
-            None => {
-                return Err(format!("Var node without displayName found at {}", node_pos(node)));
-            },
-        };
-
-        // if let Err(err) = validate_name(display_name) {
-        //     return Err(format!("Invalid Var displayName {} at {}: {}", id, node_pos(node), err));
-        // }
-
+        let id = parse_attribute_string_required(node, "id", true)?;
+        let display_name = parse_attribute_string_required(node, "displayName", false)?;
+        let variable_name = parse_attribute_string(node, "msfVariable", true)?;
+        let ignore = parse_attribute_bool(node, "msfIgnore")?;
+        let validate = parse_attribute_bool(node, "msfValidate")?;
         
         Ok(Var {
             id: id.to_owned(),
+            variable_name,
             display_name: display_name.to_owned(),
             display_type: DisplayType::try_from(node)?,
+            ignore,
+            validate
         })
     }
 }

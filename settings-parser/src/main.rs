@@ -8,6 +8,7 @@ mod traits;
 mod indented_document;
 mod xml;
 mod settings_enum;
+mod constants;
 
 use std::{fs::OpenOptions, io::{Read, Write}, path::{Path, PathBuf}};
 
@@ -17,15 +18,11 @@ use roxmltree::Document;
 use settings_master::SettingsMaster;
 use xml::user_config::UserConfig;
 
-use crate::{traits::{WitcherScript, WitcherScriptTypeDef}, utils::validate_name};
+use crate::traits::{WitcherScript, WitcherScriptTypeDef};
 
 
 fn main() -> Result<(), String>{
     let cli = CLI::parse();
-
-    if let Err(err) = validate_name(&cli.settings_master_name) {
-        return Err(format!("Invalid settings master name: {}", err));
-    }
 
     let input_file_path = Path::new(&cli.xml_file_path);
     let xml_file = OpenOptions::new()
@@ -74,7 +71,7 @@ fn main() -> Result<(), String>{
 
     match UserConfig::try_from(&doc) {
         Ok(user_config) => {
-            let settings_master = SettingsMaster::from(&user_config, &cli)?;
+            let settings_master = SettingsMaster::try_from(user_config, &cli)?;
 
             let mut buffer = WitcherScript::new();
 

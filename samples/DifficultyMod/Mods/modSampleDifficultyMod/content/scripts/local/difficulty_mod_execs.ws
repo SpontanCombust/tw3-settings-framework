@@ -1,11 +1,11 @@
 exec function settings_difficulty_easy()
 {
-    GetModDifficultySettings().general.Reset(0);
+    GetModDifficultySettings().general.ResetSettings(0, true);
 }
 
 exec function settings_difficulty_default()
 {
-    GetModDifficultySettings().general.ResetToDefault();
+    GetModDifficultySettings().general.ResetSettingsToDefault(true);
 }
 
 exec function settings_difficulty_hard()

@@ -1,24 +1,45 @@
 use crate::{
     settings_var_type::SettingsVarType, 
     traits::WitcherScriptType, 
-    cli::CLI, 
     utils::strip_prefixes, 
-    xml::var::Var
+    xml::{var::Var, display_type::DisplayType}
 };
 
 pub struct SettingsVar {
     pub id: String, // id attribute in the Var node
     pub var_name: String, // name of a variable inside a group class in WitcherScript
-    pub var_type: SettingsVarType
+    pub var_type: SettingsVarType,
+    pub var_not_found_value: String, // value that gets read if a given setting does not yet exist in user.settings
+    pub validate_value: bool
 }
 
 impl SettingsVar {
-    pub fn from(xml_var: &Var, cli: &CLI) -> Option<Self> {
-        SettingsVarType::from(xml_var, cli)
-        .and_then(|var_type| Some(SettingsVar {
+    pub fn try_from(xml_var: &Var, master_class_name: &str, prefixes: &Vec<String>, group_validate_values: bool) -> Result<Option<Self>, String> {
+        let svt;
+        match SettingsVarType::from(xml_var, master_class_name, prefixes)? {
+            Some(v) => svt = v,
+            None => return Ok(None),
+        }
+
+        let var_name = if let Some(variable_name) = &xml_var.variable_name {
+            variable_name.clone()
+        } else {
+            strip_prefixes(&xml_var.id, prefixes).trim_start_matches('_').into()
+        };
+
+        let validate_value = xml_var.validate.unwrap_or(group_validate_values);
+
+        let var_not_found_value = match xml_var.display_type {
+            DisplayType::Options(_) => "-1".to_string(),
+            _ => "".to_string()
+        };
+
+        Ok(Some(SettingsVar {
             id: xml_var.id.clone(),
-            var_name: strip_prefixes(&xml_var.id, &cli.omit_prefix).trim_start_matches('_').into(),
-            var_type
+            var_name,
+            var_type: svt,
+            var_not_found_value,
+            validate_value
         }))
     }
 }

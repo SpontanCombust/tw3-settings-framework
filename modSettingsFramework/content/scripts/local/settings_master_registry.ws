@@ -1,36 +1,29 @@
-struct SSettingsMasterRegistryEntry
-{
-    var settingsMaster : ISettingsMaster;
-    var id : name; 
-}
-
 class CSettingsMasterRegistry
 {
     public const var FRAMEWORK_VERSION : name;
-    default FRAMEWORK_VERSION = '0.5';
+    default FRAMEWORK_VERSION = '0.6.0';
 
-    private var m_settingsEntries : array<SSettingsMasterRegistryEntry>;
+    private var m_settingsEntries : array<ISettingsMaster>;
 
     public function AddSettings(settingsMaster : ISettingsMaster, id : name) : void
     {
         var i, size : int;
-        var settingsEntry : SSettingsMasterRegistryEntry;
 
         size = m_settingsEntries.Size();
         for (i = 0; i < size; i += 1)
         {
             if (m_settingsEntries[i].id == id)
             {
+                LogChannel('ModSettingsFramework', "Attempt was made to add settings master '" + id + "' which already exists in the registry");
                 return;
             }
         }
 
+        settingsMaster.id = id;
         settingsMaster.Init();
 
-        settingsEntry.settingsMaster = settingsMaster;
-        settingsEntry.id = id;
-        //TODO log these actions
-        m_settingsEntries.PushBack(settingsEntry);
+        m_settingsEntries.PushBack(settingsMaster);
+        LogChannel('ModSettingsFramework', "Added settings master '" + id + "' to the registry");
     }
 
     // Returns NULL if no setting master is found with that ID
@@ -43,7 +36,7 @@ class CSettingsMasterRegistry
         {
             if(m_settingsEntries[i].id == id)
             {
-                return m_settingsEntries[i].settingsMaster;
+                return m_settingsEntries[i];
             }
         }
 
@@ -60,6 +53,7 @@ class CSettingsMasterRegistry
             if(m_settingsEntries[i].id == id)
             {
                 m_settingsEntries.Erase(i);
+                LogChannel('ModSettingsFramework', "Removed settings master '" + id + "' from the registry");
                 return;
             }
         }
@@ -69,10 +63,12 @@ class CSettingsMasterRegistry
     {
         var i, size : int;
 
+        LogChannel('ModSettingsFramework', "Reading all settings");
+        
         size = m_settingsEntries.Size();
         for (i = 0; i < size; i += 1)
         {
-            m_settingsEntries[i].settingsMaster.ReadSettings();
+            m_settingsEntries[i].ReadSettings();
         }
     }
 }
@@ -86,6 +82,7 @@ function GetSettingsMasterRegistry() : CSettingsMasterRegistry
 
     if(!game.m_settingsMasterRegistry)
     {
+        LogChannel('ModSettingsFramework', "Initialising the registry");
         game.m_settingsMasterRegistry = new CSettingsMasterRegistry in theGame;
     }
 
