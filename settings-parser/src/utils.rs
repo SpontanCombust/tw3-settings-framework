@@ -34,8 +34,12 @@ pub(crate) fn strip_prefixes<'a>(s: &'a str, prefixes: &'a [String]) -> &'a str 
     stripped_s
 }
 
-pub(crate) fn is_integral_range(min: i32, max: i32, div: i32) -> bool {
-    (max - min) % div == 0
+pub(crate) fn is_integral_range(min: f32, max: f32, div: f32) -> bool {
+    if min.floor() != min || max.floor() != max || div.floor() != div {
+        return false;
+    } else {
+        (max as i32 - min as i32) % div as i32 == 0
+    }
 } 
 
 pub(crate) fn common_str_prefix(v: &[String]) -> &str {
