@@ -42,7 +42,7 @@
     	
    	<Group id="MODtab2subtab1" msfVariable="tab2" displayName="Mods.my_mod.my_mod_tab2.subtap1">
 		<VisibleVars>
-				<Var id="anotherSlider" displayName="mod_another_slider" displayType="SLIDER;-100;100;1000"/>
+				<Var id="anotherSlider" displayName="mod_another_slider" displayType="SLIDER;-1.5;1.5;30"/>
 		</VisibleVars>
     </Group>
 	<Group id="MODtab2subtab2" msfVariable="tab3" displayName="Mods.my_mod.my_mod_tab2.subtap2">

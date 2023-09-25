@@ -29,13 +29,13 @@ impl SettingsVarType {
             DisplayType::Slider { min, max, div } => {
                 if is_integral_range(*min, *max, *div) {
                     Ok(Some(SettingsVarType::Int {
-                        min: *min, 
-                        max: *max
+                        min: *min as i32, 
+                        max: *max as i32
                     }))
                 } else {
                     Ok(Some(SettingsVarType::Float { 
-                        min: *min as f32,
-                        max: *max as f32 
+                        min: *min,
+                        max: *max 
                     }))
                 }
             },

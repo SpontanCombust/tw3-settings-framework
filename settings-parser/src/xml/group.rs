@@ -71,7 +71,14 @@ impl TryFrom<&Node<'_, '_>> for Group {
         if let Some(visible_vars_node) = node.children().find(|n| n.has_tag_name("VisibleVars")) {
             let var_nodes = visible_vars_node.children().filter(|n| n.has_tag_name("Var"));
             for var_node in var_nodes {
-                visible_vars.push(Var::try_from(&var_node)?);
+                match Var::try_from(&var_node) {
+                    Ok(var) => {
+                        visible_vars.push(var);
+                    }
+                    Err(err) => {
+                        return Err(format!("Error parsing var at {}: {}", node_pos(&var_node), err));
+                    }
+                }
             }
         }
 

@@ -1,4 +1,4 @@
-// Code generated using Mod Settings Framework v0.6.0 by SpontanCombust & Aeltoth
+// Code generated using Mod Settings Framework v0.6.1 by SpontanCombust & Aeltoth
 
 class MyModSettings extends ISettingsMaster
 {
@@ -76,7 +76,7 @@ class MyModSettings_tab2 extends ISettingsGroup
 
 	protected /* override */ function Parser_ValidateSettings() : void
 	{
-		anotherSlider = ClampF(anotherSlider, -100, 100);
+		anotherSlider = ClampF(anotherSlider, -1.5, 1.5);
 	}
 
 	protected /* override */ function Parser_ReadSettings(config: CInGameConfigWrapper) : void
