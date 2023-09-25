@@ -37,6 +37,35 @@ fn main() -> Result<(), String>{
             return Err(format!("Error opening menu xml file: {}", e));
         }
     };
+    
+
+    let mut xml_text = String::new();
+    if let Err(e) = xml_file.read_to_string(&mut xml_text) {
+        return Err(format!("Error reading menu xml file: {}", e));
+    };
+
+    let doc = match Document::parse(&xml_text) {
+        Ok(doc) => doc,
+        Err(err) => {
+            return Err(format!("Document parsing error: {}", err))
+        }
+    };
+
+    let mut buffer = WitcherScript::new();
+    match UserConfig::try_from(&doc) {
+        Ok(user_config) => {
+            let settings_master = SettingsMaster::try_from(user_config, &cli)?;
+
+            buffer.push_line(&format!("// Code generated using Mod Settings Framework v{} by SpontanCombust & Aeltoth", option_env!("CARGO_PKG_VERSION").unwrap()))
+                  .new_line();
+
+            settings_master.ws_type_definition(&mut buffer);  
+        },
+        Err(err) => {
+            return Err(format!("Error parsing menu xml file: {}", err));
+        }
+    }
+
 
     let ws_path = match &cli.output_ws_file_path  {
         Some(path) => PathBuf::from(&path),
@@ -55,42 +84,13 @@ fn main() -> Result<(), String>{
         }
     };
 
-    
-
-    let mut xml_text = String::new();
-    if let Err(e) = xml_file.read_to_string(&mut xml_text) {
-        return Err(format!("Error reading menu xml file: {}", e));
-    };
-
-    let doc = match Document::parse(&xml_text) {
-        Ok(doc) => doc,
-        Err(err) => {
-            return Err(format!("Document parsing error: {}", err))
-        }
-    };
-
-    match UserConfig::try_from(&doc) {
-        Ok(user_config) => {
-            let settings_master = SettingsMaster::try_from(user_config, &cli)?;
-
-            let mut buffer = WitcherScript::new();
-
-            buffer.push_line(&format!("// Code generated using Mod Settings Framework v{} by SpontanCombust & Aeltoth", option_env!("CARGO_PKG_VERSION").unwrap()))
-                  .new_line();
-
-            settings_master.ws_type_definition(&mut buffer);
-
-            // clear file content if there is any
-            ws_file.set_len(0).unwrap();
+    // clear file content if there is any
+    ws_file.set_len(0).unwrap();
             
-            if let Err(e) = ws_file.write_all(buffer.text.as_bytes()) {
-                return Err(format!("Error writing witcher script output file: {}", e));
-            }
-        },
-        Err(err) => {
-            return Err(format!("Error parsing menu xml file: {}", err));
-        }
+    if let Err(e) = ws_file.write_all(buffer.text.as_bytes()) {
+        return Err(format!("Error writing witcher script output file: {}", e));
     }
+
 
     println!("Successfully parsed {} into {}", cli.xml_file_path, ws_path.to_str().unwrap_or(""));
     return Ok(())
