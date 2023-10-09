@@ -1,7 +1,7 @@
 class CSettingsMasterRegistry
 {
     public const var FRAMEWORK_VERSION : name;
-    default FRAMEWORK_VERSION = '0.6.1';
+    default FRAMEWORK_VERSION = '1.0.0';
 
     private var m_settingsEntries : array<ISettingsMaster>;
 
