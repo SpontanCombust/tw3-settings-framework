@@ -72,6 +72,13 @@ jobs:
     - name: Create draft release
       uses: ncipollo/release-action@v1
       with:
-        artifacts: "TW3_MSF_modSettingsFramework.zip,TW3_MSF_Parser.zip,TW3_MSF_Samples.zip"
+        artifacts: >
+          "TW3_MSF_modSettingsFramework.zip,
+          TW3_MSF_Parser.zip,
+          TW3_MSF_Samples.zip,
+          TW3_MSF_Hooks_1.32.zip,
+          TW3_MSF_Hooks_4.00.zip,
+          TW3_MSF_Hooks_4.03.zip,
+          TW3_MSF_Hooks_4.04.zip"
         draft: true
         generateReleaseNotes: true
