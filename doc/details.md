@@ -54,7 +54,16 @@ If a variable of a unified enum type in WitcherScript gets assigned a value it i
 If a unified enum type exists for the settings class, an extra set of functions are generated, which names start with `EnumValueMapping`. They essentially make all of this just work and allow the conversion from user config integer value to enum value in WitcherScript and vice versa.
 
 
+## Hooks
+Before v1.0 I've distributed modified vanilla scripts and local scripts in a single `modSettingsFramework` package. This was not ideal as I had to release new **framwork version** for each new **game versions** no matter what. 
+Now however there are `hooks`. There are variants for most major game versions that you install alongside `modSettingsFramework`, which now only has local scripts that don't modify vanilla ones.
+
+
 ## Breaking changes
+
+### v1.0
+- WitcherScript
+  - seperated vanilla and local scripts. Before updating delete previous files so there is no repeating code
 
 ### v0.6
 - XML

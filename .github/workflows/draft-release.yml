@@ -23,27 +23,62 @@ jobs:
     - name: Build with Cargo
       run: cargo build --release --target=x86_64-pc-windows-msvc
       working-directory: ./settings-parser
+
     - name: Zip parser
       uses: thedoctor0/zip-release@main
       with:
         type: 'zip'
-        filename: "TW3_Mod_Settings_Framework_Parser.zip"
+        filename: "TW3_MSF_Parser.zip"
         path: "./settings-parser/target/x86_64-pc-windows-msvc/release/settings_parser.exe"
     - name: Zip modSettingsFramework
       uses: thedoctor0/zip-release@main
       with:
         type: 'zip'
-        filename: "TW3_Mod_Settings_Framework_modSettingsFramework.zip"
+        filename: "TW3_MSF_modSettingsFramework.zip"
         path: "./modSettingsFramework"
+
+    - name: Zip v1.32 hooks
+      uses: thedoctor0/zip-release@main
+      with:
+        type: 'zip'
+        filename: "TW3_MSF_Hooks_1.32.zip"
+        path: "./hooks/v1.32/modSettingsFrameworkHooks"
+    - name: Zip v4.00 hooks
+      uses: thedoctor0/zip-release@main
+      with:
+        type: 'zip'
+        filename: "TW3_MSF_Hooks_4.00.zip"
+        path: "./hooks/v4.00/modSettingsFrameworkHooks"
+    - name: Zip v4.03 hooks
+      uses: thedoctor0/zip-release@main
+      with:
+        type: 'zip'
+        filename: "TW3_MSF_Hooks_4.03.zip"
+        path: "./hooks/v4.03/modSettingsFrameworkHooks"
+    - name: Zip v4.04 hooks
+      uses: thedoctor0/zip-release@main
+      with:
+        type: 'zip'
+        filename: "TW3_MSF_Hooks_4.04.zip"
+        path: "./hooks/v4.04/modSettingsFrameworkHooks"
+
     - name: Zip samples
       uses: thedoctor0/zip-release@main
       with:
         type: 'zip'
-        filename: "TW3_Mod_Settings_Framework_Samples.zip"
+        filename: "TW3_MSF_Samples.zip"
         path: "./samples"
+
     - name: Create draft release
       uses: ncipollo/release-action@v1
       with:
-        artifacts: "TW3_Mod_Settings_Framework_Parser.zip,TW3_Mod_Settings_Framework_modSettingsFramework.zip,TW3_Mod_Settings_Framework_Samples.zip"
+        artifacts: >
+          TW3_MSF_modSettingsFramework.zip,
+          TW3_MSF_Parser.zip,
+          TW3_MSF_Samples.zip,
+          TW3_MSF_Hooks_1.32.zip,
+          TW3_MSF_Hooks_4.00.zip,
+          TW3_MSF_Hooks_4.03.zip,
+          TW3_MSF_Hooks_4.04.zip
         draft: true
         generateReleaseNotes: true
