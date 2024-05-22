@@ -1,0 +1,17 @@
+# Warning: This manifest is meant to work only in a project directory and not when installed in the Mods directory
+
+# Basic information about this project
+[content]
+name = "modSettingsFrameworkHooks"
+description = "Vanilla hooks for modSettingsFramework"
+version = "1.0.1"
+authors = []
+game_version = "4.04a_REDkit"
+scripts_root = "content/scripts"
+
+# Any dependencies that this project might need
+[dependencies]
+modSettingsFramework = { path = "../../../modSettingsFramework" }
+
+# For details check the manual
+# https://spontancombust.github.io/witcherscript-ide/user-manual/project-system/#manifest-format

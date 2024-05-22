@@ -1,4 +1,4 @@
-// Code generated using Mod Settings Framework v1.0.0 by SpontanCombust & Aeltoth
+// Code generated using Mod Settings Framework v1.0.1 by SpontanCombust & Aeltoth
 
 class MonsterOfTheWeekSettings extends ISettingsMaster
 {
