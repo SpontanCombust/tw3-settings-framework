@@ -7,7 +7,7 @@ description = """
 Framework for modding Witcher 3 that simplifies the pipeline of using mod settings by generating code 
 based directly on mod menu XML and providing extendible interface for reacting to changes of settings.
 """
-version = "1.0.0"
+version = "1.0.1"
 authors = []
 game_version = "4.04"
 scripts_root = "content/scripts"
