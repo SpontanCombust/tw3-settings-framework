@@ -1,0 +1,15 @@
+# Basic information about this project
+[content]
+name = "modSettingsFrameworkHooks"
+description = "Vanilla hooks for modSettingsFramework"
+version = "1.0.0"
+authors = []
+game_version = "4.04"
+scripts_root = "content/scripts"
+
+# Any dependencies that this project might need
+[dependencies]
+modSettingsFramework = { path = "../../../modSettingsFramework" }
+
+# For details check the manual
+# https://spontancombust.github.io/witcherscript-ide/user-manual/project-system/#manifest-format
