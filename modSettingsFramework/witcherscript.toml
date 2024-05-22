@@ -1,3 +1,5 @@
+# Warning: This manifest is meant to work only in a project directory and not when installed in the Mods directory
+
 # Basic information about this project
 [content]
 name = "modSettingsFramework"
