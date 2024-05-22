@@ -36,6 +36,7 @@ jobs:
         type: 'zip'
         filename: "TW3_MSF_modSettingsFramework.zip"
         path: "./modSettingsFramework"
+        exclusions: "*/witcherscript.toml"
 
     - name: Zip v1.32 hooks
       uses: thedoctor0/zip-release@main
@@ -43,24 +44,35 @@ jobs:
         type: 'zip'
         filename: "TW3_MSF_Hooks_1.32.zip"
         path: "./hooks/v1.32/modSettingsFrameworkHooks"
+        exclusions: "*/witcherscript.toml"
     - name: Zip v4.00 hooks
       uses: thedoctor0/zip-release@main
       with:
         type: 'zip'
         filename: "TW3_MSF_Hooks_4.00.zip"
         path: "./hooks/v4.00/modSettingsFrameworkHooks"
+        exclusions: "*/witcherscript.toml"
     - name: Zip v4.03 hooks
       uses: thedoctor0/zip-release@main
       with:
         type: 'zip'
         filename: "TW3_MSF_Hooks_4.03.zip"
         path: "./hooks/v4.03/modSettingsFrameworkHooks"
+        exclusions: "*/witcherscript.toml"
     - name: Zip v4.04 hooks
       uses: thedoctor0/zip-release@main
       with:
         type: 'zip'
         filename: "TW3_MSF_Hooks_4.04.zip"
         path: "./hooks/v4.04/modSettingsFrameworkHooks"
+        exclusions: "*/witcherscript.toml"
+    - name: Zip v4.04a_REDkit hooks
+      uses: thedoctor0/zip-release@main
+      with:
+        type: 'zip'
+        filename: "TW3_MSF_Hooks_4.04a_REDkit.zip"
+        path: "./hooks/v4.04a_REDkit/modSettingsFrameworkHooks"
+        exclusions: "*/witcherscript.toml"
 
     - name: Zip samples
       uses: thedoctor0/zip-release@main
@@ -68,6 +80,7 @@ jobs:
         type: 'zip'
         filename: "TW3_MSF_Samples.zip"
         path: "./samples"
+        exclusions: "*/witcherscript.toml"
 
     - name: Create draft release
       uses: ncipollo/release-action@v1
@@ -79,6 +92,7 @@ jobs:
           TW3_MSF_Hooks_1.32.zip,
           TW3_MSF_Hooks_4.00.zip,
           TW3_MSF_Hooks_4.03.zip,
-          TW3_MSF_Hooks_4.04.zip
+          TW3_MSF_Hooks_4.04.zip,
+          TW3_MSF_Hooks_4.04a_REDkit.zip
         draft: true
         generateReleaseNotes: true
