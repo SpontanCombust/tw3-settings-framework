@@ -48,13 +48,7 @@ jobs:
           cargo run --release -- -h >> "../doc/cli_specification.md"
           echo  '```' >> "../doc/cli_specification.md"
         working-directory: settings-parser
-      - name: Check for changes in the project
-        id: get_changes
-        run: echo "changed=$(git status --porcelain | wc -l)" >> $GITHUB_OUTPUT
-      - name: Committing changes if there are any
-        if: steps.get_changes.outputs.changed != 0
-        uses: EndBug/add-and-commit@v7
+      - uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          message: "Update doc and samples"
-          default_author: github_actions
+          commit_message: "Update doc and samples"
     
