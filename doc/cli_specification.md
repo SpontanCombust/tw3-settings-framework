@@ -1,5 +1,5 @@
 ```
-TW3 Settings Framework Parser 1.0.1
+TW3 Settings Framework Parser 1.0.2
 Parses a mod menu XML file and outputs witcher script code representing settings of this menu
 
 USAGE:
