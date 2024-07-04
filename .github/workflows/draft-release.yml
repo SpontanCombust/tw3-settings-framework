@@ -29,8 +29,9 @@ jobs:
       uses: thedoctor0/zip-release@0.7.5
       with:
         type: 'zip'
-        filename: "TW3_MSF_Parser.zip"
-        path: "./settings-parser/target/x86_64-pc-windows-msvc/release/settings_parser.exe"
+        filename: "${{ github.workspace }}/TW3_MSF_Parser.zip"
+        path: "settings_parser.exe"
+        directory: "./settings-parser/target/x86_64-pc-windows-msvc/release"
 
     - uses: actions/upload-artifact@v4
       with:
@@ -52,46 +53,51 @@ jobs:
       uses: thedoctor0/zip-release@0.7.5
       with:
         type: 'zip'
-        filename: "TW3_MSF_modSettingsFramework.zip"
-        path: "./modSettingsFramework"
+        filename: "${{ github.workspace }}/TW3_MSF_modSettingsFramework.zip"
+        path: "modSettingsFramework"
 
     - name: Zip v1.32 hooks
       uses: thedoctor0/zip-release@0.7.5
       with:
         type: 'zip'
-        filename: "TW3_MSF_Hooks_1.32.zip"
-        path: "./hooks/v1.32/modSettingsFrameworkHooks"
+        filename: "${{ github.workspace }}/TW3_MSF_Hooks_1.32.zip"
+        path: "modSettingsFrameworkHooks"
+        directory: "./hooks/v1.32"
     - name: Zip v4.00 hooks
       uses: thedoctor0/zip-release@0.7.5
       with:
         type: 'zip'
-        filename: "TW3_MSF_Hooks_4.00.zip"
-        path: "./hooks/v4.00/modSettingsFrameworkHooks"
+        filename: "${{ github.workspace }}/TW3_MSF_Hooks_4.00.zip"
+        path: "modSettingsFrameworkHooks"
+        directory: "./hooks/v4.00"
     - name: Zip v4.03 hooks
       uses: thedoctor0/zip-release@0.7.5
       with:
         type: 'zip'
-        filename: "TW3_MSF_Hooks_4.03.zip"
-        path: "./hooks/v4.03/modSettingsFrameworkHooks"
+        filename: "${{ github.workspace }}/TW3_MSF_Hooks_4.03.zip"
+        path: "modSettingsFrameworkHooks"
+        directory: "./hooks/v4.03"
     - name: Zip v4.04 hooks
       uses: thedoctor0/zip-release@0.7.5
       with:
         type: 'zip'
-        filename: "TW3_MSF_Hooks_4.04.zip"
-        path: "./hooks/v4.04/modSettingsFrameworkHooks"
+        filename: "${{ github.workspace }}/TW3_MSF_Hooks_4.04.zip"
+        path: "modSettingsFrameworkHooks"
+        directory: "./hooks/v4.04"
     - name: Zip v4.04a_REDkit+ hooks
       uses: thedoctor0/zip-release@0.7.5
       with:
         type: 'zip'
-        filename: "TW3_MSF_Hooks_4.04a_REDkit+.zip"
-        path: "./hooks/v4.04a_REDkit+/modSettingsFrameworkHooks"
+        filename: "${{ github.workspace }}/TW3_MSF_Hooks_4.04a_REDkit+.zip"
+        path: "modSettingsFrameworkHooks"
+        directory: "./hooks/v4.04a_REDkit+"
 
     - name: Zip samples
       uses: thedoctor0/zip-release@0.7.5
       with:
         type: 'zip'
-        filename: "TW3_MSF_Samples.zip"
-        path: "./samples"
+        filename: "${{ github.workspace }}/TW3_MSF_Samples.zip"
+        path: "samples"
 
     - uses: actions/upload-artifact@v4
       with:
