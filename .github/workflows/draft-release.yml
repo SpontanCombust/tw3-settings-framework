@@ -8,12 +8,13 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  release:
+  parser:
     runs-on: windows-latest
 
     steps:
     - name: Checkout
       uses: actions/checkout@v2
+
     - name: Use Rust stable
       uses: actions-rs/toolchain@v1
       with:
@@ -25,74 +26,96 @@ jobs:
       working-directory: ./settings-parser
 
     - name: Zip parser
-      uses: thedoctor0/zip-release@main
+      uses: thedoctor0/zip-release@0.7.5
       with:
         type: 'zip'
         filename: "TW3_MSF_Parser.zip"
         path: "./settings-parser/target/x86_64-pc-windows-msvc/release/settings_parser.exe"
+
+    - uses: actions/upload-artifact@v4
+      with:
+        name: parser
+        path: "TW3_MSF_Parser.zip"
+
+
+  scripts:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Remove manifests locally to not include them in released packages
+      run: find . -type f -name "witcherscript.toml" -delete
+
     - name: Zip modSettingsFramework
-      uses: thedoctor0/zip-release@main
+      uses: thedoctor0/zip-release@0.7.5
       with:
         type: 'zip'
         filename: "TW3_MSF_modSettingsFramework.zip"
         path: "./modSettingsFramework"
-        recursive_exclusions: "*/witcherscript.toml"
 
     - name: Zip v1.32 hooks
-      uses: thedoctor0/zip-release@main
+      uses: thedoctor0/zip-release@0.7.5
       with:
         type: 'zip'
         filename: "TW3_MSF_Hooks_1.32.zip"
         path: "./hooks/v1.32/modSettingsFrameworkHooks"
-        recursive_exclusions: "*/witcherscript.toml"
     - name: Zip v4.00 hooks
-      uses: thedoctor0/zip-release@main
+      uses: thedoctor0/zip-release@0.7.5
       with:
         type: 'zip'
         filename: "TW3_MSF_Hooks_4.00.zip"
         path: "./hooks/v4.00/modSettingsFrameworkHooks"
-        recursive_exclusions: "*/witcherscript.toml"
     - name: Zip v4.03 hooks
-      uses: thedoctor0/zip-release@main
+      uses: thedoctor0/zip-release@0.7.5
       with:
         type: 'zip'
         filename: "TW3_MSF_Hooks_4.03.zip"
         path: "./hooks/v4.03/modSettingsFrameworkHooks"
-        recursive_exclusions: "*/witcherscript.toml"
     - name: Zip v4.04 hooks
-      uses: thedoctor0/zip-release@main
+      uses: thedoctor0/zip-release@0.7.5
       with:
         type: 'zip'
         filename: "TW3_MSF_Hooks_4.04.zip"
         path: "./hooks/v4.04/modSettingsFrameworkHooks"
-        recursive_exclusions: "*/witcherscript.toml"
-    - name: Zip v4.04a_REDkit hooks
-      uses: thedoctor0/zip-release@main
+    - name: Zip v4.04a_REDkit+ hooks
+      uses: thedoctor0/zip-release@0.7.5
       with:
         type: 'zip'
-        filename: "TW3_MSF_Hooks_4.04a_REDkit.zip"
-        path: "./hooks/v4.04a_REDkit/modSettingsFrameworkHooks"
-        recursive_exclusions: "*/witcherscript.toml"
+        filename: "TW3_MSF_Hooks_4.04a_REDkit+.zip"
+        path: "./hooks/v4.04a_REDkit+/modSettingsFrameworkHooks"
 
     - name: Zip samples
-      uses: thedoctor0/zip-release@main
+      uses: thedoctor0/zip-release@0.7.5
       with:
         type: 'zip'
         filename: "TW3_MSF_Samples.zip"
         path: "./samples"
-        recursive_exclusions: "*/witcherscript.toml"
+
+    - uses: actions/upload-artifact@v4
+      with:
+        name: scripts
+        path: "*.zip"
+
+  release:
+    runs-on: ubuntu-latest
+    needs: [parser, scripts]
+    if: success() 
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    
+    - name: Download artifacts
+      uses: actions/download-artifact@v4
+      with:
+        path: "./artifacts"
+        merge-multiple: true
 
     - name: Create draft release
       uses: ncipollo/release-action@v1
       with:
-        artifacts: >
-          TW3_MSF_modSettingsFramework.zip,
-          TW3_MSF_Parser.zip,
-          TW3_MSF_Samples.zip,
-          TW3_MSF_Hooks_1.32.zip,
-          TW3_MSF_Hooks_4.00.zip,
-          TW3_MSF_Hooks_4.03.zip,
-          TW3_MSF_Hooks_4.04.zip,
-          TW3_MSF_Hooks_4.04a_REDkit.zip
+        artifacts: "artifacts/*.zip"
         draft: true
         generateReleaseNotes: true
