@@ -4,7 +4,7 @@
 [content]
 name = "modSettingsFrameworkHooks"
 description = "Vanilla hooks for modSettingsFramework"
-version = "1.0.1"
+version = "1.0.2"
 authors = []
 game_version = "1.32"
 scripts_root = "content/scripts"
