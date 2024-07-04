@@ -30,7 +30,7 @@ Framework provides xml parser program. It generates WitcherScript code which mir
 1. Go to the [releases page](https://github.com/SpontanCombust/tw3-settings-framework/releases)
 2. Download `TW3_MSF_Hooks_vX.XX.zip` appropriate for you game version and copy to the `Mods` directory
 
-:information_source: *With the addition of code annotations introoduced in hotfix patch 4.04a_REDkit on 06.06.2024 all future game versions can use `v4.04a_REDkit+` hooks*
+:information_source: *With the addition of code annotations introduced in hotfix patch 4.04a_REDkit on 06.06.2024 all future game versions can use `v4.04a_REDkit+` hooks*
 
 3. Download `TW3_MSF_modSettingsFramework.zip` and copy to the `Mods` directory
 4. Use Script Merger to solve any conflicts
