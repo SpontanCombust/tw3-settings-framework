@@ -15,7 +15,7 @@ scripts_root = "content/scripts"
 # Any dependencies that this project might need
 [dependencies]
 content0 = true
-modSettingsFrameworkHooks = { path = "../hooks/v4.04a_REDkit_2+/modSettingsFrameworkHooks" }
+modSettingsFrameworkHooks = { path = "../hooks/v4.04a_REDkit+/modSettingsFrameworkHooks" }
 
 # For details check the manual
 # https://spontancombust.github.io/witcherscript-ide/user-manual/project-system/#manifest-format
