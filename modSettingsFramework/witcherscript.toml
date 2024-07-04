@@ -7,7 +7,7 @@ description = """
 Framework for modding Witcher 3 that simplifies the pipeline of using mod settings by generating code 
 based directly on mod menu XML and providing extendible interface for reacting to changes of settings.
 """
-version = "1.0.1"
+version = "1.0.2"
 authors = []
 game_version = "4.04"
 scripts_root = "content/scripts"
@@ -15,7 +15,7 @@ scripts_root = "content/scripts"
 # Any dependencies that this project might need
 [dependencies]
 content0 = true
-modSettingsFrameworkHooks = { path = "../hooks/v4.04a_REDkit/modSettingsFrameworkHooks" }
+modSettingsFrameworkHooks = { path = "../hooks/v4.04a_REDkit+/modSettingsFrameworkHooks" }
 
 # For details check the manual
 # https://spontancombust.github.io/witcherscript-ide/user-manual/project-system/#manifest-format
